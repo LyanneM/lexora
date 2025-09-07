@@ -1,0 +1,150 @@
+/* src/styles/admin-user-manager.css */
+.admin-user-manager {
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  margin-bottom: 30px;
+}
+
+.create-admin-form {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.create-admin-form h4 {
+  margin-bottom: 15px;
+  color: #ff0080;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.form-row input {
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.2);
+  color: white;
+}
+
+.form-row input:focus {
+  outline: none;
+  border-color: #ff0080;
+}
+
+.create-admin-btn {
+  padding: 12px 20px;
+  background: linear-gradient(45deg, #ff0080, #00b4db);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.create-admin-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 0, 150, 0.3);
+}
+
+.users-table {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.table-header, .table-row {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1fr 1fr 1fr;
+  gap: 15px;
+  padding: 15px;
+  align-items: center;
+}
+
+.table-header {
+  background: rgba(255, 0, 150, 0.2);
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.table-row {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.table-row:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.role-badge {
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.role-badge.admin {
+  background: rgba(255, 0, 150, 0.3);
+  color: #ff0080;
+}
+
+.role-badge.user {
+  background: rgba(0, 180, 219, 0.3);
+  color: #00b4db;
+}
+
+.status-badge {
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.status-badge.active {
+  background: rgba(0, 200, 83, 0.3);
+  color: #00c853;
+}
+
+.status-badge.inactive {
+  background: rgba(255, 0, 0, 0.3);
+  color: #ff5252;
+}
+
+.status-toggle-btn {
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.status-toggle-btn:hover {
+  background: rgba(255, 0, 150, 0.3);
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: #d8d8d8;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .table-header, .table-row {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+}
