@@ -6,7 +6,8 @@ function NoteTypeSelector() {
   const navigate = useNavigate();
 
   const handleNoteTypeSelect = (type) => {
-    navigate(`/notebook/create?type=${type}`);
+    // Navigate to notebook creation with the selected type
+    navigate(`/notebook/create/${type}`);
   };
 
   return (
@@ -30,7 +31,7 @@ function NoteTypeSelector() {
         </div>
         
         <div className="type-card" onClick={() => handleNoteTypeSelect("technical")}>
-          <div className="type-icon">💻</div>
+          <div className="type-icon"></div>
           <h3>Technical Notes</h3>
           <p>Code snippets, diagrams, and technical documentation</p>
         </div>

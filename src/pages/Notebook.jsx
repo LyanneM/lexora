@@ -1,15 +1,15 @@
 // src/pages/Notebook.jsx
+
 import { useState, useRef, useEffect } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { db } from "../firebase";
-import { doc, getDoc, updateDoc, setDoc, arrayUnion } from "firebase/firestore";
+import { collection, doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { useAuth } from "../context/AuthContext";
 import "../styles/notebook.css";
 
 function Notebook() {
-  const { id } = useParams();
-  const [searchParams] = useSearchParams();
-  const noteType = searchParams.get("type") || "regular";
+  const { id, type } = useParams(); // Now we can get type from URL params
+  const navigate = useNavigate();
   const { currentUser } = useAuth();
   
   const [note, setNote] = useState(null);
@@ -17,33 +17,37 @@ function Notebook() {
   const [elements, setElements] = useState([]);
   const [title, setTitle] = useState("Untitled Note");
   const [isSaving, setIsSaving] = useState(false);
+  const [noteType, setNoteType] = useState(type || "regular");
   
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    loadNote();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+    // If we're creating a new note (id is "create"), set the type
+    if (id === "create" && type) {
+      setNoteType(type);
+      setTitle(`${type.charAt(0).toUpperCase() + type.slice(1)} Note`);
+    } else if (id && id !== "create") {
+      // If we're editing an existing note, load it
+      loadNote();
+    }
+  }, [id, type]);
 
   const loadNote = async () => {
-    if (id && id !== "create") {
-      try {
-        const noteDoc = await getDoc(doc(db, "notes", id));
-        if (noteDoc.exists()) {
-          const noteData = noteDoc.data();
-          setNote(noteData);
-          setTitle(noteData.title);
-          setElements(noteData.elements || []);
-        }
-      } catch (error) {
-        console.error("Error loading note:", error);
+    try {
+      const noteDoc = await getDoc(doc(db, "notes", id));
+      if (noteDoc.exists()) {
+        const noteData = noteDoc.data();
+        setNote(noteData);
+        setTitle(noteData.title);
+        setNoteType(noteData.type);
+        setElements(noteData.elements || []);
       }
+    } catch (error) {
+      console.error("Error loading note:", error);
     }
   };
 
   const saveNote = async () => {
-    if (!currentUser) return;
-
     setIsSaving(true);
     try {
       const noteData = {
@@ -51,45 +55,53 @@ function Notebook() {
         type: noteType,
         elements,
         updatedAt: new Date(),
-        owner: currentUser.uid
+        owner: currentUser.uid,
+        createdAt: note ? note.createdAt : new Date()
       };
 
       if (id && id !== "create") {
         // Update existing note
         await updateDoc(doc(db, "notes", id), noteData);
+        alert("Note updated successfully!");
       } else {
-        // Create new note under the user
-        await setDoc(
-          doc(db, "users", currentUser.uid),
-          { notes: arrayUnion(noteData) },
-          { merge: true }
-        );
+        // Create new note
+        const docRef = doc(collection(db, "notes"));
+        await setDoc(docRef, noteData);
+        
+        // Also add to user's notes array
+        await updateDoc(doc(db, "users", currentUser.uid), {
+          notes: arrayUnion(docRef.id)
+        });
+        
+        alert("Note created successfully!");
+        navigate(`/notebook/${docRef.id}`); // Redirect to the edit page
       }
     } catch (error) {
       console.error("Error saving note:", error);
+      alert("Error saving note");
     }
     setIsSaving(false);
   };
 
-  const addElement = (type, content = "") => {
+  const addElement = (elementType, content = "") => {
     const newElement = {
       id: Date.now(),
-      type,
+      type: elementType,
       content,
-      position: { x: 100, y: 100 },
-      size: type === "sticky" ? { width: 200, height: 150 } : { width: 300, height: 40 }
+      position: { x: 100, y: 100 + (elements.length * 60) },
+      size: elementType === "sticky" ? { width: 200, height: 150 } : { width: 300, height: 40 }
     };
     setElements([...elements, newElement]);
   };
 
-  const updateElement = (id, updates) => {
+  const updateElement = (elementId, updates) => {
     setElements(elements.map(el => 
-      el.id === id ? { ...el, ...updates } : el
+      el.id === elementId ? { ...el, ...updates } : el
     ));
   };
 
-  const deleteElement = (id) => {
-    setElements(elements.filter(el => el.id !== id));
+  const deleteElement = (elementId) => {
+    setElements(elements.filter(el => el.id !== elementId));
   };
 
   const renderElement = (element) => {
@@ -150,11 +162,13 @@ function Notebook() {
             />
           </div>
         );
-
+      
       case "shape":
         return (
           <div className="element shape-element">
-            ⬢ Shape Placeholder
+            <div className="shape-content">
+              <span>⬢</span>
+            </div>
           </div>
         );
       
@@ -204,11 +218,12 @@ function Notebook() {
           )}
           {noteType === "technical" && (
             <button 
-              className={activeTool === "code" ? "active" : ""}
-              onClick={() => addElement("code")}
-            >
-              {"</>"} Code Block
-            </button>
+  className={activeTool === "code" ? "active" : ""}
+  onClick={() => addElement("code")}
+>
+  {"</>"} Code Block
+</button>
+
           )}
           <button 
             className={activeTool === "shape" ? "active" : ""}
@@ -222,8 +237,8 @@ function Notebook() {
           <button onClick={saveNote} disabled={isSaving}>
             {isSaving ? "Saving..." : "💾 Save"}
           </button>
-          <button onClick={() => window.history.back()}>
-            ← Back
+          <button onClick={() => navigate("/dashboard")}>
+            ← Dashboard
           </button>
         </div>
       </div>
@@ -247,21 +262,23 @@ function Notebook() {
         
         {elements.length === 0 && (
           <div className="empty-canvas">
-            <p>Click on the tools above to add content to your notebook</p>
+            <p>Click on the tools above to add content to your {noteType} notebook</p>
             <p>Drag elements to move them around</p>
           </div>
         )}
       </div>
 
-      {/* Quiz Creation Button */}
-      <div className="quiz-creation-panel">
-        <button 
-          onClick={() => window.location.href = `/quiz/create?fromNote=${id || 'new'}`}
-          className="create-quiz-btn"
-        >
-          🎯 Create Quiz from this Note
-        </button>
-      </div>
+      {/* Quiz Creation Button - Only show for existing notes */}
+      {id && id !== "create" && (
+        <div className="quiz-creation-panel">
+          <button 
+            onClick={() => navigate(`/quiz/create?fromNote=${id}`)}
+            className="create-quiz-btn"
+          >
+            🎯 Create Quiz from this Note
+          </button>
+        </div>
+      )}
     </div>
   );
 }

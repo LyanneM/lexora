@@ -23,9 +23,10 @@ function Dashboard() {
     ]
   });
 
-  const handleCreateNote = () => {
-    navigate("/notebook/create");
-  };
+ // In your Dashboard.jsx, update the handleCreateNote function:
+const handleCreateNote = () => {
+  navigate("/notebook/create"); // This will go to the type selector
+};
 
   const handleOpenNote = (noteId) => {
     navigate(`/notebook/${noteId}`);

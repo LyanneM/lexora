@@ -30,9 +30,12 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/adminpanel" element={<AdminPanel />} />
             
-              {/* New routes for notebook and quiz functionality */}
+              {/* Note creation flow */}
               <Route path="/notebook/create" element={<NoteTypeSelector />} />
+              <Route path="/notebook/create/:type" element={<Notebook />} />
               <Route path="/notebook/:id" element={<Notebook />} />
+              
+              {/* Quiz routes */}
               <Route path="/quiz/create" element={<QuizCreator />} />
               <Route path="/quiz/:id" element={<Quiz />} />
               
