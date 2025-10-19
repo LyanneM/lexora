@@ -5,10 +5,15 @@ import "../styles/note-type-selector.css";
 function NoteTypeSelector() {
   const navigate = useNavigate();
 
-  const handleNoteTypeSelect = (type) => {
-    // Navigate to notebook creation with the selected type
-    navigate(`/notebook/create/${type}`);
-  };
+ const handleNoteTypeSelect = (type) => {
+  if (type === 'math') {
+    navigate('/notebook/math/create'); // Goes to MathNotebook
+  } else if (type === 'technical') {
+    navigate('/notebook/code/create'); // Goes to CodeNotebook
+  } else {
+    navigate(`/notebook/create/${type}`); // Goes to regular Notebook
+  }
+};
 
   return (
     <div className="note-type-selector">
