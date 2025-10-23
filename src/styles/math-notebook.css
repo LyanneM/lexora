@@ -290,7 +290,7 @@
   border-radius: 4px;
 }
 
-/* Equations Panel */
+/* Equations and Matrices Panel */  
 .equations-panel {
   max-width: 1000px;
   margin: 0 auto;
@@ -381,7 +381,7 @@
   background: #007acc;
 }
 
-/* Responsive Design */
+
 @media (max-width: 768px) {
   .math-toolbar {
     flex-direction: column;

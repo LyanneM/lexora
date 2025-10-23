@@ -6,6 +6,8 @@ import { collection, doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase
 import { useAuth } from "../context/AuthContext";
 import "../styles/math-notebook.css";
 
+const API_BASE_URL = "http://localhost:8000";
+
 function MathNotebook() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -18,14 +20,48 @@ function MathNotebook() {
   const [graphElements, setGraphElements] = useState([]);
   const [calculatorInput, setCalculatorInput] = useState("");
   const [calculatorResult, setCalculatorResult] = useState("");
-  const [graphEquation, setGraphEquation] = useState("x^2");
+  const [graphEquation, setGraphEquation] = useState("x**2");
   const [graphType, setGraphType] = useState("function");
+  const [graphData, setGraphData] = useState(null);
+  const [equationInput, setEquationInput] = useState("");
+  const [equationSolution, setEquationSolution] = useState("");
+  const [matrixInput, setMatrixInput] = useState([
+    ['1', '2'],
+    ['3', '4']
+  ]);
 
   const canvasRef = useRef(null);
   const graphRef = useRef(null);
 
-  // Advanced calculator functions
-  const calculate = (expression) => {
+  // Calculate using backend
+  const calculateMath = async (expression, operation = "evaluate") => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/calculate-math`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          expression: expression,
+          operation: operation
+        })
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        return result.result;
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      console.error("Calculation error:", error);
+      return "Error";
+    }
+  };
+
+  // Frontend calculator as fallback
+  const calculateFrontend = (expression) => {
     try {
       // Basic arithmetic
       let result = expression
@@ -57,10 +93,18 @@ function MathNotebook() {
     return result;
   };
 
-  const handleCalculatorInput = (value) => {
+  const handleCalculatorInput = async (value) => {
     if (value === "=") {
-      const result = calculate(calculatorInput);
-      setCalculatorResult(result);
+      if (calculatorInput.trim()) {
+        try {
+          // Try backend first, fallback to frontend
+          const result = await calculateMath(calculatorInput, "evaluate");
+          setCalculatorResult(result);
+        } catch (error) {
+          const result = calculateFrontend(calculatorInput);
+          setCalculatorResult(result);
+        }
+      }
     } else if (value === "C") {
       setCalculatorInput("");
       setCalculatorResult("");
@@ -71,7 +115,48 @@ function MathNotebook() {
     }
   };
 
-  const renderGraph = () => {
+  const solveEquation = async () => {
+    if (equationInput.trim()) {
+      try {
+        const solution = await calculateMath(equationInput, "solve");
+        setEquationSolution(solution);
+      } catch (error) {
+        setEquationSolution("Error solving equation");
+      }
+    }
+  };
+
+  const plotGraph = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/plot-graph`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          equation: graphEquation,
+          graph_type: graphType,
+          x_range: [-10, 10]
+        })
+      });
+
+      const result = await response.json();
+      
+      if (result.success && result.points) {
+        setGraphData(result.points);
+        renderGraph(result.points);
+      } else {
+        // Fallback to frontend graphing
+        renderGraphFrontend();
+      }
+    } catch (error) {
+      console.error("Graph plotting error:", error);
+      // Fallback to frontend graphing
+      renderGraphFrontend();
+    }
+  };
+
+  const renderGraphFrontend = () => {
     const canvas = graphRef.current;
     if (!canvas) return;
 
@@ -127,7 +212,7 @@ function MathNotebook() {
 
       for (let x = -10; x <= 10; x += 0.1) {
         try {
-          const y = eval(graphEquation.replace(/x/g, `(${x})`));
+          const y = eval(graphEquation.replace(/x/g, `(${x})`).replace(/\^/g, '**'));
           const pixelX = (x + 10) * (width / 20);
           const pixelY = height - ((y + 10) * (height / 20));
           
@@ -144,11 +229,86 @@ function MathNotebook() {
     }
   };
 
-  useEffect(() => {
-    if (graphRef.current) {
-      renderGraph();
+  const renderGraph = (points) => {
+    const canvas = graphRef.current;
+    if (!canvas || !points) return;
+
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+
+    // Clear canvas
+    ctx.fillStyle = '#1e1e1e';
+    ctx.fillRect(0, 0, width, height);
+
+    // Draw grid
+    ctx.strokeStyle = '#3e3e42';
+    ctx.lineWidth = 1;
+
+    // Vertical lines
+    for (let x = 0; x <= width; x += 50) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, height);
+      ctx.stroke();
     }
-  }, [graphEquation, graphType]);
+
+    // Horizontal lines
+    for (let y = 0; y <= height; y += 50) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(width, y);
+      ctx.stroke();
+    }
+
+    // Draw axes
+    ctx.strokeStyle = '#007acc';
+    ctx.lineWidth = 2;
+    
+    // X-axis
+    ctx.beginPath();
+    ctx.moveTo(0, height / 2);
+    ctx.lineTo(width, height / 2);
+    ctx.stroke();
+
+    // Y-axis
+    ctx.beginPath();
+    ctx.moveTo(width / 2, 0);
+    ctx.lineTo(width / 2, height);
+    ctx.stroke();
+
+    // Plot the points from backend
+    if (points && points.length > 0) {
+      ctx.strokeStyle = '#ff6b6b';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+
+      points.forEach((point, index) => {
+        const pixelX = (point.x + 10) * (width / 20);
+        const pixelY = height - ((point.y + 10) * (height / 20));
+        
+        if (index === 0) {
+          ctx.moveTo(pixelX, pixelY);
+        } else {
+          ctx.lineTo(pixelX, pixelY);
+        }
+      });
+      
+      ctx.stroke();
+    }
+  };
+
+  const handleMatrixInputChange = (row, col, value) => {
+    const newMatrix = [...matrixInput];
+    newMatrix[row][col] = value;
+    setMatrixInput(newMatrix);
+  };
+
+  useEffect(() => {
+    if (activeTool === "graph" && graphRef.current) {
+      plotGraph();
+    }
+  }, [graphEquation, graphType, activeTool]);
 
   const mathSymbols = [
     'π', 'e', '√', '^', '(', ')', 'sin', 'cos', 'tan', 'log', 'ln'
@@ -193,6 +353,9 @@ function MathNotebook() {
         </div>
 
         <div className="math-actions">
+          <button onClick={() => navigate("/notebook/python")}>
+            🐍 Advanced Mode
+          </button>
           <button onClick={() => navigate("/dashboard")}>
             ← Dashboard
           </button>
@@ -266,7 +429,7 @@ function MathNotebook() {
                 type="text"
                 value={graphEquation}
                 onChange={(e) => setGraphEquation(e.target.value)}
-                placeholder="Enter function (e.g., x^2, sin(x), 2*x+1)"
+                placeholder="Enter function (e.g., x**2, sin(x), 2*x+1)"
                 className="graph-equation-input"
               />
               <select 
@@ -277,7 +440,7 @@ function MathNotebook() {
                 <option value="parametric">Parametric</option>
                 <option value="polar">Polar</option>
               </select>
-              <button onClick={renderGraph}>Plot Graph</button>
+              <button onClick={plotGraph}>Plot Graph</button>
             </div>
             
             <div className="graph-canvas-container">
@@ -315,23 +478,33 @@ function MathNotebook() {
               <h3>Equation Solver</h3>
               <input
                 type="text"
-                placeholder="Enter equation (e.g., 2x + 5 = 13)"
+                value={equationInput}
+                onChange={(e) => setEquationInput(e.target.value)}
+                placeholder="Enter equation (e.g., 2*x + 5 = 13, x**2 - 4 = 0)"
                 className="equation-input"
               />
-              <button>Solve</button>
+              <button onClick={solveEquation}>Solve</button>
               <div className="solution-display">
-                Solution will appear here...
+                {equationSolution || "Solution will appear here..."}
               </div>
             </div>
             
             <div className="matrix-calculator">
               <h3>Matrix Calculator</h3>
               <div className="matrix-input">
-                <input type="text" placeholder="1" />
-                <input type="text" placeholder="2" />
-                <br />
-                <input type="text" placeholder="3" />
-                <input type="text" placeholder="4" />
+                {matrixInput.map((row, rowIndex) => (
+                  <div key={rowIndex}>
+                    {row.map((value, colIndex) => (
+                      <input 
+                        key={colIndex}
+                        type="text" 
+                        value={value}
+                        onChange={(e) => handleMatrixInputChange(rowIndex, colIndex, e.target.value)}
+                        style={{width: '60px', margin: '2px'}}
+                      />
+                    ))}
+                  </div>
+                ))}
               </div>
               <div className="matrix-operations">
                 <button>Determinant</button>

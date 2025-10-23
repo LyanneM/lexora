@@ -1,32 +1,53 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { notesService, quizzesService } from "../services/firebaseService";
 import "../styles/dashboard.css";
 
 function Dashboard() {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const [activeTab, setActiveTab] = useState("notes");
-
-  // Sample data - you'll replace this with real data from your backend
+  const [loading, setLoading] = useState(true);
+  
+  // Real user data state
   const [userData, setUserData] = useState({
-    notes: [
-      { id: 1, title: "Math Lecture Notes", type: "math", date: "2023-10-15" },
-      { id: 2, title: "Programming Concepts", type: "technical", date: "2023-10-10" },
-      { id: 3, title: "History Summary", type: "regular", date: "2023-10-05" }
-    ],
-    quizzes: [
-      { id: 1, title: "Algebra Quiz", score: "85%", date: "2023-10-16" },
-      { id: 2, title: "JavaScript Basics", score: "92%", date: "2023-10-11" }
-    ],
-    uploads: [
-      { id: 1, title: "Lecture Slides", type: "PDF", date: "2023-10-14" },
-      { id: 2, title: "Research Paper", type: "DOC", date: "2023-10-08" }
-    ]
+    notes: [],
+    quizzes: [],
+    uploads: [] // Placeholder for future upload feature
   });
 
- // In your Dashboard.jsx, update the handleCreateNote function:
-const handleCreateNote = () => {
-  navigate("/notebook/create"); // This will go to the type selector
-};
+  // Fetch user data from Firebase
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!currentUser) return;
+      
+      setLoading(true);
+      try {
+        // Fetch notes
+        const userNotes = await notesService.getUserNotes(currentUser.uid);
+        
+        // Fetch quizzes
+        const userQuizzes = await quizzesService.getUserQuizzes(currentUser.uid);
+        
+        setUserData({
+          notes: userNotes,
+          quizzes: userQuizzes,
+          uploads: [] // Add uploads when you implement the service
+        });
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [currentUser]);
+
+  const handleCreateNote = () => {
+    navigate("/notebook/create");
+  };
 
   const handleOpenNote = (noteId) => {
     navigate(`/notebook/${noteId}`);
@@ -36,7 +57,7 @@ const handleCreateNote = () => {
     if (noteId) {
       navigate(`/quiz/create?fromNote=${noteId}`);
     } else {
-      navigate("/quiz/create");
+      navigate("/quiz");
     }
   };
 
@@ -44,11 +65,87 @@ const handleCreateNote = () => {
     navigate(`/quiz/${quizId}`);
   };
 
+  const handleUploadFile = () => {
+    // Implement file upload logic here
+    document.getElementById('file-upload').click();
+  };
+
+  const formatDate = (timestamp) => {
+    if (!timestamp) return 'No date';
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  const getNoteIcon = (noteType) => {
+    switch (noteType) {
+      case 'math': return 'π';
+      case 'technical': return '</>';
+      case 'regular': 
+      default: 
+        return '📝';
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="dashboard-loading">
+        <div className="loading-spinner"></div>
+        <p>Loading your dashboard...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
-        <h2>Your Dashboard</h2>
+        <h2>Welcome to Your Dashboard</h2>
         <p>Manage your notes, quizzes, and learning materials</p>
+      </div>
+
+      {/* Notebook Options Section */}
+      <div className="notebook-options-section">
+        <h3>Quick Access Notebooks</h3>
+        <div className="notebook-options">
+          {/* Quick Math Tools */}
+          <div className="notebook-card">
+            <h3>🧮 Math Notebook</h3>
+            <p>Quick calculations, graphing, and equation solving</p>
+            <button 
+              className="notebook-card-btn"
+              onClick={() => navigate('/notebook/math')}
+            >
+              Open Math Tools
+            </button>
+          </div>
+
+          {/* Advanced Python Notebook */}
+          <div className="notebook-card">
+            <h3>🐍 Python Math Notebook</h3>
+            <p>Advanced computations with Python code and rich outputs</p>
+            <button 
+              className="notebook-card-btn"
+              onClick={() => navigate('/notebook/python')}
+            >
+              Open Python Notebook
+            </button>
+          </div>
+
+          {/* Code Notebook */}
+          <div className="notebook-card">
+            <h3>💻 Code Notebook</h3>
+            <p>Write and execute code in multiple languages</p>
+            <button 
+              className="notebook-card-btn"
+              onClick={() => navigate('/notebook/code')}
+            >
+              Open Code Editor
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Tab Navigation */}
@@ -57,19 +154,19 @@ const handleCreateNote = () => {
           className={activeTab === "notes" ? "tab-active" : ""} 
           onClick={() => setActiveTab("notes")}
         >
-          Notes
+          Notes ({userData.notes.length})
         </button>
         <button 
           className={activeTab === "quizzes" ? "tab-active" : ""} 
           onClick={() => setActiveTab("quizzes")}
         >
-          Quizzes
+          Quizzes ({userData.quizzes.length})
         </button>
         <button 
           className={activeTab === "uploads" ? "tab-active" : ""} 
           onClick={() => setActiveTab("uploads")}
         >
-          Uploads
+          Uploads ({userData.uploads.length})
         </button>
       </div>
 
@@ -86,8 +183,10 @@ const handleCreateNote = () => {
             
             {userData.notes.length === 0 ? (
               <div className="empty-state">
-                <p>You haven't created any notes yet.</p>
-                <button className="create-button" onClick={handleCreateNote}>
+                <div className="empty-icon">📝</div>
+                <h4>No notes yet</h4>
+                <p>Create your first note to get started with Lexora</p>
+                <button className="create-button primary" onClick={handleCreateNote}>
                   Create Your First Note
                 </button>
               </div>
@@ -96,15 +195,26 @@ const handleCreateNote = () => {
                 {userData.notes.map(note => (
                   <div key={note.id} className="item-card">
                     <div className="item-icon">
-                      {note.type === "math" && "π"}
-                      {note.type === "technical" && "</>"}
-                      {note.type === "regular" && "📝"}
+                      {getNoteIcon(note.type)}
                     </div>
-                    <h4>{note.title}</h4>
-                    <p>Created: {note.date}</p>
+                    <h4>{note.title || 'Untitled Note'}</h4>
+                    <p>Created: {formatDate(note.createdAt)}</p>
+                    {note.updatedAt && note.updatedAt !== note.createdAt && (
+                      <p className="updated-date">Updated: {formatDate(note.updatedAt)}</p>
+                    )}
                     <div className="item-actions">
-                      <button onClick={() => handleOpenNote(note.id)}>Open</button>
-                      <button onClick={() => handleCreateQuiz(note.id)}>Quiz Me</button>
+                      <button 
+                        className="action-btn primary"
+                        onClick={() => handleOpenNote(note.id)}
+                      >
+                        Open
+                      </button>
+                      <button 
+                        className="action-btn secondary"
+                        onClick={() => handleCreateQuiz(note.id)}
+                      >
+                        Quiz Me
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -124,8 +234,10 @@ const handleCreateNote = () => {
             
             {userData.quizzes.length === 0 ? (
               <div className="empty-state">
-                <p>You haven't taken any quizzes yet.</p>
-                <button className="create-button" onClick={() => handleCreateQuiz()}>
+                <div className="empty-icon">❓</div>
+                <h4>No quizzes yet</h4>
+                <p>Create quizzes from your notes to test your knowledge</p>
+                <button className="create-button primary" onClick={() => handleCreateQuiz()}>
                   Create Your First Quiz
                 </button>
               </div>
@@ -134,11 +246,22 @@ const handleCreateNote = () => {
                 {userData.quizzes.map(quiz => (
                   <div key={quiz.id} className="item-card">
                     <div className="item-icon">❓</div>
-                    <h4>{quiz.title}</h4>
-                    <p>Score: {quiz.score} • Date: {quiz.date}</p>
+                    <h4>{quiz.title || 'Untitled Quiz'}</h4>
+                    <p>Created: {formatDate(quiz.createdAt)}</p>
+                    {quiz.score && <p className="quiz-score">Score: {quiz.score}</p>}
                     <div className="item-actions">
-                      <button onClick={() => handleOpenQuiz(quiz.id)}>Review</button>
-                      <button onClick={() => handleCreateQuiz()}>Retake</button>
+                      <button 
+                        className="action-btn primary"
+                        onClick={() => handleOpenQuiz(quiz.id)}
+                      >
+                        {quiz.score ? 'Review' : 'Start'}
+                      </button>
+                      <button 
+                        className="action-btn secondary"
+                        onClick={() => handleCreateQuiz()}
+                      >
+                        Retake
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -151,7 +274,7 @@ const handleCreateNote = () => {
           <div className="uploads-section">
             <div className="section-header">
               <h3>Your Uploads</h3>
-              <button className="create-button" onClick={() => document.getElementById('file-upload').click()}>
+              <button className="create-button" onClick={handleUploadFile}>
                 + Upload File
               </button>
               <input type="file" id="file-upload" style={{display: 'none'}} />
@@ -159,7 +282,12 @@ const handleCreateNote = () => {
             
             {userData.uploads.length === 0 ? (
               <div className="empty-state">
-                <p>You haven't uploaded any files yet.</p>
+                <div className="empty-icon">📄</div>
+                <h4>No uploads yet</h4>
+                <p>Upload files to organize your learning materials</p>
+                <button className="create-button primary" onClick={handleUploadFile}>
+                  Upload Your First File
+                </button>
               </div>
             ) : (
               <div className="items-grid">
@@ -167,10 +295,10 @@ const handleCreateNote = () => {
                   <div key={upload.id} className="item-card">
                     <div className="item-icon">📄</div>
                     <h4>{upload.title}</h4>
-                    <p>Type: {upload.type} • Date: {upload.date}</p>
+                    <p>Type: {upload.type} • Date: {formatDate(upload.date)}</p>
                     <div className="item-actions">
-                      <button>View</button>
-                      <button>Download</button>
+                      <button className="action-btn primary">View</button>
+                      <button className="action-btn secondary">Download</button>
                     </div>
                   </div>
                 ))}

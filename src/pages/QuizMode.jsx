@@ -11,18 +11,19 @@ function QuizMode() {
   const [selectedMode, setSelectedMode] = useState('');
   const [selectedTime, setSelectedTime] = useState(30);
   const [questionCount, setQuestionCount] = useState(10);
-  const [questionTypes, setQuestionTypes] = useState({
-    multipleChoice: true,
-    fillInBlank: true,
-    trueFalse: true,
-    openEnded: false
+
+  const [questionFormats, setQuestionFormats] = useState({
+    multiple_choice: true,
+    fill_blank: true,
+    true_false: true,
+    open_ended: false,
+    essay: false,
+    structured: false
   });
 
- 
   const [musicEnabled, setMusicEnabled] = useState(false);
   const [audio, setAudio] = useState(null);
 
-  // ADD DEBUGGING HERE:
   useEffect(() => {
     console.log("📥 QuizMode received data:", {
       quizData,
@@ -34,7 +35,6 @@ function QuizMode() {
     console.log("🔢 Question count:", quizData?.quiz_data?.questions?.length);
   }, [quizData]);
 
-  // Music functionality - MOVE INSIDE COMPONENT
   useEffect(() => {
     const backgroundAudio = new Audio('/music/quiz-background.mp3');
     backgroundAudio.loop = true;
@@ -66,17 +66,21 @@ function QuizMode() {
     setMusicEnabled(!musicEnabled);
   };
 
-  // Handle question type changes
-  const handleQuestionTypeChange = (type) => {
-    setQuestionTypes(prev => ({
-      ...prev,
-      [type]: !prev[type]
-    }));
+  // Helper method for format descriptions
+  const getFormatDescription = (format) => {
+    const descriptions = {
+      multiple_choice: 'Choose from several options',
+      fill_blank: 'Type the missing word or phrase',
+      true_false: 'Determine if statement is true or false',
+      open_ended: 'Write short answers (1-2 sentences)',
+      essay: 'Write detailed paragraph responses',
+      structured: 'Step-by-step problem solving'
+    };
+    return descriptions[format] || 'Question format';
   };
 
-  // Filter questions based on selected types
+  // Filter questions based on selected formats
   const getAvailableQuestions = () => {
-    // Check different possible locations for questions
     const questions = quizData?.quiz_data?.questions || quizData?.questions || [];
     
     console.log("🔍 Available questions:", questions);
@@ -90,18 +94,23 @@ function QuizMode() {
     const filtered = questions.filter(question => {
       if (!question || !question.type) return true;
       
-      switch(question.type) {
-        case 'multiple_choice':
-          return questionTypes.multipleChoice;
-        case 'fill_blank':
-          return questionTypes.fillInBlank;
-        case 'true_false':
-          return questionTypes.trueFalse;
-        case 'open_ended':
-          return questionTypes.openEnded;
-        default:
-          return true;
-      }
+      // Map question types to our format categories
+      const typeMapping = {
+        'multiple_choice': 'multiple_choice',
+        'multiple_choice_question': 'multiple_choice',
+        'fill_blank': 'fill_blank',
+        'fill_in_blank': 'fill_blank',
+        'fill-in-the-blank': 'fill_blank',
+        'true_false': 'true_false',
+        'true_false_question': 'true_false',
+        'open_ended': 'open_ended',
+        'open_ended_question': 'open_ended',
+        'essay': 'essay',
+        'structured': 'structured'
+      };
+      
+      const questionFormat = typeMapping[question.type] || question.type;
+      return questionFormats[questionFormat];
     });
     
     console.log("✅ Filtered questions:", filtered.length);
@@ -123,21 +132,20 @@ function QuizMode() {
     return totalTime * 60;
   };
 
-  // FIXED: startQuiz function - no hooks inside!
   const startQuiz = () => {
     if (!selectedMode) {
       alert('Please select a quiz mode');
       return;
     }
 
-    const selectedTypes = Object.values(questionTypes).filter(Boolean);
-    if (selectedTypes.length === 0) {
-      alert('Please select at least one question type');
+    const selectedFormats = Object.values(questionFormats).filter(Boolean);
+    if (selectedFormats.length === 0) {
+      alert('Please select at least one question format');
       return;
     }
 
     if (actualQuestionCount === 0) {
-      alert('No questions available with the selected types. Please adjust your question type selection.');
+      alert('No questions available with the selected formats. Please adjust your question format selection.');
       return;
     }
 
@@ -152,13 +160,12 @@ function QuizMode() {
         mode: selectedMode,
         timeLimit: timeLimit,
         sourceName,
-        questionTypes,
+        questionFormats,
         questionCount: actualQuestionCount
       }
     });
   };
 
-  // Add floating elements component - MOVE INSIDE COMPONENT
   const FloatingElements = () => (
     <div className="floating-elements">
       <div className="floating-element"></div>
@@ -200,7 +207,7 @@ function QuizMode() {
           <p>AI has generated {quizData.quiz_data?.questions?.length || 0} questions from your {sourceType}</p>
           {maxAvailableQuestions < quizData.quiz_data?.questions?.length && (
             <p className="filtered-count">
-              ({maxAvailableQuestions} questions available with selected types)
+              ({maxAvailableQuestions} questions available with selected formats)
             </p>
           )}
         </div>
@@ -239,74 +246,114 @@ function QuizMode() {
             </div>
           </div>
 
-          {/* Question Type Selection */}
+          {/* Question Formats Selection - Consolidated */}
           <div className="config-card">
-            <h3>🎯 Question Types</h3>
-            <div className="type-selection">
-              <div className="type-option">
-                <label className="type-checkbox">
+            <h3>🎯 Question Formats</h3>
+            <div className="format-selection">
+              <div className="format-option">
+                <label className="format-checkbox">
                   <input
                     type="checkbox"
-                    checked={questionTypes.multipleChoice}
-                    onChange={() => handleQuestionTypeChange('multipleChoice')}
+                    checked={questionFormats.multiple_choice}
+                    onChange={() => setQuestionFormats(prev => ({
+                      ...prev,
+                      multiple_choice: !prev.multiple_choice
+                    }))}
                   />
                   <span className="checkmark"></span>
-                  <div className="type-info">
-                    <span className="type-name">Multiple Choice</span>
-                    <span className="type-desc">
-                      Choose from several options
-                    </span>
+                  <div className="format-info">
+                    <span className="format-name">Multiple Choice</span>
+                    <span className="format-desc">Choose from several options</span>
                   </div>
                 </label>
               </div>
 
-              <div className="type-option">
-                <label className="type-checkbox">
+              <div className="format-option">
+                <label className="format-checkbox">
                   <input
                     type="checkbox"
-                    checked={questionTypes.fillInBlank}
-                    onChange={() => handleQuestionTypeChange('fillInBlank')}
+                    checked={questionFormats.fill_blank}
+                    onChange={() => setQuestionFormats(prev => ({
+                      ...prev,
+                      fill_blank: !prev.fill_blank
+                    }))}
                   />
                   <span className="checkmark"></span>
-                  <div className="type-info">
-                    <span className="type-name">Fill in the Blank</span>
-                    <span className="type-desc">
-                      Type the missing word or phrase
-                    </span>
+                  <div className="format-info">
+                    <span className="format-name">Fill in the Blank</span>
+                    <span className="format-desc">Type the missing word or phrase</span>
                   </div>
                 </label>
               </div>
 
-              <div className="type-option">
-                <label className="type-checkbox">
+              <div className="format-option">
+                <label className="format-checkbox">
                   <input
                     type="checkbox"
-                    checked={questionTypes.trueFalse}
-                    onChange={() => handleQuestionTypeChange('trueFalse')}
+                    checked={questionFormats.true_false}
+                    onChange={() => setQuestionFormats(prev => ({
+                      ...prev,
+                      true_false: !prev.true_false
+                    }))}
                   />
                   <span className="checkmark"></span>
-                  <div className="type-info">
-                    <span className="type-name">True/False</span>
-                    <span className="type-desc">
-                      Determine if statement is true or false
-                    </span>
+                  <div className="format-info">
+                    <span className="format-name">True/False</span>
+                    <span className="format-desc">Determine if statement is true or false</span>
                   </div>
                 </label>
               </div>
 
-              <div className="type-option">
-                <label className="type-checkbox">
+              <div className="format-option">
+                <label className="format-checkbox">
                   <input
                     type="checkbox"
-                    checked={questionTypes.openEnded}
-                    onChange={() => handleQuestionTypeChange('openEnded')}
+                    checked={questionFormats.open_ended}
+                    onChange={() => setQuestionFormats(prev => ({
+                      ...prev,
+                      open_ended: !prev.open_ended
+                    }))}
                   />
                   <span className="checkmark"></span>
-                  <div className="type-info">
-                    <span className="type-name">Open Ended</span>
-                    <span className="type-desc">
-                      Write detailed answers
-                    </span>
+                  <div className="format-info">
+                    <span className="format-name">Open Ended</span>
+                    <span className="format-desc">Write short answers (1-2 sentences)</span>
+                  </div>
+                </label>
+              </div>
+
+              <div className="format-option">
+                <label className="format-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={questionFormats.essay}
+                    onChange={() => setQuestionFormats(prev => ({
+                      ...prev,
+                      essay: !prev.essay
+                    }))}
+                  />
+                  <span className="checkmark"></span>
+                  <div className="format-info">
+                    <span className="format-name">Essay</span>
+                    <span className="format-desc">Write detailed paragraph responses</span>
+                  </div>
+                </label>
+              </div>
+
+              <div className="format-option">
+                <label className="format-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={questionFormats.structured}
+                    onChange={() => setQuestionFormats(prev => ({
+                      ...prev,
+                      structured: !prev.structured
+                    }))}
+                  />
+                  <span className="checkmark"></span>
+                  <div className="format-info">
+                    <span className="format-name">Structured</span>
+                    <span className="format-desc">Step-by-step problem solving</span>
                   </div>
                 </label>
               </div>
@@ -389,6 +436,8 @@ function QuizMode() {
                   {q.type === 'fill_blank' && '📝 Fill in Blank'}
                   {q.type === 'true_false' && '✅ True/False'}
                   {q.type === 'open_ended' && '📝 Open Ended'}
+                  {q.type === 'essay' && '📄 Essay'}
+                  {q.type === 'structured' && '🔍 Structured'}
                 </div>
                 <h4>Q{index + 1}: {q.question}</h4>
                 {q.type === 'multiple_choice' && q.options && (
@@ -412,7 +461,17 @@ function QuizMode() {
                 )}
                 {q.type === 'open_ended' && (
                   <div className="preview-options">
-                    <div className="preview-option">Write detailed answer...</div>
+                    <div className="preview-option">Write short answer...</div>
+                  </div>
+                )}
+                {q.type === 'essay' && (
+                  <div className="preview-options">
+                    <div className="preview-option">Write detailed essay...</div>
+                  </div>
+                )}
+                {q.type === 'structured' && (
+                  <div className="preview-options">
+                    <div className="preview-option">Step-by-step solution...</div>
                   </div>
                 )}
               </div>
@@ -431,13 +490,13 @@ function QuizMode() {
             className="start-quiz-btn"
           >
             {selectedMode === 'exam' 
-              ? `🚀 Start Exam (${actualQuestionCount} questions, ${Math.ceil(calculateTimeLimit() / 60)} min)` 
-              : `😌 Start Quiz (${actualQuestionCount} questions)`
+              ? `📖 Start Exam (${actualQuestionCount} questions, ${Math.ceil(calculateTimeLimit() / 60)} min)` 
+              : `😎 Start Quiz (${actualQuestionCount} questions)`
             }
           </button>
           
           {actualQuestionCount === 0 && (
-            <p className="warning">No questions available with current filters. Please adjust question types.</p>
+            <p className="warning">No questions available with the current filters implemented. Please adjust question formats or try again later.</p>
           )}
         </div>
       </div>

@@ -9,19 +9,60 @@ import {
   getDoc,
   query,
   where,
-  orderBy 
+  orderBy,
+  serverTimestamp 
 } from "firebase/firestore";
-import { db } from "../firebase";
+import { db, COLLECTIONS } from "../firebase";
+
+// Users operations
+export const usersService = {
+  // Get all users (admin only)
+  getAllUsers: async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, COLLECTIONS.USERS));
+      return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+      console.error("Error getting users:", error);
+      throw error;
+    }
+  },
+
+  // Get user by ID
+  getUser: async (userId) => {
+    try {
+      const docSnap = await getDoc(doc(db, COLLECTIONS.USERS, userId));
+      if (docSnap.exists()) {
+        return { id: docSnap.id, ...docSnap.data() };
+      }
+      return null;
+    } catch (error) {
+      console.error("Error getting user:", error);
+      throw error;
+    }
+  },
+
+  // Update user profile
+  updateUser: async (userId, userData) => {
+    try {
+      await updateDoc(doc(db, COLLECTIONS.USERS, userId), {
+        ...userData,
+        updatedAt: serverTimestamp()
+      });
+    } catch (error) {
+      console.error("Error updating user:", error);
+      throw error;
+    }
+  }
+};
 
 // Notes operations
 export const notesService = {
-  // Create a new note
   createNote: async (noteData) => {
     try {
-      const docRef = await addDoc(collection(db, "notes"), {
+      const docRef = await addDoc(collection(db, COLLECTIONS.NOTES), {
         ...noteData,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
       });
       return docRef.id;
     } catch (error) {
@@ -30,12 +71,11 @@ export const notesService = {
     }
   },
 
-  // Update an existing note
   updateNote: async (noteId, noteData) => {
     try {
-      await updateDoc(doc(db, "notes", noteId), {
+      await updateDoc(doc(db, COLLECTIONS.NOTES, noteId), {
         ...noteData,
-        updatedAt: new Date()
+        updatedAt: serverTimestamp()
       });
     } catch (error) {
       console.error("Error updating note:", error);
@@ -43,11 +83,19 @@ export const notesService = {
     }
   },
 
-  // Get user's notes
+  deleteNote: async (noteId) => {
+    try {
+      await deleteDoc(doc(db, COLLECTIONS.NOTES, noteId));
+    } catch (error) {
+      console.error("Error deleting note:", error);
+      throw error;
+    }
+  },
+
   getUserNotes: async (userId) => {
     try {
       const q = query(
-        collection(db, "notes"),
+        collection(db, COLLECTIONS.NOTES),
         where("owner", "==", userId),
         orderBy("updatedAt", "desc")
       );
@@ -59,10 +107,9 @@ export const notesService = {
     }
   },
 
-  // Get a specific note
   getNote: async (noteId) => {
     try {
-      const docSnap = await getDoc(doc(db, "notes", noteId));
+      const docSnap = await getDoc(doc(db, COLLECTIONS.NOTES, noteId));
       if (docSnap.exists()) {
         return { id: docSnap.id, ...docSnap.data() };
       }
@@ -76,12 +123,12 @@ export const notesService = {
 
 // Quizzes operations
 export const quizzesService = {
-  // Create a new quiz
   createQuiz: async (quizData) => {
     try {
-      const docRef = await addDoc(collection(db, "quizzes"), {
+      const docRef = await addDoc(collection(db, COLLECTIONS.QUIZZES), {
         ...quizData,
-        createdAt: new Date()
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
       });
       return docRef.id;
     } catch (error) {
@@ -90,11 +137,10 @@ export const quizzesService = {
     }
   },
 
-  // Get user's quizzes
   getUserQuizzes: async (userId) => {
     try {
       const q = query(
-        collection(db, "quizzes"),
+        collection(db, COLLECTIONS.QUIZZES),
         where("owner", "==", userId),
         orderBy("createdAt", "desc")
       );
@@ -102,6 +148,130 @@ export const quizzesService = {
       return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     } catch (error) {
       console.error("Error getting quizzes:", error);
+      throw error;
+    }
+  },
+
+  getQuiz: async (quizId) => {
+    try {
+      const docSnap = await getDoc(doc(db, COLLECTIONS.QUIZZES, quizId));
+      if (docSnap.exists()) {
+        return { id: docSnap.id, ...docSnap.data() };
+      }
+      return null;
+    } catch (error) {
+      console.error("Error getting quiz:", error);
+      throw error;
+    }
+  }
+};
+
+// AI Chat operations
+export const aiChatService = {
+  createChat: async (chatData) => {
+    try {
+      const docRef = await addDoc(collection(db, COLLECTIONS.AI_CHATS), {
+        ...chatData,
+        createdAt: serverTimestamp()
+      });
+      return docRef.id;
+    } catch (error) {
+      console.error("Error creating chat:", error);
+      throw error;
+    }
+  },
+
+  getUserChats: async (userId) => {
+    try {
+      const q = query(
+        collection(db, COLLECTIONS.AI_CHATS),
+        where("userId", "==", userId),
+        orderBy("createdAt", "desc")
+      );
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+      console.error("Error getting chats:", error);
+      throw error;
+    }
+  }
+};
+
+// Reports operations (admin only)
+export const reportsService = {
+  createReport: async (reportData) => {
+    try {
+      const docRef = await addDoc(collection(db, COLLECTIONS.REPORTS), {
+        ...reportData,
+        createdAt: serverTimestamp(),
+        status: "pending"
+      });
+      return docRef.id;
+    } catch (error) {
+      console.error("Error creating report:", error);
+      throw error;
+    }
+  },
+
+  getReports: async (userId = null) => {
+    try {
+      let q;
+      if (userId) {
+        q = query(
+          collection(db, COLLECTIONS.REPORTS),
+          where("userId", "==", userId),
+          orderBy("createdAt", "desc")
+        );
+      } else {
+        q = query(
+          collection(db, COLLECTIONS.REPORTS),
+          orderBy("createdAt", "desc")
+        );
+      }
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+      console.error("Error getting reports:", error);
+      throw error;
+    }
+  }
+};
+
+// Suggestions operations
+export const suggestionsService = {
+  createSuggestion: async (suggestionData) => {
+    try {
+      const docRef = await addDoc(collection(db, COLLECTIONS.SUGGESTIONS), {
+        ...suggestionData,
+        createdAt: serverTimestamp(),
+        status: "pending"
+      });
+      return docRef.id;
+    } catch (error) {
+      console.error("Error creating suggestion:", error);
+      throw error;
+    }
+  },
+
+  getSuggestions: async (userId = null) => {
+    try {
+      let q;
+      if (userId) {
+        q = query(
+          collection(db, COLLECTIONS.SUGGESTIONS),
+          where("userId", "==", userId),
+          orderBy("createdAt", "desc")
+        );
+      } else {
+        q = query(
+          collection(db, COLLECTIONS.SUGGESTIONS),
+          orderBy("createdAt", "desc")
+        );
+      }
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+      console.error("Error getting suggestions:", error);
       throw error;
     }
   }

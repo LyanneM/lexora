@@ -165,7 +165,7 @@ function QuizSession() {
       // Save to Firestore
       await addDoc(collection(db, 'quizResults'), quizResult);
 
-      // Update user stats
+      // Update user statistics
       const userRef = doc(db, 'users', currentUser.uid);
       await updateDoc(userRef, {
         totalQuizzes: arrayUnion(quizResult),
@@ -336,7 +336,7 @@ const toggleMusic = () => {
   setMusicEnabled(!musicEnabled);
 };
 
-// Add floating particles component
+
 const FloatingParticles = () => {
   const [particles, setParticles] = useState([]);
 
@@ -370,7 +370,7 @@ const FloatingParticles = () => {
   );
 };
 
-// Add music control and particles to the return
+//music toggle button JSX
 <>
   <FloatingParticles />
   <div className="music-control">
@@ -382,7 +382,7 @@ const FloatingParticles = () => {
       {musicEnabled ? "🔊" : "🔇"}
     </button>
   </div>
-  {/* Rest of your JSX */}
+
 </>
 
   const getQuestionTypeBadge = () => {
@@ -420,13 +420,13 @@ const FloatingParticles = () => {
     return (
       <div className="quiz-session-container pre-start">
         <div className="quiz-start-screen">
-          <h1>Quiz Ready! 🚀</h1>
+          <h1>Quiz Ready! 🎊</h1>
           <div className="quiz-info-card">
             <h2>{quizData?.subject || 'General'} Quiz</h2>
             <div className="info-grid">
               <div className="info-item">
                 <span className="label">Mode:</span>
-                <span className="value">{mode === 'exam' ? '⏰ Exam Mode' : '😌 Relaxed Mode'}</span>
+                <span className="value">{mode === 'exam' ? '⏰ Exam Mode' : '🛏️ Relaxed Mode'}</span>
               </div>
               <div className="info-item">
                 <span className="label">Questions:</span>
@@ -471,7 +471,7 @@ const FloatingParticles = () => {
           </div>
 
           <button onClick={startQuiz} className="start-quiz-btn large">
-            {mode === 'exam' ? '🚀 Start Exam' : '😌 Start Quiz'}
+            {mode === 'exam' ? '🚀 Start Exam' : '😃 Start Quiz'}
           </button>
         </div>
       </div>
@@ -505,7 +505,7 @@ const FloatingParticles = () => {
 
           <div className="results-actions">
             <button onClick={() => navigate('/quiz')} className="action-btn primary">
-              🚀 Generate New Quiz
+              📔 Generate New Quiz
             </button>
             <button onClick={exportQuiz} className="action-btn secondary">
               📥 Export Results

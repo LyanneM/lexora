@@ -1,4 +1,4 @@
-// src/pages/Notebook.jsx (Enhanced with Infinite Canvas)
+// src/pages/Notebook.jsx
 import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { db } from "../firebase";
@@ -70,48 +70,88 @@ function Notebook() {
     }
   };
 
-  const askAI = async (message) => {
-    setIsLoading(true);
-    try {
-      console.log("🤖 Sending message to AI:", message);
-      
-      const response = await QuizApiService.chatWithAI(
-        message,
-        currentUser?.uid || 'anonymous',
-        conversationId
-      );
+const askAI = async (message) => {
+  setIsLoading(true);
+  
+  
+  if (backendStatus !== 'connected') {
+    const errorResponse = {
+      id: Date.now(),
+      type: 'ai',
+      content: "⚠️ Cannot connect to AI services. Please make sure the backend server is running on http://localhost:8000",
+      timestamp: new Date().toLocaleTimeString(),
+      isError: true
+    };
+    setConversation(prev => [...prev, errorResponse]);
+    setIsLoading(false);
+    return;
+  }
 
-      console.log("🤖 AI Response:", response);
+  try {
+    console.log("🤖 Sending message to AI:", message);
+    
+    const response = await fetch('http://localhost:8000/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message: message,
+        user_id: currentUser?.uid || 'anonymous',
+        conversation_id: conversationId,
+        content: getNoteContent() // Send note content for context
+      })
+    });
 
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const responseData = await response.json();
+    console.log("🤖 AI Response:", responseData);
+
+    if (responseData.success) {
       const aiResponse = {
         id: Date.now(),
         type: 'ai',
-        content: response.response || "I'm here to help with your notes!",
+        content: responseData.response,
         timestamp: new Date().toLocaleTimeString()
       };
 
-      if (response.conversation_id) {
-        setConversationId(response.conversation_id);
+      if (responseData.conversation_id) {
+        setConversationId(responseData.conversation_id);
       }
 
       setConversation(prev => [...prev, aiResponse]);
-      return aiResponse;
-
-    } catch (error) {
-      console.error('AI chat error:', error);
-      const errorResponse = {
-        id: Date.now(),
-        type: 'ai',
-        content: "I'm having temporary connection issues, but I'm still here to help! You can continue working on your notes, and I'll assist as much as possible.",
-        timestamp: new Date().toLocaleTimeString(),
-        isError: true
-      };
-      setConversation(prev => [...prev, errorResponse]);
-    } finally {
-      setIsLoading(false);
+    } else {
+      throw new Error(responseData.detail || 'AI service error');
     }
-  };
 
+  } catch (error) {
+    console.error('AI chat error:', error);
+    
+    let errorMessage = "I'm having trouble connecting to the AI service. ";
+    
+    if (error.message.includes('Failed to fetch')) {
+      errorMessage += "Please make sure the backend server is running on http://localhost:8000";
+    } else if (error.message.includes('500')) {
+      errorMessage += "The AI service encountered an internal error.";
+    } else {
+      errorMessage += `Error: ${error.message}`;
+    }
+
+    const errorResponse = {
+      id: Date.now(),
+      type: 'ai',
+      content: errorMessage,
+      timestamp: new Date().toLocaleTimeString(),
+      isError: true
+    };
+    setConversation(prev => [...prev, errorResponse]);
+  } finally {
+    setIsLoading(false);
+  }
+};
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!userInput.trim() || isLoading) return;
@@ -129,10 +169,38 @@ function Notebook() {
     await askAI(userInput);
   };
 
-  // Handle Shift+Enter for new lines
+const debugConnection = async () => {
+  console.group('🔧 Backend Connection Debug');
+  
+  try {
+    // Test multiple endpoints
+    const endpoints = [
+      'http://localhost:8000/health',
+      'http://localhost:8000/server-info',
+      'http://localhost:8000/debug-quiz-structure'
+    ];
+    
+    for (const endpoint of endpoints) {
+      try {
+        const response = await fetch(endpoint);
+        const data = await response.json();
+        console.log(`✅ ${endpoint}:`, data);
+      } catch (error) {
+        console.log(`❌ ${endpoint}:`, error.message);
+      }
+    }
+    
+  } catch (error) {
+    console.error('Debug failed:', error);
+  }
+  
+  console.groupEnd();
+};
+
+
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && e.shiftKey) {
-      // Allow new line
+      // Allow new lines
       return;
     } else if (e.key === 'Enter') {
       e.preventDefault();
@@ -227,7 +295,7 @@ function Notebook() {
     setIsSaving(false);
   };
 
-  // Enhanced element creation with better positioning
+  // Enhanced element creation with better positioning on canvas
   const addElement = (elementType, content = "") => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -252,7 +320,7 @@ function Notebook() {
       position: { x: centerX, y: centerY },
       size: baseSizes[elementType],
       color: elementType === "sticky" ? selectedColor : null,
-      rotation: elementType === "sticky" ? Math.random() * 8 - 4 : 0 // slight rotation for sticky notes
+      rotation: elementType === "sticky" ? Math.random() * 8 - 4 : 0 // Slight random tilt for stickies
     };
     
     setElements([...elements, newElement]);
@@ -273,7 +341,7 @@ function Notebook() {
     if (e.button !== 0) return; // Only left click
     
     if (element && activeTool === "select") {
-      // Start dragging element
+      // dragging element
       isDragging.current = true;
       selectedElement.current = element;
       const rect = e.currentTarget.getBoundingClientRect();
@@ -288,6 +356,108 @@ function Notebook() {
       canvasRef.current.style.cursor = "grabbing";
     }
   };
+// src/pages/CodeNotebook.jsx
+// Add this function to replace the mock execution
+const runCode = async () => {
+  setIsRunning(true);
+  setOutput("Running code...");
+
+  try {
+    const response = await fetch('http://localhost:8001/execute', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        code: code,
+        language: language,
+        input_data: ""
+      })
+    });
+
+    const result = await response.json();
+    
+    if (result.error) {
+      setOutput(`Error: ${result.error}`);
+    } else {
+      setOutput(result.output);
+    }
+  } catch (error) {
+    setOutput(`Connection error: ${error.message}`);
+  } finally {
+    setIsRunning(false);
+  }
+};
+const testBackendConnection = async () => {
+  try {
+    console.log("🔍 Testing backend connection...");
+    
+    // Test 1: Basic health check
+    const healthResponse = await fetch('http://localhost:8000/health');
+    const healthData = await healthResponse.json();
+    console.log("✅ Health check:", healthData);
+    
+    // Test 2: Server info
+    const serverResponse = await fetch('http://localhost:8000/server-info');
+    const serverData = await serverResponse.json();
+    console.log("✅ Server info:", serverData);
+    
+    // Test 3: Test AI chat
+    const testMessage = {
+      message: "Hello, are you connected?",
+      user_id: "test_user"
+    };
+    
+    const chatResponse = await fetch('http://localhost:8000/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(testMessage)
+    });
+    
+    const chatData = await chatResponse.json();
+    console.log("✅ AI Chat test:", chatData);
+    
+    alert(`Backend connection successful!\nAI Features: ${serverData.mode}\nHealth: ${healthData.status}`);
+    
+  } catch (error) {
+    console.error("❌ Backend connection failed:", error);
+    alert("Backend connection failed. Make sure the server is running on port 8000.");
+  }
+};
+
+
+<button onClick={testBackendConnection} className="test-connection-btn">
+  🔗 Test Connection
+</button>
+
+
+const [backendStatus, setBackendStatus] = useState('checking');
+const [aiCapabilities, setAiCapabilities] = useState('');
+
+useEffect(() => {
+  checkBackendStatus();
+}, []);
+
+const checkBackendStatus = async () => {
+  try {
+    const response = await fetch('http://localhost:8000/health');
+    const data = await response.json();
+    
+    if (data.status === 'healthy') {
+      setBackendStatus('connected');
+      
+      // Get server capabilities
+      const serverInfo = await fetch('http://localhost:8000/server-info');
+      const serverData = await serverInfo.json();
+      setAiCapabilities(serverData.mode);
+    } else {
+      setBackendStatus('error');
+    }
+  } catch (error) {
+    console.error('Backend connection error:', error);
+    setBackendStatus('disconnected');
+  }
+};
 
   const handleMouseMove = (e) => {
     if (isDragging.current && selectedElement.current) {
@@ -323,8 +493,8 @@ function Notebook() {
 
   // Sticky note colors
   const stickyColors = [
-    "#ffeb3b", "#ffcdd2", "#c8e6c9", "#bbdefb", "#e1bee7", 
-    "#ffccbc", "#f0f4c3", "#d7ccc8", "#cfd8dc", "#ffffff"
+    "#ffeb3b", "#ffcdd2", "#c8e6c9", "#bbdefb", "#e1bee7", "#5452dbff",
+    "#ffccbc", "#f0f4c3", "#d7ccc8", "#cfd8dc", "#ffffff", "#cb3e0bff",
   ];
 
   const renderElement = (element) => {
@@ -469,13 +639,13 @@ function Notebook() {
             className={activeTool === "text" ? "active" : ""}
             onClick={() => addElement("text")}
           >
-            📝 Text Box
+            🗒️ Text Box
           </button>
           <button 
             className={activeTool === "sticky" ? "active" : ""}
             onClick={() => addElement("sticky")}
           >
-            📌 Sticky Note
+            📝 Sticky Note
           </button>
           <button 
             className={activeTool === "highlighter" ? "active" : ""}
@@ -491,7 +661,7 @@ function Notebook() {
             className="page-style-selector"
           >
             <option value="ruled">📏 Ruled</option>
-            <option value="grid">🔲 Grid</option>
+            <option value="grid">🏁 Grid</option>
             <option value="blank">⬜ Blank</option>
           </select>
         </div>
@@ -509,6 +679,21 @@ function Notebook() {
           <button onClick={() => navigate("/dashboard")}>
             ← Dashboard
           </button>
+          <div className={`connection-status ${backendStatus}`}>
+    {backendStatus === 'connected' && '✅ Connected'}
+    {backendStatus === 'checking' && '⏳ Checking...'}
+    {backendStatus === 'disconnected' && '❌ Disconnected'}
+    {backendStatus === 'error' && '⚠️ Error'}
+  </div>
+  
+  <button 
+    onClick={toggleAICompanion} 
+    className={`ai-companion-btn ${showAICompanion ? 'active' : ''}`}
+    disabled={backendStatus !== 'connected'}
+  >
+    {showAICompanion ? "🤖 Hide AI" : "🤖 AI Companion"}
+    {aiCapabilities && ` (${aiCapabilities})`}
+  </button>
         </div>
       </div>
 

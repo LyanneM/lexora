@@ -18,6 +18,19 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Export services
-export const auth = getAuth(app);       // Authentication
-export const db = getFirestore(app);   // Firestore Database
-export const storage = getStorage(app); // File uploads
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const storage = getStorage(app);
+
+// Firestore Collections
+export const COLLECTIONS = {
+  USERS: 'users',
+  NOTES: 'notes',
+  QUIZZES: 'quizzes',
+  QUIZ_RESULTS: 'quizResults',
+  AI_CHATS: 'aiChats',
+  REPORTS: 'reports',
+  SUGGESTIONS: 'suggestions',
+  UPLOADS: 'uploads',
+  ADMIN_SETTINGS: 'adminSettings'
+};

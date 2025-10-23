@@ -669,3 +669,37 @@
     height: 50vh;
   }
 }
+.connection-status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.connection-status.connected {
+  background: #d4edda;
+  color: #155724;
+}
+
+.connection-status.disconnected {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.connection-status.checking {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.test-connection-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.test-connection-btn:hover {
+  background: #0056b3;
+}

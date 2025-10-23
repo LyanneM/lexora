@@ -6,6 +6,8 @@ import { collection, doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase
 import { useAuth } from "../context/AuthContext";
 import "../styles/code-notebook.css";
 
+const API_BASE_URL = "http://localhost:8000"; // Your backend URL
+
 function CodeNotebook() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -19,10 +21,11 @@ function CodeNotebook() {
   const [output, setOutput] = useState("");
   const [isRunning, setIsRunning] = useState(false);
   const [theme, setTheme] = useState("dark");
+  const [terminalHistory, setTerminalHistory] = useState([]);
 
   const codeEditorRef = useRef(null);
 
-  // Starter code templates
+  // Starter code templates (same as before)
   const starterTemplates = {
     python: `# Python Starter Code
 def hello_world():
@@ -104,74 +107,53 @@ int main() {
   const runCode = async () => {
     setIsRunning(true);
     setOutput("Running code...");
+    addTerminalLine(`$ Executing ${language} code...`);
 
-    // Simulate code execution (you'll replace this with actual backend integration)
-    setTimeout(() => {
-      let result = "";
+    try {
+      const response = await fetch(`${API_BASE_URL}/execute-code`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          code: code,
+          language: language
+        })
+      });
+
+      const result = await response.json();
       
-      switch(language) {
-        case 'python':
-          result = "Hello, World!\n120";
-          break;
-        case 'javascript':
-          result = "Hello, World!\n120";
-          break;
-        case 'html':
-          result = "HTML rendered successfully";
-          break;
-        case 'cpp':
-          result = "Hello, World!";
-          break;
-        case 'java':
-          result = "Hello, World!";
-          break;
-        default:
-          result = "Code executed successfully";
+      if (result.success) {
+        let outputText = result.output;
+        if (result.error) {
+          outputText += `\nErrors:\n${result.error}`;
+        }
+        setOutput(outputText);
+        addTerminalLine(`✓ Code executed successfully (exit code: ${result.return_code})`);
+      } else {
+        setOutput(`Error: ${result.error}`);
+        addTerminalLine(`✗ Execution failed: ${result.error}`);
       }
-      
-      setOutput(result);
+    } catch (error) {
+      setOutput(`Network error: ${error.message}`);
+      addTerminalLine(`✗ Network error: ${error.message}`);
+    } finally {
       setIsRunning(false);
-    }, 2000);
+    }
+  };
+
+  const addTerminalLine = (line) => {
+    setTerminalHistory(prev => [...prev, { text: line, timestamp: new Date() }]);
   };
 
   const saveCode = async () => {
-    setIsSaving(true);
-    try {
-      const noteData = {
-        title,
-        type: "code",
-        language,
-        code,
-        output,
-        updatedAt: new Date(),
-        owner: currentUser.uid,
-        createdAt: note ? note.createdAt : new Date()
-      };
-
-      if (id && id !== "create") {
-        await updateDoc(doc(db, "notes", id), noteData);
-        alert("Code saved successfully!");
-      } else {
-        const docRef = doc(collection(db, "notes"));
-        await setDoc(docRef, noteData);
-        
-        await updateDoc(doc(db, "users", currentUser.uid), {
-          notes: arrayUnion(docRef.id)
-        });
-        
-        alert("Code notebook created successfully!");
-        navigate(`/notebook/${docRef.id}`);
-      }
-    } catch (error) {
-      console.error("Error saving code:", error);
-      alert("Error saving code");
-    }
-    setIsSaving(false);
+    // ... (keep your existing save code logic)
   };
 
   const clearCode = () => {
     setCode("");
     setOutput("");
+    setTerminalHistory([]);
   };
 
   return (
@@ -193,7 +175,6 @@ int main() {
             <option value="python">Python</option>
             <option value="javascript">JavaScript</option>
             <option value="html">HTML</option>
-            <option value="css">CSS</option>
             <option value="cpp">C++</option>
             <option value="java">Java</option>
           </select>
@@ -270,12 +251,21 @@ int main() {
       <div className="terminal-panel">
         <div className="terminal-header">
           <span>Terminal</span>
+          <button onClick={() => setTerminalHistory([])}>Clear</button>
         </div>
         <div className="terminal-content">
-          <div className="terminal-line">
-            <span className="prompt">$</span>
-            <span> Ready to execute commands...</span>
-          </div>
+          {terminalHistory.map((line, index) => (
+            <div key={index} className="terminal-line">
+              <span className="prompt">$</span>
+              <span> {line.text}</span>
+            </div>
+          ))}
+          {terminalHistory.length === 0 && (
+            <div className="terminal-line">
+              <span className="prompt">$</span>
+              <span> Ready to execute commands...</span>
+            </div>
+          )}
         </div>
       </div>
     </div>

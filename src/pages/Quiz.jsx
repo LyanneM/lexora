@@ -35,8 +35,8 @@ function Quiz() {
 
   // Music functionality
   useEffect(() => {
-    // Create audio element for background music
-    const backgroundAudio = new Audio('/music/quiz-background.mp3');
+    //audio element for background music
+    const backgroundAudio = new Audio('/music/quizz.mp3');
     backgroundAudio.loop = true;
     backgroundAudio.volume = 0.3;
     setAudio(backgroundAudio);
@@ -140,7 +140,6 @@ function Quiz() {
       content = note?.content || JSON.stringify(note?.elements || '');
       console.log("Extracted content from note");
     } else if (sourceType === 'upload' && uploadedFile) {
-      // For files, we'll send the file directly
       return null;
     } else if (sourceType === 'text' && customText) {
       content = customText;
@@ -170,13 +169,11 @@ const generateQuiz = async () => {
   try {
     console.log("=== STARTING QUIZ GENERATION ===");
     
-    // Test connection first
     await testBackendConnection();
     console.log("✅ Backend connection confirmed");
     
     let quizData;
-    
-    // Show analyzing state for 2 seconds
+
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     if (sourceType === 'upload' && uploadedFile) {
@@ -201,7 +198,7 @@ const generateQuiz = async () => {
       });
     }
 
-    // ADD COMPREHENSIVE DEBUGGING HERE:
+    // COMPREHENSIVE DEBUGGING: THE QUIZ NEEDS TO WORKKKK
     console.log("🎯 FULL QUIZ DATA RESPONSE:", quizData);
     console.log("📊 Quiz data keys:", Object.keys(quizData));
     console.log("🔍 Quiz data structure:", quizData.quiz_data);
@@ -211,7 +208,7 @@ const generateQuiz = async () => {
     
     setAnalyzing(false);
     
-    // Navigate to quiz mode selection
+
     navigate('/quiz-mode', { 
       state: { 
         quizData,
@@ -256,7 +253,6 @@ const getGeneratorStatus = () => {
   }
 };
 
-  // Floating shapes component
   const FloatingShapes = () => (
     <div className="floating-shapes">
       <div className="floating-shape"></div>
@@ -265,7 +261,7 @@ const getGeneratorStatus = () => {
     </div>
   );
 
-  // Loading/Analyzing Component
+  // Loading...
   const LoadingOverlay = () => (
     <div className="loading-overlay">
       <div className="loading-content">
@@ -346,7 +342,7 @@ const getGeneratorStatus = () => {
                 className={sourceType === 'upload' ? 'active' : ''}
                 onClick={() => setSourceType('upload')}
               >
-                📎 Upload File
+                🗄️ Upload File
               </button>
               <button 
                 className={sourceType === 'text' ? 'active' : ''}
@@ -452,7 +448,7 @@ const getGeneratorStatus = () => {
               }
               className="generate-btn"
             >
-              {loading ? '🔄 Generating Quiz...' : '🚀 Generate AI Quiz (Up to 50 questions)'}
+              {loading ? '🔄 Generating Quiz...' : '🫸 Generate AI Quiz (Up to 50 questions)'}
             </button>
             
             {sourceType === 'text' && customText.length < 50 && (
@@ -487,7 +483,7 @@ const getGeneratorStatus = () => {
     margin: '10px'
   }}
 >
-  🧪 Test Quiz Generation
+  👨🏾‍🔬 Test Quiz Generation
 </button>
         </div>
 

@@ -5,7 +5,16 @@ function ChooseRole() {
   const navigate = useNavigate();
 
   const handleSelect = (role) => {
-    navigate(`/register?role=${role}`);
+    if (role === "admin") {
+      // Redirect directly to login for admin; admins cannot self-register
+      navigate("/login", { 
+        state: { 
+          message: "Please log in with your admin credentials or contact an administrator." 
+        } 
+      });
+    } else {
+      navigate(`/register?role=${role}`);
+    }
   };
 
   const handleLoginRedirect = () => {

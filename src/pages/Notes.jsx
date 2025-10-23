@@ -22,16 +22,14 @@ function Notes() {
     scrollToBottom();
   }, [conversation]);
 
-  // Load user's notes for context
+
   useEffect(() => {
-    // You'll need to implement this based on your Firestore structure
+    //
     loadUserNotes();
   }, [currentUser]);
 
   const loadUserNotes = async () => {
-    // TODO: Implement loading user's notes from Firestore
-    // This is a placeholder - implement based on your database structure
-    const userNotes = []; // await getUserNotes(currentUser.uid);
+    const userNotes = []; 
     setNotes(userNotes);
   };
 

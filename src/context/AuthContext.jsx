@@ -1,6 +1,6 @@
 // src/context/AuthContext.jsx
-import { createContext, useState, useContext, useEffect } from "react";
-import { auth, db } from "../firebase";
+import React, { createContext, useState, useContext, useEffect } from "react"; // Add React import
+import { auth, db, COLLECTIONS } from "../firebase";
 import { 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
@@ -9,15 +9,52 @@ import {
   GoogleAuthProvider,
   onAuthStateChanged
 } from "firebase/auth";
-import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
+import { doc, setDoc, getDoc, serverTimestamp, updateDoc } from "firebase/firestore";
 
 const AuthContext = createContext();
+
+// Admin configuration
+const ADMIN_CONFIG = {
+  allowedEmails: ["lyanne371@gmail.com"],
+};
+
+// Allowed domains for registration
+const ALLOWED_DOMAINS = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com"];
 
 export function AuthProvider({ children }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [role, setRole] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // 🔹 Validate email domain
+  const validateEmailDomain = (email) => {
+    if (!email || !email.includes('@')) return false;
+    const domain = email.split('@')[1];
+    return ALLOWED_DOMAINS.includes(domain);
+  };
+
+  // 🔹 Check if user can be admin
+  const canBeAdmin = async (email) => {
+    return ADMIN_CONFIG.allowedEmails.includes(email);
+  };
+
+  // 🔹 Initialize admin settings in Firestore
+  const initializeAdminSettings = async () => {
+    try {
+      const adminSettingsDoc = await getDoc(doc(db, COLLECTIONS.ADMIN_SETTINGS, "config"));
+      if (!adminSettingsDoc.exists()) {
+        await setDoc(doc(db, COLLECTIONS.ADMIN_SETTINGS, "config"), {
+          allowedAdminEmails: ADMIN_CONFIG.allowedEmails,
+          initializedAt: serverTimestamp(),
+        });
+        console.log("Admin settings initialized");
+      }
+    } catch (error) {
+      console.error("Error initializing admin settings:", error);
+      // Don't throw error here, just log it
+    }
+  };
 
   // 🔹 Listen for auth changes
   useEffect(() => {
@@ -27,10 +64,35 @@ export function AuthProvider({ children }) {
         setIsLoggedIn(true);
 
         try {
-          const docSnap = await getDoc(doc(db, "users", user.uid));
-          setRole(docSnap.exists() ? docSnap.data().role : "user");
+          const userDoc = await getDoc(doc(db, COLLECTIONS.USERS, user.uid));
+          
+          if (userDoc.exists()) {
+            // Existing user - get their role
+            const userData = userDoc.data();
+            setRole(userData.role);
+            
+            // Update last login
+            await updateDoc(doc(db, COLLECTIONS.USERS, user.uid), {
+              lastLogin: serverTimestamp()
+            });
+          } else {
+            // New user
+            const userRole = await canBeAdmin(user.email) ? "admin" : "user";
+            
+            await setDoc(doc(db, COLLECTIONS.USERS, user.uid), {
+              email: user.email,
+              role: userRole,
+              name: user.displayName || "",
+              photoURL: user.photoURL || "",
+              createdAt: serverTimestamp(),
+              lastLogin: serverTimestamp()
+            });
+            
+            setRole(userRole);
+            console.log(`New user created with role: ${userRole}`);
+          }
         } catch (error) {
-          console.error("Error fetching user role:", error);
+          console.error("Error in auth state change:", error);
           setRole("user");
         }
       } else {
@@ -41,29 +103,47 @@ export function AuthProvider({ children }) {
       setLoading(false);
     });
 
+    // Initialize admin settings on app start 
+    initializeAdminSettings();
+
     return unsubscribe;
   }, []);
 
   // 🔹 Register new user
   const register = async (email, password, role = "user") => {
+    // Validate email domain
+    if (!validateEmailDomain(email)) {
+      throw new Error(`Email domain not allowed. Allowed domains: ${ALLOWED_DOMAINS.join(', ')}`);
+    }
+
+    // Check admin permissions
     if (role === "admin") {
-      throw new Error("Admin registration not allowed here.");
+      const canAdmin = await canBeAdmin(email);
+      if (!canAdmin) {
+        throw new Error("Admin registration not allowed for this email.");
+      }
     }
 
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    await setDoc(doc(db, "users", user.uid), {
+    // Determine final role
+    const finalRole = role === "admin" && (await canBeAdmin(email)) ? "admin" : "user";
+
+    await setDoc(doc(db, COLLECTIONS.USERS, user.uid), {
       email: user.email,
-      role,
+      role: finalRole,
+      name: "",
+      photoURL: "",
       createdAt: serverTimestamp(),
+      lastLogin: serverTimestamp()
     });
 
     setCurrentUser(user);
-    setRole(role);
+    setRole(finalRole);
     setIsLoggedIn(true);
 
-    return role;
+    return finalRole;
   };
 
   // 🔹 Login
@@ -71,8 +151,13 @@ export function AuthProvider({ children }) {
     const res = await signInWithEmailAndPassword(auth, email, password);
     const user = res.user;
 
-    const docSnap = await getDoc(doc(db, "users", user.uid));
-    const userRole = docSnap.exists() ? docSnap.data().role : "user";
+    // Update last login
+    await updateDoc(doc(db, COLLECTIONS.USERS, user.uid), {
+      lastLogin: serverTimestamp()
+    });
+
+    const userDoc = await getDoc(doc(db, COLLECTIONS.USERS, user.uid));
+    const userRole = userDoc.exists() ? userDoc.data().role : "user";
 
     setRole(userRole);
     setCurrentUser(user);
@@ -82,32 +167,54 @@ export function AuthProvider({ children }) {
   };
 
   // 🔹 Google Sign-in
-  const signInWithGoogle = async (role = "user") => {
-    if (role === "admin") {
-      throw new Error("Admin signup not allowed via Google.");
-    }
-
+  const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
+    
+    provider.addScope('email');
+    provider.addScope('profile');
 
-    const docSnap = await getDoc(doc(db, "users", user.uid));
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
 
-    if (!docSnap.exists()) {
-      await setDoc(doc(db, "users", user.uid), {
-        email: user.email,
-        role,
-        name: user.displayName,
-        photoURL: user.photoURL,
-        createdAt: serverTimestamp(),
-      });
+      // Validate email domain for Google sign-in
+      if (!validateEmailDomain(user.email)) {
+        await signOut(auth);
+        throw new Error(`Email domain not allowed. Allowed domains: ${ALLOWED_DOMAINS.join(', ')}`);
+      }
+
+      const userDoc = await getDoc(doc(db, COLLECTIONS.USERS, user.uid));
+
+      if (!userDoc.exists()) {
+        // New user - create document with appropriate role
+        const userRole = await canBeAdmin(user.email) ? "admin" : "user";
+        
+        await setDoc(doc(db, COLLECTIONS.USERS, user.uid), {
+          email: user.email,
+          role: userRole,
+          name: user.displayName || "",
+          photoURL: user.photoURL || "",
+          createdAt: serverTimestamp(),
+          lastLogin: serverTimestamp(),
+          provider: "google"
+        });
+        
+        setRole(userRole);
+      } else {
+        // Existing user - update last login
+        await updateDoc(doc(db, COLLECTIONS.USERS, user.uid), {
+          lastLogin: serverTimestamp(),
+          photoURL: user.photoURL || userDoc.data().photoURL
+        });
+        
+        setRole(userDoc.data().role);
+      }
+
+      return userDoc.exists() ? userDoc.data().role : "user";
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+      throw error;
     }
-
-    setRole(docSnap.exists() ? docSnap.data().role : role);
-    setCurrentUser(user);
-    setIsLoggedIn(true);
-
-    return role;
   };
 
   // 🔹 Logout
@@ -129,7 +236,7 @@ export function AuthProvider({ children }) {
       signInWithGoogle,
       loading
     }}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 }

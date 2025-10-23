@@ -1,17 +1,38 @@
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import Lottie from "lottie-react";
 import "../styles/home.css";
 
-// Import your Lottie animations (assuming they're in public folder)
+//  Lottie animations
 import KeyboardTypingAnimation from "../../public/Keyboard Typing.json";
 import StudentAnimation from "../../public/STUDENT.json";
 import RobotAnimation from "../../public/Little Power Robot.json";
 import ProgrammingAnimation from "../../public/Programming Computer.json";
 
 function Home() {
+  const { isLoggedIn, loading } = useAuth();
+  const navigate = useNavigate();
+
+  // Redirect to dashboard if already logged in
+  React.useEffect(() => { 
+    if (!loading && isLoggedIn) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isLoggedIn, loading, navigate]);
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="home-container">
-      {/* Animated background elements */}
+      {/* Your  Home component content is here lol*/}
       <div className="floating-shapes">
         <div className="shape shape-1"></div>
         <div className="shape shape-2"></div>
@@ -20,7 +41,6 @@ function Home() {
       </div>
       
       <div className="home-hero">
-        {/* Add your logo here */}
         <div className="logo-container">
           <img src="/logo.png" alt="Lexora Logo" className="home-logo" />
         </div>
@@ -52,7 +72,6 @@ function Home() {
           </div>
         </div>
       </div>
-      
       {/* Lottie Animations Section */}
       <div id="animations" className="animations-section">
         <div className="section-header">

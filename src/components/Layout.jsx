@@ -7,7 +7,7 @@ function Layout() {
     <div className="app-container">
       <Navbar />
       <main className="main-content">
-        <Outlet /> {/* 👈 this will render the page content */}
+        <Outlet /> {/* this will render the page content */}
       </main>
       <Footer />
     </div>

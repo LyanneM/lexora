@@ -1,4 +1,4 @@
-import "../styles/global.css"; // We'll create this CSS file
+import "../styles/global.css"; 
 
 function Footer() {
   return (
