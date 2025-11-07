@@ -55,7 +55,7 @@ function Dashboard() {
 
   const handleCreateQuiz = (noteId = null) => {
     if (noteId) {
-      navigate(`/quiz/create?fromNote=${noteId}`);
+      navigate(`/quiz/${noteId}`);
     } else {
       navigate("/quiz");
     }

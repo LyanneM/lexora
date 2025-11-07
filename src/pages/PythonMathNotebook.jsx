@@ -1,4 +1,4 @@
-// src/pages/PythonMathNotebook.jsx
+// Enhanced PythonMathNotebook.jsx - Fix execution and add better UI
 import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -11,16 +11,40 @@ function PythonMathNotebook() {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState("Python Math Notebook");
   const [cells, setCells] = useState([]);
   const [sessionId, setSessionId] = useState(null);
   const [variables, setVariables] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Add initial cell when component mounts
+  useEffect(() => {
+    const createSession = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/math-notebook/create-session`, {
+          method: 'POST'
+        });
+        const result = await response.json();
+        if (result.success) {
+          setSessionId(result.session_id);
+          // Add first cell
+          addNewCell("code");
+        }
+      } catch (error) {
+        console.error("Error creating session:", error);
+        // Add cell anyway for offline usage
+        addNewCell("code");
+      }
+    };
+
+    createSession();
+  }, []);
 
   const addNewCell = (type = "code") => {
     const newCell = {
       id: Date.now().toString(),
       type: type,
-      content: "",
+      content: type === "code" ? "# Enter Python code here\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n# Your code here" : "",
       output: null,
       isExecuting: false
     };
@@ -28,12 +52,13 @@ function PythonMathNotebook() {
   };
 
   const executeCell = async (cellId) => {
-    setCells(prev => prev.map(cell => 
-      cell.id === cellId ? { ...cell, isExecuting: true } : cell
+    const cell = cells.find(c => c.id === cellId);
+    if (!cell) return;
+
+    setCells(prev => prev.map(c => 
+      c.id === cellId ? { ...c, isExecuting: true, output: null } : c
     ));
 
-    const cell = cells.find(c => c.id === cellId);
-    
     try {
       const response = await fetch(`${API_BASE_URL}/math-notebook/execute`, {
         method: 'POST',
@@ -42,46 +67,43 @@ function PythonMathNotebook() {
         },
         body: JSON.stringify({
           code: cell.content,
-          cell_id: cellId
+          cell_id: cellId,
+          session_id: sessionId
         })
       });
 
       const result = await response.json();
       
-      setCells(prev => prev.map(c => 
-        c.id === cellId ? { 
-          ...c, 
-          output: result.success ? result.result : { error: result.error },
-          isExecuting: false 
-        } : c
-      ));
-
-      
-      if (sessionId) {
-        fetchVariables();
-      }
-    } catch (error) {
-      setCells(prev => prev.map(c => 
-        c.id === cellId ? { 
-          ...c, 
-          output: { error: error.message },
-          isExecuting: false 
-        } : c
-      ));
-    }
-  };
-
-  const fetchVariables = async () => {
-    if (!sessionId) return;
-    
-    try {
-      const response = await fetch(`${API_BASE_URL}/math-notebook/session/${sessionId}/variables`);
-      const result = await response.json();
       if (result.success) {
-        setVariables(result.variables);
+        setCells(prev => prev.map(c => 
+          c.id === cellId ? { 
+            ...c, 
+            output: result.result,
+            isExecuting: false 
+          } : c
+        ));
+        
+        // Update variables if available
+        if (result.result && result.result.variables) {
+          setVariables(result.result.variables);
+        }
+      } else {
+        setCells(prev => prev.map(c => 
+          c.id === cellId ? { 
+            ...c, 
+            output: { error: result.error },
+            isExecuting: false 
+          } : c
+        ));
       }
     } catch (error) {
-      console.error("Error fetching variables:", error);
+      setCells(prev => prev.map(c => 
+        c.id === cellId ? { 
+          ...c, 
+          output: { error: `Network error: ${error.message}` },
+          isExecuting: false 
+        } : c
+      ));
     }
   };
 
@@ -95,49 +117,36 @@ function PythonMathNotebook() {
     setCells(prev => prev.filter(cell => cell.id !== cellId));
   };
 
-  useEffect(() => {
-    // Create a session when component mounts
-    const createSession = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/math-notebook/create-session`, {
-          method: 'POST'
-        });
-        const result = await response.json();
-        if (result.success) {
-          setSessionId(result.session_id);
-        }
-      } catch (error) {
-        console.error("Error creating session:", error);
-      }
-    };
-
-    createSession();
-    // Add first cell
-    addNewCell();
-  }, []);
+  const clearAllCells = () => {
+    setCells([]);
+    setVariables({});
+    addNewCell("code");
+  };
 
   const renderOutput = (output) => {
     if (!output) return null;
     
     if (output.error) {
-      return <div className="cell-output error">{output.error}</div>;
+      return (
+        <div className="cell-output error">
+          <strong>Error:</strong> {output.error}
+        </div>
+      );
     }
 
-    const { output: result } = output;
-    
-    switch (result.type) {
+    switch (output.type) {
       case "python_execution":
         return (
           <div className="cell-output python-output">
-            <pre>{result.text_output}</pre>
+            <pre>{output.text_output}</pre>
           </div>
         );
       
       case "expression_evaluation":
         return (
           <div className="cell-output math-output">
-            <div className="latex-result">${result.latex_result}$</div>
-            <div className="evaluated">≈ {result.evaluated}</div>
+            <div className="latex-result">${output.latex_result}$</div>
+            <div className="evaluated">≈ {output.evaluated}</div>
           </div>
         );
       
@@ -145,8 +154,9 @@ function PythonMathNotebook() {
         return (
           <div className="cell-output plot-output">
             <img 
-              src={`data:image/png;base64,${result.plot_data}`} 
+              src={`data:image/png;base64,${output.plot_data}`} 
               alt="Plot" 
+              style={{ maxWidth: '100%', height: 'auto' }}
             />
           </div>
         );
@@ -155,7 +165,7 @@ function PythonMathNotebook() {
         return (
           <div className="cell-output solutions-output">
             <h4>Solutions:</h4>
-            {result.latex_solutions.map((sol, idx) => (
+            {output.latex_solutions.map((sol, idx) => (
               <div key={idx} className="solution">${sol}$</div>
             ))}
           </div>
@@ -164,15 +174,15 @@ function PythonMathNotebook() {
       case "variable_assignment":
         return (
           <div className="cell-output variable-output">
-            <div>${result.variable} = {result.latex_value}$</div>
-            <div>Evaluated: {result.evaluated}</div>
+            <div>${output.variable} = {output.latex_value}$</div>
+            <div>Evaluated: {output.evaluated}</div>
           </div>
         );
       
       default:
         return (
           <div className="cell-output generic-output">
-            <pre>{JSON.stringify(result, null, 2)}</pre>
+            <pre>{JSON.stringify(output, null, 2)}</pre>
           </div>
         );
     }
@@ -180,48 +190,61 @@ function PythonMathNotebook() {
 
   return (
     <div className="python-math-notebook">
-     <div className="notebook-toolbar">
-  <div className="title-section">
-    <div className="title-icon">🐍</div>
-    <div className="title-input-container">
-      <span className="notebook-type">Python Math Notebook</span>
-    </div>
-  </div>
-  
-  <div className="notebook-actions">
-  <button 
-    onClick={() => addNewCell("code")}
-    className="action-btn primary"
-  >
-    + Code Cell
-  </button>
-  <button 
-    onClick={() => addNewCell("markdown")}
-    className="action-btn secondary"
-  >
-    + Text Cell
-  </button>
-  <button 
-    onClick={() => navigate("/notebook/math")}
-    className="action-btn math-tools"
-  >Simple Math
-  </button>
-  <button 
-    onClick={() => navigate("/dashboard")}
-    className="action-btn dashboard"
-  >
-    ← Dashboard
-  </button>
-</div>
-</div>
+      <div className="notebook-toolbar">
+        <div className="title-section">
+          <div className="title-icon">🐍</div>
+          <div className="title-input-container">
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="notebook-title"
+              placeholder=" "
+            />
+          </div>
+        </div>
         
+        <div className="notebook-actions">
+          <button 
+            onClick={() => addNewCell("code")}
+            className="action-btn primary"
+          >
+            + Code Cell
+          </button>
+          <button 
+            onClick={() => addNewCell("markdown")}
+            className="action-btn secondary"
+          >
+            + Text Cell
+          </button>
+          <button 
+            onClick={clearAllCells}
+            className="action-btn secondary"
+          >
+            🗑️ Clear All
+          </button>
+          <button 
+            onClick={() => navigate("/notebook/math")}
+            className="action-btn math-tools"
+          >
+            Simple Math
+          </button>
+          <button 
+            onClick={() => navigate("/dashboard")}
+            className="action-btn dashboard"
+          >
+            ← Dashboard
+          </button>
+        </div>
+      </div>
+      
       <div className="notebook-content">
         <div className="cells-container">
-          {cells.map((cell) => (
+          {cells.map((cell, index) => (
             <div key={cell.id} className="notebook-cell">
               <div className="cell-header">
                 <span className="cell-number">
-                  In [{cells.findIndex(c => c.id === cell.id) + 1}]:
+                  In [{index + 1}]:
                 </span>
                 <div className="cell-actions">
                   <button 
@@ -241,14 +264,23 @@ function PythonMathNotebook() {
               </div>
               
               <div className="cell-input">
-                <textarea
-                  value={cell.content}
-                  onChange={(e) => updateCellContent(cell.id, e.target.value)}
-                  placeholder={cell.type === "code" 
-                    ? "# Enter Python code here...\nimport math\nimport numpy as np\n\n# Your code here" 
-                    : "Enter markdown text here..."}
-                  rows={6}
-                />
+                {cell.type === "code" ? (
+                  <textarea
+                    value={cell.content}
+                    onChange={(e) => updateCellContent(cell.id, e.target.value)}
+                    placeholder="# Enter Python code here...\n# You can use numpy, sympy, matplotlib\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n# Example: Solve equation\nfrom sympy import symbols, solve\nx = symbols('x')\nequation = x**2 - 4\nsolution = solve(equation, x)\nprint(solution)"
+                    rows={8}
+                    className="code-textarea"
+                  />
+                ) : (
+                  <textarea
+                    value={cell.content}
+                    onChange={(e) => updateCellContent(cell.id, e.target.value)}
+                    placeholder="Enter markdown text here..."
+                    rows={4}
+                    className="markdown-textarea"
+                  />
+                )}
               </div>
               
               {cell.output && (
@@ -258,26 +290,62 @@ function PythonMathNotebook() {
               )}
             </div>
           ))}
+          
+          {cells.length === 0 && (
+            <div className="empty-notebook">
+              <h3>No cells yet</h3>
+              <p>Add a code cell to start writing Python code with mathematical capabilities.</p>
+              <button 
+                onClick={() => addNewCell("code")}
+                className="action-btn primary"
+              >
+                + Add Your First Cell
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="variables-panel">
           <div className="panel-header">
             <h3>Variables</h3>
-            <button onClick={fetchVariables} className="refresh-btn">🔄</button>
+            <button className="refresh-btn">🔄</button>
           </div>
           <div className="variables-list">
-            {Object.entries(variables).map(([name, value]) => (
-              <div key={name} className="variable-item">
-                <span className="variable-name">{name}</span>
-                <span className="variable-value">= {value}</span>
-              </div>
-            ))}
-            {Object.keys(variables).length === 0 && (
+            {Object.entries(variables).length > 0 ? (
+              Object.entries(variables).map(([name, value]) => (
+                <div key={name} className="variable-item">
+                  <span className="variable-name">{name}</span>
+                  <span className="variable-value">= {value}</span>
+                </div>
+              ))
+            ) : (
               <div className="no-variables">
                 No variables defined
                 <div className="hint">Run some code to see variables here</div>
               </div>
             )}
+          </div>
+          
+          <div className="quick-examples">
+            <h4>Quick Examples:</h4>
+            <div className="example-item" onClick={() => {
+              addNewCell("code");
+              setTimeout(() => {
+                const newCell = cells[cells.length - 1];
+                updateCellContent(newCell.id, `# Basic calculation\nresult = 2 + 3 * 4\nprint("Result:", result)`);
+              }, 100);
+            }}>
+              Basic Calculation
+            </div>
+            <div className="example-item" onClick={() => {
+              addNewCell("code");
+              setTimeout(() => {
+                const newCell = cells[cells.length - 1];
+                updateCellContent(newCell.id, `# Solve equation\nfrom sympy import symbols, solve\nx = symbols('x')\nequation = x**2 - 4\nsolution = solve(equation, x)\nprint("Solutions:", solution)`);
+              }, 100);
+            }}>
+              Solve Equation
+            </div>
           </div>
         </div>
       </div>
