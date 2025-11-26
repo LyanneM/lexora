@@ -25,7 +25,7 @@
 }
 
 .register-card {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95); /* Increased opacity for better contrast */
   padding: 40px;
   border-radius: 20px;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
@@ -35,12 +35,13 @@
   position: relative;
   z-index: 2;
   border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #333; /* Added base text color */
 }
 
 .register-card h2 {
   text-align: center;
   margin-bottom: 25px;
-  color: #333;
+  color: #333 !important;
   font-size: 28px;
   background: linear-gradient(45deg, #8A2BE2, #6A0DAD);
   -webkit-background-clip: text;
@@ -57,6 +58,14 @@
   position: relative;
 }
 
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #333; /* Dark text for labels */
+  font-weight: 500;
+  font-size: 14px;
+}
+
 .form-group input {
   width: 100%;
   padding: 15px 20px;
@@ -64,7 +73,9 @@
   border-radius: 10px;
   font-size: 16px;
   transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.9);
+  color: #333; /* Dark text for input */
+  box-sizing: border-box; /* Ensure padding doesn't affect width */
 }
 
 .form-group input:focus {
@@ -75,7 +86,13 @@
 }
 
 .form-group input::placeholder {
-  color: #999;
+  color: #666; /* Darker placeholder text */
+}
+
+/* Ensure all text in form is visible */
+.register-form,
+.register-form * {
+  color: #333 !important; /* Force dark text throughout form */
 }
 
 .register-btn {
@@ -113,12 +130,13 @@
   text-align: center;
   margin: 25px 0;
   position: relative;
+  color: #666; /* Dark divider text */
 }
 
 .divider span {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95); /* Match card background */
   padding: 0 15px;
-  color: #777;
+  color: #666;
   position: relative;
   z-index: 1;
   font-size: 14px;
@@ -138,7 +156,7 @@
   width: 100%;
   padding: 15px;
   background: white;
-  color: #333;
+  color: #333 !important; /* Force dark text */
   border: 1px solid #ddd;
   border-radius: 10px;
   font-size: 16px;
@@ -173,25 +191,25 @@
 .login-link {
   text-align: center;
   margin-top: 25px;
-  color: #666;
+  color: #666 !important; /* Dark text */
   font-size: 15px;
 }
 
 .login-link a {
-  color: #8A2BE2;
+  color: #8A2BE2 !important; /* Keep link color */
   text-decoration: none;
   font-weight: 600;
   transition: color 0.3s;
 }
 
 .login-link a:hover {
-  color: #6A0DAD;
+  color: #6A0DAD !important;
   text-decoration: underline;
 }
 
 .error-message {
   background: #ffebee;
-  color: #c62828;
+  color: #c62828 !important; /* Force dark red text */
   padding: 12px 15px;
   border-radius: 8px;
   margin-bottom: 20px;
@@ -201,7 +219,7 @@
 
 .success-message {
   background: #e8f5e9;
-  color: #2e7d32;
+  color: #2e7d32 !important; /* Force dark green text */
   padding: 12px 15px;
   border-radius: 8px;
   margin-bottom: 20px;
@@ -238,8 +256,7 @@
   }
 }
 
-
-
+/* Google Sign-in Button Styles */
 .gsi-material-button {
   -moz-user-select: none;
   -webkit-user-select: none;
@@ -255,7 +272,7 @@
   border-radius: 4px;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  color: #1f1f1f;
+  color: #1f1f1f !important; /* Force dark text */
   cursor: pointer;
   font-family: 'Roboto', arial, sans-serif;
   font-size: 14px;
@@ -305,6 +322,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   vertical-align: top;
+  color: #1f1f1f !important; /* Force dark text */
 }
 
 .gsi-material-button .gsi-material-button-state {
@@ -351,7 +369,7 @@
 /* Success and error messages */
 .success-message {
   background-color: #d4edda;
-  color: #155724;
+  color: #155724 !important; /* Force dark text */
   padding: 12px;
   border-radius: 6px;
   margin-bottom: 20px;
@@ -360,7 +378,7 @@
 
 .error-message {
   background-color: #f8d7da;
-  color: #721c24;
+  color: #721c24 !important; /* Force dark text */
   padding: 12px;
   border-radius: 6px;
   margin-bottom: 20px;
@@ -373,7 +391,7 @@
   align-items: center;
   text-align: center;
   margin: 20px 0;
-  color: #666;
+  color: #666 !important; /* Dark text */
   font-size: 14px;
 }
 
@@ -386,4 +404,59 @@
 
 .divider span {
   padding: 0 15px;
+  background: rgba(255, 255, 255, 0.95); /* Match card background */
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: left;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 15px 20px;
+  border: 2px solid #e1e1e1;
+  border-radius: 10px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.95);
+  color: #333;
+  box-sizing: border-box;
+  margin-bottom: 5px;
+}
+
+.form-group input:focus {
+  border-color: #8A2BE2;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.2);
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 1);
+}
+
+.form-group input::placeholder {
+  color: #888;
+  font-weight: 400;
+}
+
+.form-group {
+  margin-bottom: 25px;
+  position: relative;
+  text-align: left;
+}
+
+
+.form-group input:focus + .input-hint {
+  opacity: 1;
+}
+
+.input-hint {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+  opacity: 0.8;
+  text-align: left;
 }

@@ -89,10 +89,12 @@ function Register() {
         
         <form onSubmit={handleRegister} className="register-form">
           <div className="form-group">
+            <label htmlFor="name">Full Name</label>
             <input
               type="text"
+              id="name"
               name="name"
-              placeholder="Full Name"
+              placeholder="Enter your full name"
               value={formData.name}
               onChange={handleChange}
               required
@@ -100,10 +102,12 @@ function Register() {
           </div>
           
           <div className="form-group">
+            <label htmlFor="age">Age</label>
             <input
               type="number"
+              id="age"
               name="age"
-              placeholder="Age"
+              placeholder="Enter your age"
               min="13"
               max="120"
               value={formData.age}
@@ -113,10 +117,12 @@ function Register() {
           </div>
           
           <div className="form-group">
+            <label htmlFor="email">Email Address</label>
             <input
               type="email"
+              id="email"
               name="email"
-              placeholder="Email Address"
+              placeholder="Enter your email address"
               value={formData.email}
               onChange={handleChange}
               required
@@ -124,10 +130,12 @@ function Register() {
           </div>
           
           <div className="form-group">
+            <label htmlFor="password">Password</label>
             <input
               type="password"
+              id="password"
               name="password"
-              placeholder="Password (min 6 characters)"
+              placeholder="Enter password (min 6 characters)"
               value={formData.password}
               onChange={handleChange}
               required
@@ -135,10 +143,12 @@ function Register() {
           </div>
           
           <div className="form-group">
+            <label htmlFor="confirmPassword">Confirm Password</label>
             <input
               type="password"
+              id="confirmPassword"
               name="confirmPassword"
-              placeholder="Confirm Password"
+              placeholder="Confirm your password"
               value={formData.confirmPassword}
               onChange={handleChange}
               required
