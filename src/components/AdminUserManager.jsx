@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { db } from "../firebase";
 import { collection, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import "../styles/admin-user-manager.css";
+import { usersService } from '../services/firebaseService';
 
 function AdminUserManager() {
   const { createAdminAccount, isAdmin, currentUser } = useAuth();
@@ -25,20 +26,17 @@ function AdminUserManager() {
     fetchUsers();
   }, []);
 
+  
   const fetchUsers = async () => {
-    try {
-      const querySnapshot = await getDocs(collection(db, "users"));
-      const usersList = [];
-      querySnapshot.forEach((doc) => {
-        usersList.push({ id: doc.id, ...doc.data() });
-      });
-      setUsers(usersList);
-    } catch (err) {
-      setError("Failed to fetch users: " + err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    const usersList = await usersService.getAllUsers();
+    setUsers(usersList);
+  } catch (err) {
+    setError("Failed to fetch users: " + err.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleCreateAdmin = async (e) => {
     e.preventDefault();
@@ -98,20 +96,51 @@ function AdminUserManager() {
     }
   };
 
+  // Calculate statistics
+  const userStats = {
+    totalUsers: users.length,
+    activeUsers: users.filter(u => u.isActive).length,
+    admins: users.filter(u => u.role === 'admin').length,
+    totalQuizzes: users.reduce((total, user) => total + (user.quizzesCreated || 0), 0)
+  };
+
   if (loading) {
     return <div className="loading">Loading users...</div>;
   }
 
   return (
     <div className="admin-user-manager">
-      <h3>User Management</h3>
-      
+      <div className="section-header">
+        <h3>User Management</h3>
+        <p>Manage user accounts and permissions</p>
+      </div>
+
       {error && <div className="error-message">{error}</div>}
       {success && <div className="success-message">{success}</div>}
 
+      {/* User Statistics */}
+      <div className="user-stats">
+        <div className="stat">
+          <div className="stat-value">{userStats.totalUsers}</div>
+          <div className="stat-label">Total Users</div>
+        </div>
+        <div className="stat">
+          <div className="stat-value">{userStats.activeUsers}</div>
+          <div className="stat-label">Active Users</div>
+        </div>
+        <div className="stat">
+          <div className="stat-value">{userStats.admins}</div>
+          <div className="stat-label">Administrators</div>
+        </div>
+        <div className="stat">
+          <div className="stat-value">{userStats.totalQuizzes}</div>
+          <div className="stat-label">Total Quizzes</div>
+        </div>
+      </div>
+
       {/* Create New Admin Form */}
       <div className="create-admin-form">
-        <h4>Create New Admin</h4>
+        <h4>Create New Admin Account</h4>
         <form onSubmit={handleCreateAdmin}>
           <div className="form-row">
             <input
@@ -130,8 +159,6 @@ function AdminUserManager() {
               onChange={handleInputChange}
               required
             />
-          </div>
-          <div className="form-row">
             <input
               type="password"
               name="password"
@@ -156,44 +183,61 @@ function AdminUserManager() {
       </div>
 
       {/* Users List */}
-      <div className="users-list">
-        <h4>All Users</h4>
-        <div className="users-table">
-          <div className="table-header">
-            <div>Name</div>
-            <div>Email</div>
-            <div>Role</div>
-            <div>Status</div>
-            <div>Actions</div>
-          </div>
-          {users.map(user => (
-            <div key={user.id} className="table-row">
-              <div>{user.name || "N/A"}</div>
-              <div>{user.email}</div>
-              <div>
-                <span className={`role-badge ${user.role}`}>
-                  {user.role}
-                </span>
-              </div>
-              <div>
-                <span className={`status-badge ${user.isActive ? 'active' : 'inactive'}`}>
-                  {user.isActive ? 'Active' : 'Inactive'}
-                </span>
-              </div>
-              <div>
-                {user.id !== currentUser.uid && (
-                  <button 
-                    onClick={() => toggleUserStatus(user.id, user.isActive)}
-                    className="status-toggle-btn"
-                  >
-                    {user.isActive ? 'Deactivate' : 'Activate'}
-                  </button>
-                )}
+      <div className="users-table">
+        <div className="table-header">
+          <div>User</div>
+          <div>Role</div>
+          <div>Status</div>
+          <div>Quizzes</div>
+          <div>Actions</div>
+        </div>
+        
+        {users.map(user => (
+          <div key={user.id} className="table-row">
+            <div>
+              <div className="user-email">{user.email}</div>
+              <div className="user-name">{user.name || "No name provided"}</div>
+              <div className="user-meta">
+                Joined: {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "Unknown"}
               </div>
             </div>
-          ))}
-        </div>
+            <div>
+              <span className={`role-badge ${user.role}`}>
+                {user.role || 'user'}
+              </span>
+            </div>
+            <div>
+              <span className={`status-badge ${user.isActive ? 'active' : 'inactive'}`}>
+                {user.isActive ? 'Active' : 'Inactive'}
+              </span>
+            </div>
+            <div>
+              <span className="quiz-count">{user.quizzesCreated || 0}</span>
+            </div>
+            <div>
+              {user.id !== currentUser?.uid && (
+                <button 
+                  onClick={() => toggleUserStatus(user.id, user.isActive)}
+                  className="status-toggle-btn"
+                >
+                  {user.isActive ? 'Deactivate' : 'Activate'}
+                </button>
+              )}
+              {user.id === currentUser?.uid && (
+                <span className="current-user">You</span>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
+
+      {users.length === 0 && !loading && (
+        <div className="empty-state">
+          <div className="empty-icon">👥</div>
+          <h3>No Users Found</h3>
+          <p>There are no users registered in the system yet.</p>
+        </div>
+      )}
     </div>
   );
 }

@@ -72,7 +72,7 @@ function Profile() {
 
     try {
       await usersService.updateUser(currentUser.uid, profileData);
-      setMessage("Profile updated successfully!");
+      setMessage("Profile updated successfully! ✨");
 
       setTimeout(() => setMessage(""), 3000);
     } catch (error) {
@@ -111,7 +111,7 @@ function Profile() {
     return (
       <div className="profile-loading">
         <div className="loading-spinner"></div>
-        <p>Loading profile...</p>
+        <p>Loading your profile...</p>
       </div>
     );
   }
@@ -119,8 +119,8 @@ function Profile() {
   return (
     <div className="profile-container">
       <div className="profile-header">
-        <h2>Your Profile</h2>
-        <p>Manage your personal information and preferences</p>
+        <h2>🌟 Your Profile</h2>
+        <p>Manage your personal information and learning preferences</p>
       </div>
 
       <div className="profile-content">
@@ -147,23 +147,23 @@ function Profile() {
               className="change-avatar-btn"
               onClick={() => document.getElementById('avatar-upload').click()}
             >
-              Change Photo
+              📸 Change Photo
             </button>
             <small>JPG, PNG or GIF - Max 5MB</small>
           </div>
 
           <div className="profile-stats">
-            <h4>Account Info</h4>
+            <h4>📊 Account Info</h4>
             <div className="stat-item">
-              <span className="stat-label">Email:</span>
+              <span className="stat-label">📧 Email:</span>
               <span className="stat-value">{currentUser?.email}</span>
             </div>
             <div className="stat-item">
-              <span className="stat-label">User ID:</span>
+              <span className="stat-label">🆔 User ID:</span>
               <span className="stat-value">{currentUser?.uid?.substring(0, 8)}...</span>
             </div>
             <div className="stat-item">
-              <span className="stat-label">Member since:</span>
+              <span className="stat-label">📅 Member since:</span>
               <span className="stat-value">
                 {currentUser?.metadata?.creationTime ? 
                   new Date(currentUser.metadata.creationTime).toLocaleDateString() : 
@@ -181,11 +181,11 @@ function Profile() {
             {error && <div className="error-message">{error}</div>}
 
             <div className="form-section">
-              <h3>Basic Information</h3>
+              <h3>👤 Basic Information</h3>
               
               <div className="form-row">
                 <div className="form-group">
-                  <label htmlFor="displayName">Display Name</label>
+                  <label htmlFor="displayName">🎭 Display Name</label>
                   <input
                     type="text"
                     id="displayName"
@@ -199,7 +199,7 @@ function Profile() {
 
               <div className="form-row">
                 <div className="form-group">
-                  <label htmlFor="firstName">First Name</label>
+                  <label htmlFor="firstName">📛 First Name</label>
                   <input
                     type="text"
                     id="firstName"
@@ -211,7 +211,7 @@ function Profile() {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="lastName">Last Name</label>
+                  <label htmlFor="lastName">📛 Last Name</label>
                   <input
                     type="text"
                     id="lastName"
@@ -225,7 +225,7 @@ function Profile() {
 
               <div className="form-row">
                 <div className="form-group">
-                  <label htmlFor="age">Age</label>
+                  <label htmlFor="age">🎂 Age</label>
                   <input
                     type="number"
                     id="age"
@@ -239,7 +239,7 @@ function Profile() {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="location">Location</label>
+                  <label htmlFor="location">📍 Location</label>
                   <input
                     type="text"
                     id="location"
@@ -253,10 +253,10 @@ function Profile() {
             </div>
 
             <div className="form-section">
-              <h3>Education & Interests</h3>
+              <h3>🎓 Education & Interests</h3>
 
               <div className="form-group">
-                <label htmlFor="education">Education Level</label>
+                <label htmlFor="education">📚 Education Level</label>
                 <select
                   id="education"
                   name="education"
@@ -264,17 +264,17 @@ function Profile() {
                   onChange={handleChange}
                 >
                   <option value="">Select education level</option>
-                  <option value="high-school">High School</option>
-                  <option value="undergraduate">Undergraduate</option>
-                  <option value="graduate">Graduate</option>
-                  <option value="post-graduate">Post Graduate</option>
-                  <option value="professional">Professional</option>
-                  <option value="other">Other</option>
+                  <option value="high-school">🎒 High School</option>
+                  <option value="undergraduate">🎓 Undergraduate</option>
+                  <option value="graduate">🧑‍🎓 Graduate</option>
+                  <option value="post-graduate">👨‍🎓 Post Graduate</option>
+                  <option value="professional">💼 Professional</option>
+                  <option value="other">🔮 Other</option>
                 </select>
               </div>
 
               <div className="form-group">
-                <label htmlFor="interests">Learning Interests</label>
+                <label htmlFor="interests">💡 Learning Interests</label>
                 <input
                   type="text"
                   id="interests"
@@ -287,7 +287,7 @@ function Profile() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="bio">Bio</label>
+                <label htmlFor="bio">📖 Bio</label>
                 <textarea
                   id="bio"
                   name="bio"
@@ -301,10 +301,10 @@ function Profile() {
             </div>
 
             <div className="form-section">
-              <h3>Contact Information</h3>
+              <h3>📞 Contact Information</h3>
               
               <div className="form-group">
-                <label htmlFor="phone">Phone Number</label>
+                <label htmlFor="phone">📱 Phone Number</label>
                 <input
                   type="tel"
                   id="phone"
@@ -323,14 +323,14 @@ function Profile() {
                 className="save-btn"
                 disabled={saving}
               >
-                {saving ? "Saving..." : "Save Profile"}
+                {saving ? "💾 Saving..." : "✨ Save Profile"}
               </button>
               <button 
                 type="button" 
                 className="cancel-btn"
                 onClick={() => window.history.back()}
               >
-                Cancel
+                ↩️ Cancel
               </button>
             </div>
           </form>

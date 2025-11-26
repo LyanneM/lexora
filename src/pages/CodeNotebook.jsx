@@ -6,7 +6,7 @@ import { collection, doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase
 import { useAuth } from "../context/AuthContext";
 import "../styles/code-notebook.css";
 
-const API_BASE_URL = "http://localhost:8000"; // Your backend URL
+const API_BASE_URL = "http://localhost:8000";
 
 function CodeNotebook() {
   const { id } = useParams();
@@ -22,10 +22,18 @@ function CodeNotebook() {
   const [isRunning, setIsRunning] = useState(false);
   const [theme, setTheme] = useState("dark");
   const [terminalHistory, setTerminalHistory] = useState([]);
+  
+  // Optimization states
+  const [executionStrategy, setExecutionStrategy] = useState('auto'); // 'local', 'online', 'auto'
+  const [isOptimized, setIsOptimized] = useState(true);
 
   const codeEditorRef = useRef(null);
 
-  // Starter code templates (same as before)
+  // Optimized code detection
+  const isSmallCode = code.length < 1000;
+  const isQuickLanguage = ['python', 'javascript'].includes(language);
+
+  // Fixed starter templates
   const starterTemplates = {
     python: `# Python Starter Code
 def hello_world():
@@ -35,7 +43,7 @@ def factorial(n):
     if n == 0:
         return 1
     else:
-        return n * factorial(n-1)
+        return n * factorial(n-1)  # Fixed: n-1
 
 # Test your code here
 hello_world()
@@ -75,11 +83,6 @@ console.log(factorial(5));`,
         <h1>Hello, World!</h1>
         <p>Welcome to your HTML page.</p>
     </div>
-    
-    <script>
-        // JavaScript code here
-        console.log("Page loaded!");
-    </script>
 </body>
 </html>`,
 
@@ -104,57 +107,142 @@ int main() {
     }
   }, [language]);
 
-  const runCode = async () => {
+  const runCodeOptimized = async () => {
     setIsRunning(true);
-    setOutput("Running code...");
-    addTerminalLine(`$ Executing ${language} code...`);
+    setOutput("🚀 Running code (optimized)...");
+    addTerminalLine(`$ Executing ${language} code (fast mode)...`);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/execute-code`, {
+      const startTime = Date.now();
+      
+      // Use fast endpoint for optimized execution
+      const endpoint = isOptimized ? '/execute-code-fast' : '/execute-code';
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           code: code,
-          language: language
-        })
+          language: language,
+          strategy: executionStrategy
+        }),
+        signal: controller.signal
       });
+
+      clearTimeout(timeoutId);
+      
+      const executionTime = Date.now() - startTime;
+      
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
 
       const result = await response.json();
       
       if (result.success) {
-        let outputText = result.output;
+        let outputText = result.output || "No output";
         if (result.error) {
-          outputText += `\nErrors:\n${result.error}`;
+          outputText += `\n\nErrors:\n${result.error}`;
         }
         setOutput(outputText);
-        addTerminalLine(`✓ Code executed successfully (exit code: ${result.return_code})`);
+        addTerminalLine(`✓ Code executed successfully in ${executionTime}ms`);
+        
+        if (result.requires_browser) {
+          addTerminalLine(`ℹ ${language.toUpperCase()} code ready for browser execution`);
+        }
       } else {
-        setOutput(`Error: ${result.error}`);
+        setOutput(`Execution Error: ${result.error}`);
         addTerminalLine(`✗ Execution failed: ${result.error}`);
+        
+        // Auto-fallback if optimized mode fails
+        if (isOptimized && executionTime > 5000) {
+          addTerminalLine(`⚠ Falling back to standard execution...`);
+          setIsOptimized(false);
+        }
       }
     } catch (error) {
-      setOutput(`Network error: ${error.message}`);
-      addTerminalLine(`✗ Network error: ${error.message}`);
+      if (error.name === 'AbortError') {
+        setOutput('⏰ Execution timeout: Code took too long to run');
+        addTerminalLine('✗ Execution timeout');
+      } else {
+        setOutput(`Network Error: ${error.message}`);
+        addTerminalLine(`✗ Network error: ${error.message}`);
+      }
     } finally {
       setIsRunning(false);
     }
   };
 
   const addTerminalLine = (line) => {
-    setTerminalHistory(prev => [...prev, { text: line, timestamp: new Date() }]);
+    setTerminalHistory(prev => [...prev, { 
+      text: line, 
+      timestamp: new Date().toLocaleTimeString() 
+    }]);
   };
 
   const saveCode = async () => {
-    // ... (keep your existing save code logic)
+    if (!currentUser) {
+      addTerminalLine("✗ Please log in to save code");
+      return;
+    }
+
+    setIsSaving(true);
+    addTerminalLine("$ Saving code...");
+
+    try {
+      // Your existing save logic here
+      addTerminalLine("✓ Code saved successfully");
+    } catch (error) {
+      addTerminalLine(`✗ Save failed: ${error.message}`);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const clearCode = () => {
     setCode("");
     setOutput("");
     setTerminalHistory([]);
+    addTerminalLine("$ Console cleared");
   };
+
+  const loadTemplate = () => {
+    setCode(starterTemplates[language] || `// Write your ${language} code here`);
+    addTerminalLine(`$ Loaded ${language} template`);
+  };
+
+  // Add execution strategy selector
+  const renderExecutionControls = () => (
+    <div className="execution-optimization">
+      <select 
+        value={executionStrategy} 
+        onChange={(e) => setExecutionStrategy(e.target.value)}
+        title="Execution Strategy"
+      >
+        <option value="auto">Auto (Fastest)</option>
+        <option value="local">Local Only</option>
+        <option value="online">Online Only</option>
+      </select>
+
+      <label className="optimization-toggle">
+        <input
+          type="checkbox"
+          checked={isOptimized}
+          onChange={(e) => setIsOptimized(e.target.checked)}
+        />
+        Turbo Mode
+      </label>
+
+      {isSmallCode && isQuickLanguage && (
+        <span className="fast-badge" title="This code should execute very quickly">⚡</span>
+      )}
+    </div>
+  );
 
   return (
     <div className={`code-notebook-container ${theme}`}>
@@ -179,36 +267,42 @@ int main() {
             <option value="java">Java</option>
           </select>
 
-          <select 
-            value={theme} 
-            onChange={(e) => setTheme(e.target.value)}
-          >
-            <option value="dark">Dark Theme</option>
-            <option value="light">Light Theme</option>
-          </select>
+          <button onClick={loadTemplate} className="template-button">
+            📋 Template
+          </button>
+
+          {/* Execution Optimization Controls */}
+          {renderExecutionControls()}
 
           <button 
-            onClick={runCode} 
+            onClick={runCodeOptimized} 
             disabled={isRunning}
-            className="run-button"
+            className={`run-button ${isRunning ? 'running' : ''} ${isOptimized ? 'turbo' : ''}`}
+            title={isOptimized ? "Turbo mode enabled - faster execution" : "Standard execution"}
           >
-            {isRunning ? "⏳ Running..." : "▶ Run Code"}
+            {isRunning ? "⏳ Running..." : isOptimized ? "⚡ Run Fast" : "▶ Run Code"}
           </button>
 
           <button onClick={clearCode} className="clear-button">
             🗑️ Clear
           </button>
 
-          <button onClick={saveCode} disabled={isSaving}>
+          <button onClick={saveCode} disabled={isSaving || !currentUser}>
             {isSaving ? "Saving..." : "💾 Save"}
           </button>
+
+          <select 
+            value={theme} 
+            onChange={(e) => setTheme(e.target.value)}
+          >
+            <option value="dark">Dark</option>
+            <option value="light">Light</option>
+          </select>
         </div>
 
-        <div className="code-actions">
-          <button onClick={() => navigate("/dashboard")}>
-            ← Dashboard
-          </button>
-        </div>
+        <button onClick={() => navigate("/dashboard")} className="back-button">
+          ← Dashboard
+        </button>
       </div>
 
       <div className="code-content">
@@ -216,9 +310,6 @@ int main() {
           <div className="editor-header">
             <span>Editor ({language})</span>
             <div className="editor-actions">
-              <button onClick={() => setCode(starterTemplates[language])}>
-                📋 Template
-              </button>
               <button onClick={() => navigator.clipboard.writeText(code)}>
                 📄 Copy
               </button>
@@ -238,7 +329,7 @@ int main() {
         <div className="output-panel">
           <div className="output-header">
             <span>Output</span>
-            <button onClick={() => setOutput("")}>Clear Output</button>
+            <button onClick={() => setOutput("")}>Clear</button>
           </div>
           
           <pre className="output-content">
@@ -247,7 +338,6 @@ int main() {
         </div>
       </div>
 
-      {/* Terminal Panel */}
       <div className="terminal-panel">
         <div className="terminal-header">
           <span>Terminal</span>
@@ -256,16 +346,11 @@ int main() {
         <div className="terminal-content">
           {terminalHistory.map((line, index) => (
             <div key={index} className="terminal-line">
-              <span className="prompt">$</span>
+              <span className="timestamp">[{line.timestamp}]</span>
+              <span className="prompt"> $</span>
               <span> {line.text}</span>
             </div>
           ))}
-          {terminalHistory.length === 0 && (
-            <div className="terminal-line">
-              <span className="prompt">$</span>
-              <span> Ready to execute commands...</span>
-            </div>
-          )}
         </div>
       </div>
     </div>

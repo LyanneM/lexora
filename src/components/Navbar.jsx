@@ -24,7 +24,7 @@ function Navbar() {
     setIsMenuOpen(!isMenuOpen);
   };
 
-// Hide Navbar on specific routes like login and register and home
+  // Hide Navbar on specific routes like login and register and home
   if (location.pathname === "/") {
     return null;
   }
@@ -46,53 +46,64 @@ function Navbar() {
           
           {isLoggedIn ? (
             <>
-              <div className="nav-item">
-                <Link to="/dashboard" className="nav-link" onClick={() => setIsMenuOpen(false)}>
-                  Dashboard
-                </Link>
-              </div>
-              
-              
-              {/* <div className="nav-item">
-                <Link to="/notes" className="nav-link" onClick={() => setIsMenuOpen(false)}>
-                  Notes
-                </Link>
-              </div> */}
-              
-              <div className="nav-item">
-                <Link to="/quiz" className="nav-link" onClick={() => setIsMenuOpen(false)}>
-                  Quiz
-                </Link>
-              </div>
-              
-              {/* Profile and Settings Links */}
-              <div className="nav-item">
-                <Link to="/profile" className="nav-link" onClick={() => setIsMenuOpen(false)}>
-                  Profile
-                </Link>
-              </div>
-              
-              <div className="nav-item">
-                <Link to="/settings" className="nav-link" onClick={() => setIsMenuOpen(false)}>
-                  Settings
-                </Link>
-              </div>
-              
-              {isAdmin && (
-                <div className="nav-item">
-                  <Link to="/adminpanel" className="nav-link" onClick={() => setIsMenuOpen(false)}>
-                    Admin
-                  </Link>
-                </div>
+              {/* ADMIN USER MENU - Only Home, Profile, Admin */}
+              {isAdmin ? (
+                <>
+                  <div className="nav-item">
+                    <Link to="/profile" className="nav-link" onClick={() => setIsMenuOpen(false)}>
+                      Profile
+                    </Link>
+                  </div>
+                  
+                  <div className="nav-item">
+                    <Link to="/adminpanel" className="nav-link" onClick={() => setIsMenuOpen(false)}>
+                      Admin
+                    </Link>
+                  </div>
+                  
+                  <div className="nav-item">
+                    <button onClick={handleLogout} className="nav-button">
+                      Logout
+                    </button>
+                  </div>
+                </>
+              ) : (
+                /* REGULAR USER MENU - Full menu */
+                <>
+                  <div className="nav-item">
+                    <Link to="/dashboard" className="nav-link" onClick={() => setIsMenuOpen(false)}>
+                      Dashboard
+                    </Link>
+                  </div>
+                  
+                  <div className="nav-item">
+                    <Link to="/quiz" className="nav-link" onClick={() => setIsMenuOpen(false)}>
+                      Quiz
+                    </Link>
+                  </div>
+                  
+                  <div className="nav-item">
+                    <Link to="/profile" className="nav-link" onClick={() => setIsMenuOpen(false)}>
+                      Profile
+                    </Link>
+                  </div>
+                  
+                  <div className="nav-item">
+                    <Link to="/settings" className="nav-link" onClick={() => setIsMenuOpen(false)}>
+                      Settings
+                    </Link>
+                  </div>
+                  
+                  <div className="nav-item">
+                    <button onClick={handleLogout} className="nav-button">
+                      Logout
+                    </button>
+                  </div>
+                </>
               )}
-              
-              <div className="nav-item">
-                <button onClick={handleLogout} className="nav-button">
-                  Logout
-                </button>
-              </div>
             </>
           ) : (
+            /* NOT LOGGED IN MENU */
             <>
               <div className="nav-item">
                 <Link to="/login" className="nav-link" onClick={() => setIsMenuOpen(false)}>

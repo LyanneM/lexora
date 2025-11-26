@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { notesService, quizzesService } from "../services/firebaseService";
+import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
+import { db } from '../firebase';
 import "../styles/dashboard.css";
 
 function Dashboard() {
@@ -10,39 +11,103 @@ function Dashboard() {
   const [activeTab, setActiveTab] = useState("notes");
   const [loading, setLoading] = useState(true);
   
-  // Real user data state
+  // ADD THIS MISSING STATE DECLARATION
   const [userData, setUserData] = useState({
     notes: [],
     quizzes: [],
-    uploads: [] // Placeholder for future upload feature
+    uploads: []
   });
 
-  // Fetch user data from Firebase
+  // Add useEffect to fetch data when component mounts
   useEffect(() => {
-    const fetchUserData = async () => {
-      if (!currentUser) return;
+    fetchUserData();
+  }, [currentUser]);
+
+  // In your fetchUserData function, add more detailed logging:
+  const fetchUserData = async () => {
+    if (!currentUser) {
+      console.log("No current user found");
+      setLoading(false);
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      console.log("Fetching data for user:", currentUser.uid);
       
-      setLoading(true);
+      // Fetch notes with better error handling
+      let userNotes = [];
       try {
-        // Fetch notes
-        const userNotes = await notesService.getUserNotes(currentUser.uid);
-        
-        // Fetch quizzes
-        const userQuizzes = await quizzesService.getUserQuizzes(currentUser.uid);
-        
-        setUserData({
-          notes: userNotes,
-          quizzes: userQuizzes,
-          uploads: [] // Add uploads when you implement the service
-        });
+        const notesQuery = query(
+          collection(db, "notes"),
+          where("owner", "==", currentUser.uid)
+        );
+        const notesSnapshot = await getDocs(notesQuery);
+        userNotes = notesSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        console.log('✅ Successfully loaded notes:', userNotes.length);
+      } catch (notesError) {
+        console.error('❌ Error loading notes:', notesError);
+        console.log('Notes error details:', notesError.code, notesError.message);
+      }
+
+      // Fetch quizzes
+      let userQuizzes = [];
+      try {
+        const quizzesQuery = query(
+          collection(db, "quizResults"),
+          where("userId", "==", currentUser.uid),
+          orderBy("completedAt", "desc")
+        );
+        const quizzesSnapshot = await getDocs(quizzesQuery);
+        userQuizzes = quizzesSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        console.log('✅ Successfully loaded quizzes:', userQuizzes.length);
+      } catch (quizzesError) {
+        console.error('❌ Error loading quizzes:', quizzesError);
+        console.log('Quizzes error details:', quizzesError.code, quizzesError.message);
+      }
+
+      setUserData({
+        notes: userNotes,
+        quizzes: userQuizzes,
+        uploads: []
+      });
+      
+    } catch (error) {
+      console.error("General error fetching user data:", error);
+      setUserData({
+        notes: [],
+        quizzes: [],
+        uploads: []
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Add error handling for Firestore permissions
+  useEffect(() => {
+    const checkFirestoreAccess = async () => {
+      try {
+        // Test if we can access Firestore
+        const testQuery = query(collection(db, "notes"), where("owner", "==", "test"));
+        await getDocs(testQuery);
       } catch (error) {
-        console.error("Error fetching user data:", error);
-      } finally {
-        setLoading(false);
+        console.error("Firestore access error:", error);
+        if (error.code === 'permission-denied') {
+          console.log("Firestore permissions issue - check your Firestore rules");
+        }
       }
     };
-
-    fetchUserData();
+    
+    if (currentUser) {
+      checkFirestoreAccess();
+    }
   }, [currentUser]);
 
   const handleCreateNote = () => {
@@ -62,22 +127,26 @@ function Dashboard() {
   };
 
   const handleOpenQuiz = (quizId) => {
-    navigate(`/quiz/${quizId}`);
+    navigate(`/quiz-review/${quizId}`);
   };
 
   const handleUploadFile = () => {
-    // Implement file upload logic here
     document.getElementById('file-upload').click();
   };
 
   const formatDate = (timestamp) => {
     if (!timestamp) return 'No date';
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
+    try {
+      const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Invalid date';
+    }
   };
 
   const getNoteIcon = (noteType) => {
@@ -90,11 +159,43 @@ function Dashboard() {
     }
   };
 
+const testFirestoreAccess = async () => {
+  try {
+    console.log("Testing Firestore access...");
+    
+    // Test notes access
+    const notesTest = await getDocs(query(collection(db, "notes"), where("owner", "==", currentUser.uid)));
+    console.log("Notes test result:", notesTest.docs.length, "documents");
+    
+    // Test quizResults access  
+    const quizzesTest = await getDocs(query(collection(db, "quizResults"), where("userId", "==", currentUser.uid)));
+    console.log("Quizzes test result:", quizzesTest.docs.length, "documents");
+    
+  } catch (error) {
+    console.error("Firestore test failed:", error);
+    console.log("Error code:", error.code);
+    console.log("Error message:", error.message);
+  }
+};
+
+useEffect(() => {
+  if (currentUser) {
+    fetchUserData();
+    testFirestoreAccess(); // Add this line
+  }
+}, [currentUser]);
+  const handleRefresh = () => {
+    fetchUserData();
+  };
+
   if (loading) {
     return (
       <div className="dashboard-loading">
         <div className="loading-spinner"></div>
         <p>Loading your dashboard...</p>
+        <button onClick={handleRefresh} style={{marginTop: '10px'}}>
+          🔄 Retry
+        </button>
       </div>
     );
   }
@@ -104,7 +205,35 @@ function Dashboard() {
       <div className="dashboard-header">
         <h2>Welcome to Your Dashboard</h2>
         <p>Manage your notes, quizzes, and learning materials</p>
+        <button 
+          onClick={handleRefresh}
+          className="refresh-btn"
+          style={{
+            background: '#6c757d',
+            color: 'white',
+            border: 'none',
+            padding: '8px 16px',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            marginTop: '10px'
+          }}
+        >
+          🔄 Refresh Data
+        </button>
       </div>
+      {/* Feedback Prompt Section */}
+<div className="feedback-prompt">
+  <div className="feedback-message">
+    <h3>Enjoying Lexora?</h3>
+    <p>Help us improve by sharing your feedback</p>
+  </div>
+  <button 
+    onClick={() => navigate("/feedback")}
+    className="feedback-btn"
+  >
+    💬 Give Feedback
+  </button>
+</div>
 
       {/* Notebook Options Section */}
       <div className="notebook-options-section">
@@ -124,13 +253,13 @@ function Dashboard() {
 
           {/* Advanced Python Notebook */}
           <div className="notebook-card">
-            <h3>🐍 Python Math Notebook</h3>
-            <p>Advanced computations with Python code and rich outputs</p>
+            <h3>Complex Math Notebook</h3>
+            <p>Advanced Mathematical practices</p>
             <button 
               className="notebook-card-btn"
-              onClick={() => navigate('/notebook/python')}
+              onClick={() => navigate('/notebook/complex-math/')}
             >
-              Open Python Notebook
+              Open Complex Notebook
             </button>
           </div>
 
@@ -209,9 +338,10 @@ function Dashboard() {
                       >
                         Open
                       </button>
+                      
                       <button 
                         className="action-btn secondary"
-                        onClick={() => handleCreateQuiz(note.id)}
+                        onClick={() => navigate('/quiz', { state: { selectedNoteId: note.id } })}
                       >
                         Quiz Me
                       </button>
@@ -246,21 +376,26 @@ function Dashboard() {
                 {userData.quizzes.map(quiz => (
                   <div key={quiz.id} className="item-card">
                     <div className="item-icon">❓</div>
-                    <h4>{quiz.title || 'Untitled Quiz'}</h4>
-                    <p>Created: {formatDate(quiz.createdAt)}</p>
-                    {quiz.score && <p className="quiz-score">Score: {quiz.score}</p>}
+                    <h4>{quiz.quizTitle || 'Quiz Results'}</h4>
+                    <p>Completed: {formatDate(quiz.completedAt)}</p>
+                    <p>Source: {quiz.sourceName || 'Unknown'}</p>
+                    {quiz.score !== undefined && (
+                      <p className={`quiz-score ${quiz.score >= 80 ? 'excellent' : quiz.score >= 60 ? 'good' : 'poor'}`}>
+                        Score: {quiz.score}%
+                      </p>
+                    )}
                     <div className="item-actions">
                       <button 
                         className="action-btn primary"
-                        onClick={() => handleOpenQuiz(quiz.id)}
+                        onClick={() => navigate(`/quiz-review/${quiz.id}`)}
                       >
-                        {quiz.score ? 'Review' : 'Start'}
+                        📊 Review
                       </button>
                       <button 
                         className="action-btn secondary"
                         onClick={() => handleCreateQuiz()}
                       >
-                        Retake
+                        🎯 New Quiz
                       </button>
                     </div>
                   </div>

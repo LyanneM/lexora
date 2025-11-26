@@ -11,7 +11,7 @@ function QuizSession() {
   const location = useLocation();
   const navigate = useNavigate();
   const { currentUser } = useAuth();
-  const { quizData, mode, timeLimit, sourceName, questionTypes } = location.state || {};
+  const { quizData, mode, timeLimit, sourceName, questionFormats, questionCount } = location.state || {};
   
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
@@ -22,26 +22,35 @@ function QuizSession() {
   const [showResults, setShowResults] = useState(false);
   const [tabSwitchCount, setTabSwitchCount] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState('');
+  const [showExportMenu, setShowExportMenu] = useState(false);
+  const [musicEnabled, setMusicEnabled] = useState(false);
+  const [audio, setAudio] = useState(null);
 
-  // Filter questions based on selected types
+  // Filter questions based on selected formats
   const filteredQuestions = React.useMemo(() => {
     if (!quizData?.questions) return [];
     
     let questions = quizData.questions;
     
-    if (questionTypes) {
+    if (questionFormats) {
       questions = questions.filter(question => {
-        if (!question?.type) return questionTypes.multipleChoice;
+        if (!question?.type) return questionFormats.multiple_choice;
         
         switch(question.type) {
           case 'multiple_choice':
-            return questionTypes.multipleChoice;
+            return questionFormats.multiple_choice;
           case 'fill_blank':
-            return questionTypes.fillInBlank;
+            return questionFormats.fill_blank;
           case 'true_false':
-            return questionTypes.trueFalse;
+            return questionFormats.true_false;
           case 'open_ended':
-            return questionTypes.openEnded;
+            return questionFormats.open_ended;
+          case 'essay':
+            return questionFormats.essay;
+          case 'structured':
+            return questionFormats.structured;
           default:
             return true;
         }
@@ -49,7 +58,7 @@ function QuizSession() {
     }
     
     return questions.filter(q => q && q.question);
-  }, [quizData?.questions, questionTypes]);
+  }, [quizData?.questions, questionFormats]);
 
   const currentQuestion = filteredQuestions?.[currentQuestionIndex];
   const totalQuestions = filteredQuestions?.length || 0;
@@ -90,7 +99,38 @@ function QuizSession() {
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, [mode, quizStarted, quizCompleted, tabSwitchCount]);
 
-  // Fullscreen handling for exam mode
+  // Music functionality
+  useEffect(() => {
+    const backgroundAudio = new Audio('/music/quiz-session.mp3'); 
+    backgroundAudio.loop = true;
+    backgroundAudio.volume = 0.2;
+    setAudio(backgroundAudio);
+
+    return () => {
+      if (backgroundAudio) {
+        backgroundAudio.pause();
+        backgroundAudio.currentTime = 0;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (audio) {
+      if (musicEnabled && quizStarted) {
+        audio.play().catch(error => {
+          console.log('Audio play failed:', error);
+        });
+      } else {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+    }
+  }, [musicEnabled, quizStarted, audio]);
+
+  const toggleMusic = () => {
+    setMusicEnabled(!musicEnabled);
+  };
+
   const enterFullscreen = useCallback(() => {
     const elem = document.documentElement;
     if (elem.requestFullscreen) {
@@ -127,56 +167,6 @@ function QuizSession() {
     }
   };
 
-  const handleAutoSubmit = async () => {
-    setQuizCompleted(true);
-    await saveQuizResults();
-  };
-
-  const handleSubmitQuiz = async () => {
-    setQuizCompleted(true);
-    await saveQuizResults();
-    setShowResults(true);
-  };
-
-  const saveQuizResults = async () => {
-    try {
-      const score = calculateScore();
-      const quizResult = {
-        userId: currentUser.uid,
-        quizTitle: `Quiz - ${quizData?.subject || 'Unknown Subject'}`,
-        sourceName,
-        mode,
-        questions: filteredQuestions.map((q, index) => ({
-          question: q?.question || 'No question text',
-          userAnswer: answers[index] || textAnswers[index] || 'Not answered',
-          correctAnswer: q?.correct_answer || 'No correct answer provided',
-          options: q?.options || [],
-          explanation: q?.explanation || 'No explanation provided',
-          type: q?.type || 'multiple_choice'
-        })),
-        score,
-        totalQuestions,
-        timeSpent: mode === 'exam' ? timeLimit - timeLeft : null,
-        tabSwitches: mode === 'exam' ? tabSwitchCount : null,
-        completedAt: new Date(),
-        generatedAt: quizData?.generated_at || new Date()
-      };
-
-      // Save to Firestore
-      await addDoc(collection(db, 'quizResults'), quizResult);
-
-      // Update user statistics
-      const userRef = doc(db, 'users', currentUser.uid);
-      await updateDoc(userRef, {
-        totalQuizzes: arrayUnion(quizResult),
-        lastQuizDate: new Date()
-      });
-
-    } catch (error) {
-      console.error('Error saving quiz results:', error);
-    }
-  };
-
   const calculateScore = () => {
     let correct = 0;
     filteredQuestions.forEach((question, index) => {
@@ -187,6 +177,119 @@ function QuizSession() {
       }
     });
     return totalQuestions > 0 ? Math.round((correct / totalQuestions) * 100) : 0;
+  };
+
+  const saveQuizResults = async () => {
+    try {
+      const score = calculateScore();
+      const correctCount = Object.keys(answers).filter(idx => 
+        answers[idx] === filteredQuestions[idx]?.correct_answer
+      ).length + Object.keys(textAnswers).filter(idx => 
+        textAnswers[idx]?.toLowerCase() === filteredQuestions[idx]?.correct_answer?.toLowerCase()
+      ).length;
+
+      const quizResult = {
+        userId: currentUser.uid,
+        quizTitle: `Quiz - ${sourceName || 'Unknown Source'}`,
+        sourceName: sourceName || 'Unknown',
+        mode: mode,
+        questions: filteredQuestions.map((q, index) => {
+          const userAnswer = answers[index] || textAnswers[index] || 'Not answered';
+          const correctAnswer = q?.correct_answer || 'Not provided';
+          const isCorrect = userAnswer.toString().toLowerCase() === correctAnswer.toString().toLowerCase();
+          
+          return {
+            question: q?.question || 'No question text',
+            userAnswer: userAnswer,
+            correctAnswer: correctAnswer,
+            isCorrect: isCorrect,
+            options: q?.options || [],
+            explanation: q?.explanation || 'No explanation provided',
+            type: q?.type || 'multiple_choice'
+          };
+        }),
+        score: score,
+        totalQuestions: totalQuestions,
+        correctAnswers: correctCount,
+        timeSpent: mode === 'exam' ? timeLimit - timeLeft : null,
+        tabSwitches: mode === 'exam' ? tabSwitchCount : null,
+        completedAt: new Date(),
+        createdAt: new Date()
+      };
+
+      console.log('Saving quiz result:', quizResult);
+
+      // Save to Firestore
+      const docRef = await addDoc(collection(db, 'quizResults'), quizResult);
+      console.log('Quiz saved with ID:', docRef.id);
+
+      // Also update user's quiz list
+      try {
+        const userRef = doc(db, 'users', currentUser.uid);
+        await updateDoc(userRef, {
+          quizzes: arrayUnion(docRef.id),
+          lastQuizDate: new Date()
+        });
+      } catch (userError) {
+        console.log('User update failed, but quiz was saved:', userError);
+      }
+
+      return { ...quizResult, id: docRef.id };
+
+    } catch (error) {
+      console.error('Error saving quiz results:', error);
+      throw error;
+    }
+  };
+
+  // Save quiz progress function
+  const saveQuizProgress = async () => {
+    if (isSaving) return;
+    
+    setIsSaving(true);
+    setSaveStatus('Saving...');
+    
+    try {
+      await saveQuizResults();
+      setSaveStatus('✓ Quiz saved!');
+      
+      setTimeout(() => {
+        setSaveStatus('');
+      }, 3000);
+      
+    } catch (error) {
+      console.error('Failed to save quiz:', error);
+      setSaveStatus('❌ Save failed');
+      
+      setTimeout(() => {
+        setSaveStatus('');
+      }, 3000);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Add auto-save on quiz completion
+  useEffect(() => {
+    if (quizCompleted && !showResults) {
+      saveQuizProgress();
+    }
+  }, [quizCompleted, showResults]);
+
+  const handleAutoSubmit = async () => {
+    setQuizCompleted(true);
+    await saveQuizResults();
+  };
+
+  const handleSubmitQuiz = async () => {
+    setQuizCompleted(true);
+    try {
+      await saveQuizResults();
+      setShowResults(true);
+    } catch (error) {
+      console.error('Failed to save quiz:', error);
+      setShowResults(true);
+    }
   };
 
   const formatTime = (seconds) => {
@@ -203,13 +306,106 @@ function QuizSession() {
     }
   };
 
-  const exportQuiz = async () => {
+  const exportQuiz = async (format = 'csv') => {
     try {
-      await QuizApiService.exportQuiz(filteredQuestions);
+      console.log('Starting export...', format);
+      
+      const exportData = {
+        quizTitle: `Quiz - ${sourceName || 'Unknown Source'}`,
+        sourceName: sourceName,
+        mode: mode,
+        score: calculateScore(),
+        totalQuestions: totalQuestions,
+        questions: filteredQuestions.map((q, index) => ({
+          question: q?.question || 'No question',
+          type: q?.type || 'multiple_choice',
+          userAnswer: answers[index] || textAnswers[index] || 'Not answered',
+          correctAnswer: q?.correct_answer || 'Not provided',
+          explanation: q?.explanation || 'No explanation provided',
+          options: q?.options || []
+        })),
+        completedAt: new Date().toISOString()
+      };
+
+      let success = false;
+
+      try {
+        if (format === 'pdf') {
+          success = await QuizApiService.exportQuizClientSide(exportData, null, 'pdf');
+        } else {
+          success = await QuizApiService.exportQuizClientSide(exportData, null, format);
+        }
+      } catch (serverError) {
+        console.log('Server export failed, using client-side:', serverError);
+        success = await QuizApiService.exportQuizClientSide(exportData, null, format);
+      }
+
+      if (success) {
+        showExportMessage(`Quiz exported successfully as ${format.toUpperCase()}!`, 'success');
+      }
+
     } catch (error) {
       console.error('Export failed:', error);
-      alert('Export failed. Please try again.');
+      showExportMessage(`Export failed: ${error.message}`, 'error');
     }
+  };
+
+  const showExportMessage = (message, type) => {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `export-message ${type}`;
+    messageDiv.textContent = message;
+    messageDiv.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: ${type === 'success' ? '#28a745' : '#dc3545'};
+      color: white;
+      padding: 12px 20px;
+      border-radius: 5px;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      font-weight: bold;
+    `;
+    document.body.appendChild(messageDiv);
+    
+    setTimeout(() => {
+      if (document.body.contains(messageDiv)) {
+        document.body.removeChild(messageDiv);
+      }
+    }, 4000);
+  };
+
+  const FloatingParticles = () => {
+    const [particles, setParticles] = useState([]);
+
+    useEffect(() => {
+      const newParticles = Array.from({ length: 15 }, (_, i) => ({
+        id: i,
+        size: Math.random() * 20 + 10,
+        left: Math.random() * 100,
+        animationDelay: Math.random() * 8,
+        duration: Math.random() * 4 + 4
+      }));
+      setParticles(newParticles);
+    }, []);
+
+    return (
+      <div className="floating-particles">
+        {particles.map(particle => (
+          <div
+            key={particle.id}
+            className="particle"
+            style={{
+              width: `${particle.size}px`,
+              height: `${particle.size}px`,
+              left: `${particle.left}%`,
+              animationDelay: `${particle.animationDelay}s`,
+              animationDuration: `${particle.duration}s`
+            }}
+          />
+        ))}
+      </div>
+    );
   };
 
   const renderQuestionContent = () => {
@@ -301,90 +497,6 @@ function QuizSession() {
     }
   };
 
-
-const [musicEnabled, setMusicEnabled] = useState(false);
-const [audio, setAudio] = useState(null);
-
-useEffect(() => {
-  const backgroundAudio = new Audio('/music/quiz-session.mp3'); 
-  backgroundAudio.loop = true;
-  backgroundAudio.volume = 0.2;
-  setAudio(backgroundAudio);
-
-  return () => {
-    if (backgroundAudio) {
-      backgroundAudio.pause();
-      backgroundAudio.currentTime = 0;
-    }
-  };
-}, []);
-
-useEffect(() => {
-  if (audio) {
-    if (musicEnabled && quizStarted) {
-      audio.play().catch(error => {
-        console.log('Audio play failed:', error);
-      });
-    } else {
-      audio.pause();
-      audio.currentTime = 0;
-    }
-  }
-}, [musicEnabled, quizStarted, audio]);
-
-const toggleMusic = () => {
-  setMusicEnabled(!musicEnabled);
-};
-
-
-const FloatingParticles = () => {
-  const [particles, setParticles] = useState([]);
-
-  useEffect(() => {
-    const newParticles = Array.from({ length: 15 }, (_, i) => ({
-      id: i,
-      size: Math.random() * 20 + 10,
-      left: Math.random() * 100,
-      animationDelay: Math.random() * 8,
-      duration: Math.random() * 4 + 4
-    }));
-    setParticles(newParticles);
-  }, []);
-
-  return (
-    <div className="floating-particles">
-      {particles.map(particle => (
-        <div
-          key={particle.id}
-          className="particle"
-          style={{
-            width: `${particle.size}px`,
-            height: `${particle.size}px`,
-            left: `${particle.left}%`,
-            animationDelay: `${particle.animationDelay}s`,
-            animationDuration: `${particle.duration}s`
-          }}
-        />
-      ))}
-    </div>
-  );
-};
-
-//music toggle button JSX
-<>
-  <FloatingParticles />
-  <div className="music-control">
-    <button 
-      className="music-toggle"
-      onClick={toggleMusic}
-      title={musicEnabled ? "Turn music off" : "Turn music on"}
-    >
-      {musicEnabled ? "🔊" : "🔇"}
-    </button>
-  </div>
-
-</>
-
   const getQuestionTypeBadge = () => {
     if (!currentQuestion?.type) return null;
 
@@ -419,10 +531,20 @@ const FloatingParticles = () => {
   if (!quizStarted) {
     return (
       <div className="quiz-session-container pre-start">
+        <FloatingParticles />
+        <div className="music-control">
+          <button 
+            className="music-toggle"
+            onClick={toggleMusic}
+            title={musicEnabled ? "Turn music off" : "Turn music on"}
+          >
+            {musicEnabled ? "🔊" : "🔇"}
+          </button>
+        </div>
         <div className="quiz-start-screen">
           <h1>Quiz Ready! 🎊</h1>
           <div className="quiz-info-card">
-            <h2>{quizData?.subject || 'General'} Quiz</h2>
+            <h2>{sourceName || 'General'} Quiz</h2>
             <div className="info-grid">
               <div className="info-item">
                 <span className="label">Mode:</span>
@@ -507,9 +629,33 @@ const FloatingParticles = () => {
             <button onClick={() => navigate('/quiz')} className="action-btn primary">
               📔 Generate New Quiz
             </button>
-            <button onClick={exportQuiz} className="action-btn secondary">
-              📥 Export Results
-            </button>
+            
+            <div className="export-dropdown">
+              <button 
+                onClick={() => setShowExportMenu(!showExportMenu)}
+                className="action-btn secondary export-toggle"
+              >
+                📥 Export Results ▼
+              </button>
+              
+              {showExportMenu && (
+                <div className="export-menu">
+                  <button onClick={() => exportQuiz('pdf')} className="export-option">
+                    📄 Export as PDF
+                  </button>
+                  <button onClick={() => exportQuiz('csv')} className="export-option">
+                    📊 Export as CSV
+                  </button>
+                  <button onClick={() => exportQuiz('json')} className="export-option">
+                    🔧 Export as JSON
+                  </button>
+                  <button onClick={() => exportQuiz('txt')} className="export-option">
+                    📝 Export as Text
+                  </button>
+                </div>
+              )}
+            </div>
+            
             <button onClick={() => navigate('/dashboard')} className="action-btn tertiary">
               📊 View Dashboard
             </button>
@@ -529,7 +675,7 @@ const FloatingParticles = () => {
             <button onClick={() => setShowResults(true)} className="action-btn primary">
               📊 View Results
             </button>
-            <button onClick={exportQuiz} className="action-btn secondary">
+            <button onClick={() => exportQuiz('csv')} className="action-btn secondary">
               📥 Export Quiz
             </button>
           </div>
@@ -554,10 +700,21 @@ const FloatingParticles = () => {
   // Main quiz interface
   return (
     <div className="quiz-session-container active">
+      <FloatingParticles />
+      <div className="music-control">
+        <button 
+          className="music-toggle"
+          onClick={toggleMusic}
+          title={musicEnabled ? "Turn music off" : "Turn music on"}
+        >
+          {musicEnabled ? "🔊" : "🔇"}
+        </button>
+      </div>
+
       {/* Header */}
       <div className="quiz-header">
         <div className="quiz-info">
-          <h2>{quizData?.subject || 'Quiz'}</h2>
+          <h2>{sourceName || 'Quiz'}</h2>
           <div className="progress-info">
             Question {currentQuestionIndex + 1} of {totalQuestions}
           </div>
@@ -611,18 +768,37 @@ const FloatingParticles = () => {
           ← Previous
         </button>
         
-        <div className="question-indicators">
-          {filteredQuestions.map((_, index) => (
-            <button
-              key={index}
-              className={`indicator ${
-                index === currentQuestionIndex ? 'active' : ''
-              } ${(answers[index] || textAnswers[index]) ? 'answered' : ''}`}
-              onClick={() => setCurrentQuestionIndex(index)}
-            >
-              {index + 1}
-            </button>
-          ))}
+        <div className="navigation-center">
+          <div className="question-indicators">
+            {filteredQuestions.map((_, index) => (
+              <button
+                key={index}
+                className={`indicator ${
+                  index === currentQuestionIndex ? 'active' : ''
+                } ${(answers[index] || textAnswers[index]) ? 'answered' : ''}`}
+                onClick={() => setCurrentQuestionIndex(index)}
+              >
+                {index + 1}
+              </button>
+            ))}
+          </div>
+          
+          {/* Save Quiz Button */}
+          <button 
+            onClick={saveQuizProgress}
+            disabled={isSaving}
+            className={`save-quiz-btn ${isSaving ? 'saving' : ''}`}
+            title="Save your progress"
+          >
+            {isSaving ? '💾 Saving...' : '💾 Save Quiz'}
+          </button>
+          
+          {/* Save Status */}
+          {saveStatus && (
+            <div className={`save-status ${saveStatus.includes('✓') ? 'success' : 'error'}`}>
+              {saveStatus}
+            </div>
+          )}
         </div>
 
         {currentQuestionIndex === totalQuestions - 1 ? (

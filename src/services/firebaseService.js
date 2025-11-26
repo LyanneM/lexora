@@ -163,6 +163,103 @@ export const quizzesService = {
       console.error("Error getting quiz:", error);
       throw error;
     }
+  },
+
+  // Quiz results operations
+  saveQuizResult: async (quizData) => {
+    try {
+      const docRef = await addDoc(collection(db, 'quizResults'), {
+        ...quizData,
+        createdAt: serverTimestamp()
+      });
+      return docRef.id;
+    } catch (error) {
+      console.error('Error saving quiz result:', error);
+      throw error;
+    }
+  },
+
+  // Get user's quiz results
+  getUserQuizResults: async (userId) => {
+    try {
+      const q = query(
+        collection(db, 'quizResults'),
+        where('userId', '==', userId),
+        orderBy('createdAt', 'desc')
+      );
+      
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+    } catch (error) {
+      console.error('Error fetching user quiz results:', error);
+      throw error;
+    }
+  },
+
+  // Get specific quiz result
+  getQuizResult: async (quizId) => {
+    try {
+      const docRef = doc(db, 'quizResults', quizId);
+      const docSnap = await getDoc(docRef);
+      
+      if (docSnap.exists()) {
+        return {
+          id: docSnap.id,
+          ...docSnap.data()
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error('Error fetching quiz result:', error);
+      throw error;
+    }
+  },
+
+  // Additional quiz methods
+  saveQuizAttempt: async (quizData) => {
+    try {
+      const docRef = await addDoc(collection(db, COLLECTIONS.QUIZZES), {
+        ...quizData,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        status: 'completed',
+        score: quizData.score || 0,
+        totalQuestions: quizData.questions?.length || 0
+      });
+      return docRef.id;
+    } catch (error) {
+      console.error("Error saving quiz attempt:", error);
+      throw error;
+    }
+  },
+
+  getQuizWithResults: async (quizId) => {
+    try {
+      const quizDoc = await getDoc(doc(db, COLLECTIONS.QUIZZES, quizId));
+      if (!quizDoc.exists()) return null;
+
+      const quizData = { id: quizDoc.id, ...quizDoc.data() };
+      
+      // Get results for this quiz
+      const resultsQuery = query(
+        collection(db, "quizResults"),
+        where("quizId", "==", quizId),
+        orderBy("createdAt", "desc")
+      );
+      const resultsSnapshot = await getDocs(resultsQuery);
+      const results = resultsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      return {
+        ...quizData,
+        results: results
+      };
+    } catch (error) {
+      console.error("Error getting quiz with results:", error);
+      throw error;
+    }
   }
 };
 

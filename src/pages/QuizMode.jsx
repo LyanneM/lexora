@@ -186,7 +186,7 @@ function QuizMode() {
     );
   }
 
-  const maxQuestions = Math.min(maxAvailableQuestions, 50);
+  const maxQuestions = Math.min(maxAvailableQuestions, 20);
 
   return (
     <>

@@ -1,430 +1,378 @@
-/* src/styles/math-notebook.css */
-.math-notebook-container {
+/* src/styles/geometry-notebook.css */
+.geometry-notebook {
   height: 100vh;
   display: flex;
   flex-direction: column;
   background: #1e1e1e;
-  color: white;
+  color: #ffffff;
 }
 
-.math-toolbar {
-  background: #2d2d30;
-  color: white;
-  padding: 1rem;
+.geometry-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 2rem;
+  padding: 1rem 2rem;
+  background: #2d2d30;
   border-bottom: 1px solid #3e3e42;
 }
 
-.math-title {
-  padding: 0.5rem;
-  border: 1px solid #3e3e42;
-  border-radius: 4px;
-  font-size: 1.2rem;
+.geometry-title {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 1.5rem;
   font-weight: bold;
-  min-width: 200px;
-  background: #1e1e1e;
-  color: white;
+  padding: 0.5rem;
+  border-bottom: 2px solid #4ecdc4;
+  min-width: 300px;
 }
 
-.math-tools {
+.geometry-title:focus {
+  outline: none;
+  border-color: #6aecd8;
+}
+
+.header-actions {
   display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+  gap: 1rem;
 }
 
-.math-tools button {
+.save-btn, .advanced-btn, .back-btn {
   padding: 0.5rem 1rem;
-  border: 1px solid #3e3e42;
+  border: none;
   border-radius: 4px;
-  background: #1e1e1e;
-  color: white;
   cursor: pointer;
-  transition: all 0.3s;
+  font-weight: bold;
+  transition: background-color 0.2s;
 }
 
-.math-tools button:hover,
-.math-tools button.active {
+.save-btn {
+  background: #4ecdc4;
+  color: #1e1e1e;
+}
+
+.save-btn:hover:not(:disabled) {
+  background: #6aecd8;
+}
+
+.save-btn:disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+
+.advanced-btn {
   background: #007acc;
-  border-color: #007acc;
+  color: white;
 }
 
-.math-actions {
+.advanced-btn:hover {
+  background: #0098ff;
+}
+
+.back-btn {
+  background: #555;
+  color: white;
+}
+
+.back-btn:hover {
+  background: #666;
+}
+
+.geometry-tool-nav {
   display: flex;
-  gap: 0.5rem;
+  background: #252526;
+  border-bottom: 1px solid #3e3e42;
+  padding: 0 2rem;
 }
 
-.math-actions button {
-  padding: 0.5rem 1rem;
-  border: 1px solid #3e3e42;
-  border-radius: 4px;
-  background: #007acc;
-  color: white;
+.geometry-tool-nav button {
+  padding: 1rem 1.5rem;
+  background: transparent;
+  border: none;
+  color: #cccccc;
   cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
 }
 
-.math-actions button:hover {
-  background: #005a9e;
+.geometry-tool-nav button:hover {
+  background: #2a2d2e;
+  color: #ffffff;
 }
 
-.math-content {
+.geometry-tool-nav button.active {
+  color: #4ecdc4;
+  border-bottom-color: #4ecdc4;
+  background: #2a2d2e;
+}
+
+.geometry-content {
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
 }
 
-/* Calculator Panel */
-.calculator-panel {
-  max-width: 600px;
-  margin: 0 auto;
-  background: #2d2d30;
-  border-radius: 10px;
-  padding: 1.5rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-}
-
-.calculator-display {
-  background: #1e1e1e;
-  border: 2px solid #3e3e42;
+.tool-panel {
+  background: #252526;
   border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  min-height: 80px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.calculator-input {
-  font-size: 1.2rem;
-  color: #ccc;
-  min-height: 1.5em;
-  word-wrap: break-word;
-}
-
-.calculator-result {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #007acc;
-  text-align: right;
-  margin-top: 0.5rem;
-}
-
-.calculator-buttons {
-  display: flex;
-  gap: 1rem;
-}
-
-.math-symbols {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.5rem;
-  width: 120px;
-}
-
-.math-symbol-btn {
-  padding: 0.8rem;
-  background: #3e3e42;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background 0.3s;
-}
-
-.math-symbol-btn:hover {
-  background: #007acc;
-}
-
-.calculator-grid {
-  flex: 1;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.5rem;
-}
-
-.calculator-grid button {
-  padding: 1rem;
-  background: #3e3e42;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1.1rem;
-  transition: background 0.3s;
-}
-
-.calculator-grid button:hover {
-  background: #007acc;
-}
-
-.calculator-grid button:nth-child(4n) {
-  background: #007acc;
-}
-
-.calculator-grid button:nth-child(4n):hover {
-  background: #005a9e;
-}
-
-.equals-btn {
-  background: #28a745 !important;
-  grid-column: span 2;
-}
-
-.equals-btn:hover {
-  background: #218838 !important;
-}
-
-/* Graphing Panel */
-.graphing-panel {
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-.graph-controls {
-  display: flex;
-  gap: 1rem;
+  padding: 2rem;
   margin-bottom: 2rem;
-  padding: 1rem;
-  background: #2d2d30;
-  border-radius: 8px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.graph-equation-input {
-  flex: 1;
-  padding: 0.8rem;
   border: 1px solid #3e3e42;
-  border-radius: 6px;
-  background: #1e1e1e;
-  color: white;
-  font-size: 1rem;
-  min-width: 200px;
 }
 
-.graph-controls select {
-  padding: 0.8rem;
-  border: 1px solid #3e3e42;
-  border-radius: 6px;
-  background: #1e1e1e;
-  color: white;
-  cursor: pointer;
-}
-
-.graph-controls button {
-  padding: 0.8rem 1.5rem;
-  background: #007acc;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.graph-controls button:hover {
-  background: #005a9e;
-}
-
-.graph-canvas-container {
-  background: #1e1e1e;
-  border: 2px solid #3e3e42;
-  border-radius: 8px;
-  padding: 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.graph-canvas {
-  background: #1e1e1e;
-  border-radius: 4px;
-}
-
-/* Geometry Panel */
-.geometry-panel {
-  max-width: 1000px;
-  margin: 0 auto;
-  display: flex;
-  gap: 2rem;
-}
-
-.geometry-tools {
-  width: 200px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.geometry-tools button {
-  padding: 1rem;
-  background: #2d2d30;
-  color: white;
-  border: 1px solid #3e3e42;
-  border-radius: 6px;
-  cursor: pointer;
-  text-align: left;
-  transition: background 0.3s;
-}
-
-.geometry-tools button:hover {
-  background: #007acc;
-  border-color: #007acc;
-}
-
-.geometry-canvas {
-  flex: 1;
-  background: #1e1e1e;
-  border: 2px solid #3e3e42;
-  border-radius: 8px;
-  min-height: 500px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.geometry-canvas canvas {
-  background: #1e1e1e;
-  border-radius: 4px;
-}
-
-/* Equations and Matrices Panel */  
-.equations-panel {
-  max-width: 1000px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-}
-
-.equation-solver, .matrix-calculator {
-  background: #2d2d30;
-  border-radius: 8px;
-  padding: 1.5rem;
-}
-
-.equation-solver h3, .matrix-calculator h3 {
-  color: #007acc;
-  margin-bottom: 1rem;
-  border-bottom: 2px solid #3e3e42;
+.tool-panel h3 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #4ecdc4;
+  border-bottom: 1px solid #3e3e42;
   padding-bottom: 0.5rem;
 }
 
-.equation-input {
-  width: 100%;
-  padding: 0.8rem;
-  border: 1px solid #3e3e42;
-  border-radius: 6px;
-  background: #1e1e1e;
-  color: white;
-  margin-bottom: 1rem;
-  font-size: 1rem;
+/* Graphing Styles */
+.graphing-controls {
+  margin-bottom: 2rem;
 }
 
-.equation-solver button {
-  padding: 0.8rem 1.5rem;
-  background: #007acc;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-bottom: 1rem;
-}
-
-.equation-solver button:hover {
-  background: #005a9e;
-}
-
-.solution-display {
-  background: #1e1e1e;
-  border: 1px solid #3e3e42;
-  border-radius: 6px;
-  padding: 1rem;
-  min-height: 100px;
-  color: #ccc;
-}
-
-.matrix-input {
-  margin-bottom: 1rem;
-}
-
-.matrix-input input {
-  width: 60px;
-  padding: 0.5rem;
-  margin: 0.2rem;
-  border: 1px solid #3e3e42;
-  border-radius: 4px;
-  background: #1e1e1e;
-  color: white;
-  text-align: center;
-}
-
-.matrix-operations {
+.function-input-group {
   display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
-.matrix-operations button {
-  padding: 0.6rem 1rem;
-  background: #3e3e42;
+.function-input-group label {
+  min-width: 120px;
+}
+
+.function-input {
+  flex: 1;
+  padding: 0.75rem;
+  background: #333;
+  border: 1px solid #555;
+  border-radius: 4px;
   color: white;
+  font-family: monospace;
+}
+
+.function-input:focus {
+  outline: none;
+  border-color: #4ecdc4;
+}
+
+.plot-btn {
+  padding: 0.75rem 1.5rem;
+  background: #4ecdc4;
+  color: #1e1e1e;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.plot-btn:hover:not(:disabled) {
+  background: #6aecd8;
+}
+
+.plot-btn:disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+
+.graph-result {
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.graph-result .error {
+  background: #5a1f1f;
+  color: #f48771;
+  padding: 0.75rem;
+  border-radius: 4px;
+  border: 1px solid #f48771;
+}
+
+.graph-result .success {
+  background: #2b5b2b;
+  color: #7fdb7f;
+  padding: 0.75rem;
+  border-radius: 4px;
+  border: 1px solid #7fdb7f;
+}
+
+.graph-container {
+  display: flex;
+  justify-content: center;
+  background: #1e1e1e;
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid #3e3e42;
+}
+
+.graph-canvas {
+  border-radius: 4px;
+  background: #1e1e1e;
+}
+
+/* Geometry Tools Styles */
+.geometry-workspace {
+  display: grid;
+  grid-template-columns: 250px 1fr 300px;
+  gap: 2rem;
+  height: 500px;
+}
+
+.shape-tools {
+  background: #2d2d30;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #3e3e42;
+}
+
+.shape-tools h4 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #4ecdc4;
+}
+
+.shape-tools button {
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background: #333;
+  color: white;
+  border: 1px solid #555;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.shape-tools button:hover {
+  background: #444;
+  border-color: #4ecdc4;
+}
+
+.instructions {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: #2d2d30;
+  border-radius: 4px;
+  border-left: 4px solid #4ecdc4;
+}
+
+.instructions p {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.drawing-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #1e1e1e;
+  border-radius: 8px;
+  border: 1px solid #3e3e42;
+}
+
+.geometry-canvas {
+  border-radius: 4px;
+  cursor: crosshair;
+  background: #1e1e1e;
+}
+
+.geometry-canvas:hover {
+  box-shadow: 0 0 0 2px #4ecdc4;
+}
+
+.measurements-panel {
+  background: #2d2d30;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #3e3e42;
+  overflow-y: auto;
+}
+
+.measurements-panel h4 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #4ecdc4;
+}
+
+.shape-measurements {
+  background: #333;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  border-left: 4px solid #ff6b6b;
+}
+
+.shape-measurements h5 {
+  margin: 0 0 0.5rem 0;
+  color: #ff6b6b;
+  text-transform: capitalize;
+}
+
+.measurement {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
   font-size: 0.9rem;
 }
 
-.matrix-operations button:hover {
-  background: #007acc;
+.prop-name {
+  color: #cccccc;
+  text-transform: capitalize;
 }
 
+.prop-value {
+  color: #4ecdc4;
+  font-weight: bold;
+  font-family: monospace;
+}
 
-@media (max-width: 768px) {
-  .math-toolbar {
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .geometry-workspace {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+    height: auto;
+  }
+  
+  .geometry-header {
     flex-direction: column;
     gap: 1rem;
   }
   
-  .math-tools {
+  .header-actions {
+    width: 100%;
     justify-content: center;
   }
-  
-  .calculator-buttons {
-    flex-direction: column;
-  }
-  
-  .math-symbols {
-    width: 100%;
-    grid-template-columns: repeat(4, 1fr);
-  }
-  
-  .graphing-panel, .geometry-panel, .equations-panel {
+}
+
+@media (max-width: 768px) {
+  .geometry-content {
     padding: 1rem;
   }
   
-  .geometry-panel {
-    flex-direction: column;
+  .tool-panel {
+    padding: 1rem;
   }
   
-  .geometry-tools {
-    width: 100%;
-    flex-direction: row;
-    overflow-x: auto;
-  }
-  
-  .equations-panel {
-    grid-template-columns: 1fr;
-  }
-  
-  .graph-controls {
+  .function-input-group {
     flex-direction: column;
     align-items: stretch;
   }
   
-  .graph-equation-input {
-    min-width: auto;
+  .graph-container,
+  .drawing-area {
+    overflow-x: auto;
+  }
+  
+  .graph-canvas,
+  .geometry-canvas {
+    width: 100% !important;
+    height: auto !important;
   }
 }

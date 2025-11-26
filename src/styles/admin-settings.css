@@ -1,0 +1,406 @@
+.admin-settings {
+  padding: 20px 0;
+  background: rgba(10, 10, 20, 0.95);
+  min-height: 100vh;
+}
+
+.settings-header {
+  margin-bottom: 30px;
+  text-align: center;
+  padding: 30px;
+  background: linear-gradient(135deg, rgba(15, 12, 41, 0.9) 0%, rgba(48, 43, 99, 0.9) 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(138, 43, 226, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.settings-header h2 {
+  margin: 0 0 12px 0;
+  color: #ffffff;
+  font-size: 2.2rem;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.settings-header p {
+  margin: 0;
+  color: #9370DB;
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+.settings-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 0;
+  margin-bottom: 30px;
+  background: rgba(15, 12, 41, 0.9);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(138, 43, 226, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.settings-sidebar {
+  background: linear-gradient(180deg, #0f0c29 0%, #1a1738 100%);
+  padding: 0;
+  border-right: 1px solid rgba(138, 43, 226, 0.3);
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px 25px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(138, 43, 226, 0.2);
+  color: #d8d8d8;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  width: 100%;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.sidebar-item:last-child {
+  border-bottom: none;
+}
+
+.sidebar-item:hover {
+  background: rgba(138, 43, 226, 0.1);
+  color: #ffffff;
+  transform: translateX(5px);
+  border-right: 3px solid #8A2BE2;
+}
+
+.sidebar-item.active {
+  background: linear-gradient(90deg, rgba(138, 43, 226, 0.2) 0%, transparent 100%);
+  color: #8A2BE2;
+  border-right: 3px solid #8A2BE2;
+  text-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+}
+
+.sidebar-icon {
+  font-size: 1.3rem;
+  width: 24px;
+  text-align: center;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.sidebar-name {
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.3px;
+}
+
+.settings-content {
+  background: rgba(15, 12, 41, 0.8);
+  padding: 40px;
+  min-height: 500px;
+  border-left: 1px solid rgba(138, 43, 226, 0.2);
+}
+
+.settings-section h3 {
+  margin: 0 0 30px 0;
+  color: #ffffff;
+  font-size: 1.6rem;
+  border-bottom: 2px solid rgba(138, 43, 226, 0.4);
+  padding-bottom: 15px;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.setting-group {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.setting-label {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: #f0f0ff;
+  font-weight: 600;
+  font-size: 1.05rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.setting-input, .setting-textarea {
+  padding: 14px 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(138, 43, 226, 0.3);
+  border-radius: 10px;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.setting-input::placeholder, .setting-textarea::placeholder {
+  color: #a0a0c0;
+  opacity: 0.7;
+}
+
+.setting-input:focus, .setting-textarea:focus {
+  outline: none;
+  border-color: #8A2BE2;
+  box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.25), inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.4);
+  transform: translateY(-1px);
+}
+
+.setting-textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.5;
+}
+
+.setting-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 25px;
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(138, 43, 226, 0.2);
+}
+
+.setting-row:last-child {
+  border-bottom: none;
+}
+
+.setting-toggle {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: #f0f0ff;
+  cursor: pointer;
+  font-weight: 600;
+  min-width: 220px;
+  font-size: 1.05rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.setting-toggle input {
+  display: none;
+}
+
+.toggle-slider {
+  position: relative;
+  width: 54px;
+  height: 28px;
+  background: rgba(138, 43, 226, 0.3);
+  border-radius: 14px;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  background: #ffffff;
+  border-radius: 50%;
+  top: 3px;
+  left: 3px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.setting-toggle input:checked + .toggle-slider {
+  background: linear-gradient(45deg, #8A2BE2, #6A0DAD);
+}
+
+.setting-toggle input:checked + .toggle-slider::before {
+  transform: translateX(26px);
+  background: #ffffff;
+}
+
+.setting-description {
+  color: #b8b8d0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  flex: 1;
+  margin-top: 4px;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.settings-actions {
+  display: flex;
+  gap: 18px;
+  justify-content: flex-end;
+  padding: 30px;
+  background: rgba(15, 12, 41, 0.9);
+  border-top: 1px solid rgba(138, 43, 226, 0.3);
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.save-btn {
+  padding: 14px 35px;
+  background: linear-gradient(45deg, #8A2BE2, #6A0DAD);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1.05rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(138, 43, 226, 0.4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.save-btn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(138, 43, 226, 0.5);
+  background: linear-gradient(45deg, #7a1ad1, #5a0a9d);
+}
+
+.save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
+}
+
+.reset-btn {
+  padding: 14px 35px;
+  background: rgba(138, 43, 226, 0.1);
+  color: #e0e0ff;
+  border: 1px solid rgba(138, 43, 226, 0.3);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.reset-btn:hover {
+  background: rgba(138, 43, 226, 0.2);
+  border-color: rgba(138, 43, 226, 0.5);
+  color: #ffffff;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(138, 43, 226, 0.3);
+}
+
+/* Platform Settings Specific */
+.platform-settings .setting-group {
+  max-width: 600px;
+}
+
+/* API Settings Specific */
+.api-settings .setting-row {
+  flex-direction: column;
+  gap: 12px;
+}
+
+.api-settings .setting-label {
+  width: 100%;
+}
+
+/* Security Settings Specific */
+.security-settings .setting-group {
+  max-width: 500px;
+}
+
+/* Notifications Settings Specific */
+.notifications-settings .setting-row {
+  align-items: center;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .settings-layout {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  
+  .settings-sidebar {
+    border-right: none;
+    border-bottom: 1px solid rgba(138, 43, 226, 0.3);
+  }
+  
+  .sidebar-item {
+    padding: 18px 25px;
+  }
+  
+  .sidebar-item:hover {
+    transform: translateY(-2px);
+  }
+  
+  .settings-content {
+    padding: 30px;
+    border-left: none;
+    border-top: 1px solid rgba(138, 43, 226, 0.3);
+  }
+}
+
+@media (max-width: 768px) {
+  .settings-content {
+    padding: 25px;
+  }
+  
+  .setting-row {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .setting-toggle {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .settings-actions {
+    flex-direction: column;
+    padding: 25px;
+  }
+  
+  .save-btn, .reset-btn {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .sidebar-item {
+    padding: 16px 20px;
+    font-size: 0.95rem;
+  }
+  
+  .sidebar-icon {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .settings-content {
+    padding: 20px;
+  }
+  
+  .settings-header {
+    padding: 20px;
+  }
+  
+  .settings-header h2 {
+    font-size: 1.8rem;
+  }
+  
+  .settings-section h3 {
+    font-size: 1.4rem;
+  }
+  
+  .setting-input, .setting-textarea {
+    padding: 12px 14px;
+    font-size: 0.95rem;
+  }
+  
+  .settings-actions {
+    padding: 20px;
+  }
+}

@@ -16,6 +16,8 @@ function AppRoutes() {
         <Route path="/" element={<Home />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/notes" element={<Notes />} />
+        <Route path="/notebook-new/:id?" element={<EnhancedNotebook />} />
+        <Route path="/notebook-enhanced/:id?" element={<EnhancedNotebook />} />
         <Route path="/quiz" element={<Quiz />} />
         <Route path="/adminpanel" element={<AdminPanel />} />
         <Route path="/login" element={<Login />} />

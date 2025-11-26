@@ -1,163 +1,83 @@
 // src/pages/MathNotebook.jsx
 import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { db } from "../firebase";
-import { collection, doc, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { useAuth } from "../context/AuthContext";
+import { notesService } from "../services/firebaseService";
 import "../styles/math-notebook.css";
 
 const API_BASE_URL = "http://localhost:8000";
 
-function MathNotebook() {
+function GeometryNotebook() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   
-  const [note, setNote] = useState(null);
-  const [title, setTitle] = useState("Math Notebook");
+  const [title, setTitle] = useState("Geometry Notebook");
+  const [activeTool, setActiveTool] = useState("graphing");
   const [isSaving, setIsSaving] = useState(false);
-  const [activeTool, setActiveTool] = useState("calculator");
-  const [graphElements, setGraphElements] = useState([]);
-  const [calculatorInput, setCalculatorInput] = useState("");
-  const [calculatorResult, setCalculatorResult] = useState("");
-  const [graphEquation, setGraphEquation] = useState("x**2");
-  const [graphType, setGraphType] = useState("function");
-  const [graphData, setGraphData] = useState(null);
-  const [equationInput, setEquationInput] = useState("");
-  const [equationSolution, setEquationSolution] = useState("");
-  const [matrixInput, setMatrixInput] = useState([
-    ['1', '2'],
-    ['3', '4']
-  ]);
-
+  
+  // Graphing state
+  const [functionInput, setFunctionInput] = useState("x**2");
+  const [graphResult, setGraphResult] = useState(null);
+  const [isPlotting, setIsPlotting] = useState(false);
+  
+  // Geometry state
+  const [shapes, setShapes] = useState([]);
+  const [selectedShape, setSelectedShape] = useState(null);
+  const [measurements, setMeasurements] = useState({});
+  
   const canvasRef = useRef(null);
-  const graphRef = useRef(null);
+  const graphCanvasRef = useRef(null);
 
-  // Calculate using backend
-  const calculateMath = async (expression, operation = "evaluate") => {
+  // Backend integration for advanced graphing
+  const plotFunction = async () => {
+    if (!functionInput.trim()) return;
+    
+    setIsPlotting(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/calculate-math`, {
+      const response = await fetch(`${API_BASE_URL}/plot-function`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          expression: expression,
-          operation: operation
+          function: functionInput,
+          x_range: [-10, 10],
+          y_range: [-10, 10]
         })
       });
 
       const result = await response.json();
       
       if (result.success) {
-        return result.result;
+        setGraphResult(result);
+        renderGraph(result.plot_data);
       } else {
-        throw new Error(result.error);
+        setGraphResult({ error: result.error });
       }
     } catch (error) {
-      console.error("Calculation error:", error);
-      return "Error";
-    }
-  };
-
-  // Frontend calculator as fallback
-  const calculateFrontend = (expression) => {
-    try {
-      // Basic arithmetic
-      let result = expression
-        .replace(/π/g, Math.PI)
-        .replace(/e/g, Math.E)
-        .replace(/√(\d+)/g, 'Math.sqrt($1)')
-        .replace(/(\d+)!/g, 'factorial($1)')
-        .replace(/sin\(/g, 'Math.sin(')
-        .replace(/cos\(/g, 'Math.cos(')
-        .replace(/tan\(/g, 'Math.tan(')
-        .replace(/log\(/g, 'Math.log10(')
-        .replace(/ln\(/g, 'Math.log(')
-        .replace(/\^/g, '**');
-
-      // Evaluate the expression
-      const evalResult = eval(result);
-      return evalResult.toString();
-    } catch (error) {
-      return "Error";
-    }
-  };
-
-  const factorial = (n) => {
-    if (n === 0 || n === 1) return 1;
-    let result = 1;
-    for (let i = 2; i <= n; i++) {
-      result *= i;
-    }
-    return result;
-  };
-
-  const handleCalculatorInput = async (value) => {
-    if (value === "=") {
-      if (calculatorInput.trim()) {
-        try {
-          // Try backend first, fallback to frontend
-          const result = await calculateMath(calculatorInput, "evaluate");
-          setCalculatorResult(result);
-        } catch (error) {
-          const result = calculateFrontend(calculatorInput);
-          setCalculatorResult(result);
-        }
-      }
-    } else if (value === "C") {
-      setCalculatorInput("");
-      setCalculatorResult("");
-    } else if (value === "⌫") {
-      setCalculatorInput(prev => prev.slice(0, -1));
-    } else {
-      setCalculatorInput(prev => prev + value);
-    }
-  };
-
-  const solveEquation = async () => {
-    if (equationInput.trim()) {
-      try {
-        const solution = await calculateMath(equationInput, "solve");
-        setEquationSolution(solution);
-      } catch (error) {
-        setEquationSolution("Error solving equation");
-      }
-    }
-  };
-
-  const plotGraph = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/plot-graph`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          equation: graphEquation,
-          graph_type: graphType,
-          x_range: [-10, 10]
-        })
-      });
-
-      const result = await response.json();
-      
-      if (result.success && result.points) {
-        setGraphData(result.points);
-        renderGraph(result.points);
-      } else {
-        // Fallback to frontend graphing
-        renderGraphFrontend();
-      }
-    } catch (error) {
-      console.error("Graph plotting error:", error);
+      setGraphResult({ error: `Connection error: ${error.message}` });
       // Fallback to frontend graphing
       renderGraphFrontend();
     }
+    setIsPlotting(false);
+  };
+
+  const renderGraph = (plotData) => {
+    const canvas = graphCanvasRef.current;
+    if (!canvas || !plotData) return;
+
+    const img = new Image();
+    img.onload = () => {
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    };
+    img.src = `data:image/png;base64,${plotData}`;
   };
 
   const renderGraphFrontend = () => {
-    const canvas = graphRef.current;
+    const canvas = graphCanvasRef.current;
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
@@ -201,18 +121,18 @@ function MathNotebook() {
     // Y-axis
     ctx.beginPath();
     ctx.moveTo(width / 2, 0);
-    ctx.lineTo(width / 2, height);
+      ctx.lineTo(width / 2, height);
     ctx.stroke();
 
-    // Plot function if equation exists
-    if (graphEquation) {
+    // Plot function
+    if (functionInput) {
       ctx.strokeStyle = '#ff6b6b';
       ctx.lineWidth = 3;
       ctx.beginPath();
 
       for (let x = -10; x <= 10; x += 0.1) {
         try {
-          const y = eval(graphEquation.replace(/x/g, `(${x})`).replace(/\^/g, '**'));
+          const y = eval(functionInput.replace(/x/g, `(${x})`).replace(/\^/g, '**'));
           const pixelX = (x + 10) * (width / 20);
           const pixelY = height - ((y + 10) * (height / 20));
           
@@ -229,287 +149,350 @@ function MathNotebook() {
     }
   };
 
-  const renderGraph = (points) => {
-    const canvas = graphRef.current;
-    if (!canvas || !points) return;
+  // Geometry functions
+  const calculateShapeProperties = (shape) => {
+    switch (shape.type) {
+      case 'rectangle':
+        const width = Math.abs(shape.points[1].x - shape.points[0].x);
+        const height = Math.abs(shape.points[1].y - shape.points[0].y);
+        return {
+          area: width * height,
+          perimeter: 2 * (width + height),
+          width,
+          height
+        };
+      
+      case 'circle':
+        const radius = Math.sqrt(
+          Math.pow(shape.points[1].x - shape.points[0].x, 2) +
+          Math.pow(shape.points[1].y - shape.points[0].y, 2)
+        );
+        return {
+          area: Math.PI * radius * radius,
+          circumference: 2 * Math.PI * radius,
+          radius
+        };
+      
+      case 'triangle':
+        const side1 = Math.sqrt(
+          Math.pow(shape.points[1].x - shape.points[0].x, 2) +
+          Math.pow(shape.points[1].y - shape.points[0].y, 2)
+        );
+        const side2 = Math.sqrt(
+          Math.pow(shape.points[2].x - shape.points[1].x, 2) +
+          Math.pow(shape.points[2].y - shape.points[1].y, 2)
+        );
+        const side3 = Math.sqrt(
+          Math.pow(shape.points[0].x - shape.points[2].x, 2) +
+          Math.pow(shape.points[0].y - shape.points[2].y, 2)
+        );
+        const s = (side1 + side2 + side3) / 2;
+        return {
+          area: Math.sqrt(s * (s - side1) * (s - side2) * (s - side3)),
+          perimeter: side1 + side2 + side3,
+          sides: [side1, side2, side3]
+        };
+      
+      default:
+        return {};
+    }
+  };
+
+  const addShape = (type) => {
+    const newShape = {
+      id: Date.now(),
+      type,
+      points: [],
+      color: `hsl(${Math.random() * 360}, 70%, 60%)`
+    };
+    setShapes([...shapes, newShape]);
+    setSelectedShape(newShape);
+  };
+
+  const handleCanvasClick = (e) => {
+    if (!selectedShape || selectedShape.points.length >= 
+        (selectedShape.type === 'triangle' ? 3 : 2)) return;
+
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    const point = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    };
+
+    const updatedShape = {
+      ...selectedShape,
+      points: [...selectedShape.points, point]
+    };
+
+    setShapes(shapes.map(shape => 
+      shape.id === selectedShape.id ? updatedShape : shape
+    ));
+
+    // Calculate properties when shape is complete
+    if ((selectedShape.type === 'triangle' && updatedShape.points.length === 3) ||
+        (selectedShape.type !== 'triangle' && updatedShape.points.length === 2)) {
+      const properties = calculateShapeProperties(updatedShape);
+      setMeasurements(prev => ({
+        ...prev,
+        [updatedShape.id]: properties
+      }));
+    }
+  };
+
+  const renderShapes = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
-    const width = canvas.width;
-    const height = canvas.height;
-
-    // Clear canvas
-    ctx.fillStyle = '#1e1e1e';
-    ctx.fillRect(0, 0, width, height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Draw grid
     ctx.strokeStyle = '#3e3e42';
     ctx.lineWidth = 1;
-
-    // Vertical lines
-    for (let x = 0; x <= width; x += 50) {
+    
+    for (let x = 0; x <= canvas.width; x += 20) {
       ctx.beginPath();
       ctx.moveTo(x, 0);
-      ctx.lineTo(x, height);
+      ctx.lineTo(x, canvas.height);
       ctx.stroke();
     }
-
-    // Horizontal lines
-    for (let y = 0; y <= height; y += 50) {
+    
+    for (let y = 0; y <= canvas.height; y += 20) {
       ctx.beginPath();
       ctx.moveTo(0, y);
-      ctx.lineTo(width, y);
+      ctx.lineTo(canvas.width, y);
       ctx.stroke();
     }
 
-    // Draw axes
-    ctx.strokeStyle = '#007acc';
-    ctx.lineWidth = 2;
-    
-    // X-axis
-    ctx.beginPath();
-    ctx.moveTo(0, height / 2);
-    ctx.lineTo(width, height / 2);
-    ctx.stroke();
+    // Draw shapes
+    shapes.forEach(shape => {
+      ctx.strokeStyle = shape.color;
+      ctx.lineWidth = 2;
+      ctx.fillStyle = shape.color + '40';
 
-    // Y-axis
-    ctx.beginPath();
-    ctx.moveTo(width / 2, 0);
-    ctx.lineTo(width / 2, height);
-    ctx.stroke();
-
-    // Plot the points from backend
-    if (points && points.length > 0) {
-      ctx.strokeStyle = '#ff6b6b';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-
-      points.forEach((point, index) => {
-        const pixelX = (point.x + 10) * (width / 20);
-        const pixelY = height - ((point.y + 10) * (height / 20));
+      switch (shape.type) {
+        case 'rectangle':
+          if (shape.points.length === 2) {
+            const [p1, p2] = shape.points;
+            const width = p2.x - p1.x;
+            const height = p2.y - p1.y;
+            ctx.fillRect(p1.x, p1.y, width, height);
+            ctx.strokeRect(p1.x, p1.y, width, height);
+          }
+          break;
         
-        if (index === 0) {
-          ctx.moveTo(pixelX, pixelY);
-        } else {
-          ctx.lineTo(pixelX, pixelY);
-        }
-      });
-      
-      ctx.stroke();
-    }
-  };
+        case 'circle':
+          if (shape.points.length === 2) {
+            const [center, edge] = shape.points;
+            const radius = Math.sqrt(
+              Math.pow(edge.x - center.x, 2) + Math.pow(edge.y - center.y, 2)
+            );
+            ctx.beginPath();
+            ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.stroke();
+          }
+          break;
+        
+        case 'triangle':
+          if (shape.points.length === 3) {
+            ctx.beginPath();
+            ctx.moveTo(shape.points[0].x, shape.points[0].y);
+            ctx.lineTo(shape.points[1].x, shape.points[1].y);
+            ctx.lineTo(shape.points[2].x, shape.points[2].y);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+          }
+          break;
+      }
 
-  const handleMatrixInputChange = (row, col, value) => {
-    const newMatrix = [...matrixInput];
-    newMatrix[row][col] = value;
-    setMatrixInput(newMatrix);
+      // Draw points
+      shape.points.forEach(point => {
+        ctx.fillStyle = '#ff6b6b';
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 4, 0, 2 * Math.PI);
+        ctx.fill();
+      });
+    });
   };
 
   useEffect(() => {
-    if (activeTool === "graph" && graphRef.current) {
-      plotGraph();
-    }
-  }, [graphEquation, graphType, activeTool]);
+    renderShapes();
+  }, [shapes]);
 
-  const mathSymbols = [
-    'π', 'e', '√', '^', '(', ')', 'sin', 'cos', 'tan', 'log', 'ln'
-  ];
+  useEffect(() => {
+    if (activeTool === 'graphing') {
+      renderGraphFrontend();
+    }
+  }, [functionInput, activeTool]);
+
+  const saveNotebook = async () => {
+    setIsSaving(true);
+    try {
+      const notebookData = {
+        title,
+        type: "geometry",
+        content: JSON.stringify({
+          functionInput,
+          shapes,
+          measurements
+        }),
+        updatedAt: new Date(),
+        owner: currentUser.uid,
+        createdAt: id && id !== "create" ? undefined : new Date()
+      };
+
+      if (id && id !== "create") {
+        await notesService.updateNote(id, notebookData);
+      } else {
+        const newId = await notesService.createNote(notebookData);
+        navigate(`/notebook/geometry/${newId}`);
+      }
+    } catch (error) {
+      console.error("Error saving notebook:", error);
+    }
+    setIsSaving(false);
+  };
 
   return (
-    <div className="math-notebook-container">
-      <div className="math-toolbar">
+    <div className="geometry-notebook">
+      {/* Header */}
+      <div className="geometry-header">
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="math-title"
-          placeholder="Math Notebook Title"
+          className="geometry-title"
+          placeholder="Geometry Notebook"
         />
         
-        <div className="math-tools">
-          <button 
-            className={activeTool === "calculator" ? "active" : ""}
-            onClick={() => setActiveTool("calculator")}
-          >
-            🧮 Calculator
+        <div className="header-actions">
+          <button onClick={saveNotebook} disabled={isSaving} className="save-btn">
+            {isSaving ? "💾 Saving..." : "💾 Save"}
           </button>
-          <button 
-            className={activeTool === "graph" ? "active" : ""}
-            onClick={() => setActiveTool("graph")}
-          >
-            📈 Graphing
+          <button onClick={() => navigate("/notebook/complex-math/create")} className="advanced-btn">
+            🧮 Advanced Math
           </button>
-          <button 
-            className={activeTool === "geometry" ? "active" : ""}
-            onClick={() => setActiveTool("geometry")}
-          >
-            📐 Geometry
-          </button>
-          <button 
-            className={activeTool === "equations" ? "active" : ""}
-            onClick={() => setActiveTool("equations")}
-          >
-            ⚖️ Equations
-          </button>
-        </div>
-
-        <div className="math-actions">
-          <button onClick={() => navigate("/notebook/python")}>
-            🐍 Advanced Mode
-          </button>
-          <button onClick={() => navigate("/dashboard")}>
+          <button onClick={() => navigate("/dashboard")} className="back-btn">
             ← Dashboard
           </button>
         </div>
       </div>
 
-      <div className="math-content">
-        {/* Calculator Panel */}
-        {activeTool === "calculator" && (
-          <div className="calculator-panel">
-            <div className="calculator-display">
-              <div className="calculator-input">{calculatorInput}</div>
-              <div className="calculator-result">{calculatorResult}</div>
-            </div>
-            
-            <div className="calculator-buttons">
-              <div className="math-symbols">
-                {mathSymbols.map(symbol => (
-                  <button 
-                    key={symbol}
-                    onClick={() => handleCalculatorInput(symbol)}
-                    className="math-symbol-btn"
-                  >
-                    {symbol}
-                  </button>
-                ))}
-              </div>
-              
-              <div className="calculator-grid">
-                <button onClick={() => handleCalculatorInput('C')}>C</button>
-                <button onClick={() => handleCalculatorInput('⌫')}>⌫</button>
-                <button onClick={() => handleCalculatorInput('%')}>%</button>
-                <button onClick={() => handleCalculatorInput('/')}>/</button>
+      {/* Tool Navigation */}
+      <div className="geometry-tool-nav">
+        <button 
+          className={activeTool === "graphing" ? "active" : ""}
+          onClick={() => setActiveTool("graphing")}
+        >
+          📈 Graphing
+        </button>
+        <button 
+          className={activeTool === "shapes" ? "active" : ""}
+          onClick={() => setActiveTool("shapes")}
+        >
+          📐 Geometry Tools
+        </button>
+      </div>
 
-                <button onClick={() => handleCalculatorInput('7')}>7</button>
-                <button onClick={() => handleCalculatorInput('8')}>8</button>
-                <button onClick={() => handleCalculatorInput('9')}>9</button>
-                <button onClick={() => handleCalculatorInput('*')}>×</button>
-
-                <button onClick={() => handleCalculatorInput('4')}>4</button>
-                <button onClick={() => handleCalculatorInput('5')}>5</button>
-                <button onClick={() => handleCalculatorInput('6')}>6</button>
-                <button onClick={() => handleCalculatorInput('-')}>-</button>
-
-                <button onClick={() => handleCalculatorInput('1')}>1</button>
-                <button onClick={() => handleCalculatorInput('2')}>2</button>
-                <button onClick={() => handleCalculatorInput('3')}>3</button>
-                <button onClick={() => handleCalculatorInput('+')}>+</button>
-
-                <button onClick={() => handleCalculatorInput('0')}>0</button>
-                <button onClick={() => handleCalculatorInput('.')}>.</button>
-                <button onClick={() => handleCalculatorInput('(')}>(</button>
-                <button onClick={() => handleCalculatorInput(')')}>)</button>
-
+      {/* Main Content */}
+      <div className="geometry-content">
+        {/* Graphing Panel */}
+        {activeTool === "graphing" && (
+          <div className="tool-panel">
+            <h3>Function Graphing</h3>
+            <div className="graphing-controls">
+              <div className="function-input-group">
+                <label>Function f(x):</label>
+                <input
+                  type="text"
+                  value={functionInput}
+                  onChange={(e) => setFunctionInput(e.target.value)}
+                  placeholder="x**2, sin(x), exp(x), etc."
+                  className="function-input"
+                />
                 <button 
-                  onClick={() => handleCalculatorInput('=')}
-                  className="equals-btn"
+                  onClick={plotFunction} 
+                  disabled={isPlotting}
+                  className="plot-btn"
                 >
-                  =
+                  {isPlotting ? "⏳ Plotting..." : "📊 Plot Function"}
                 </button>
               </div>
-            </div>
-          </div>
-        )}
-
-        {/* Graphing Panel */}
-        {activeTool === "graph" && (
-          <div className="graphing-panel">
-            <div className="graph-controls">
-              <input
-                type="text"
-                value={graphEquation}
-                onChange={(e) => setGraphEquation(e.target.value)}
-                placeholder="Enter function (e.g., x**2, sin(x), 2*x+1)"
-                className="graph-equation-input"
-              />
-              <select 
-                value={graphType} 
-                onChange={(e) => setGraphType(e.target.value)}
-              >
-                <option value="function">Function</option>
-                <option value="parametric">Parametric</option>
-                <option value="polar">Polar</option>
-              </select>
-              <button onClick={plotGraph}>Plot Graph</button>
+              
+              {graphResult && (
+                <div className="graph-result">
+                  {graphResult.error ? (
+                    <div className="error">Error: {graphResult.error}</div>
+                  ) : (
+                    <div className="success">Function plotted successfully!</div>
+                  )}
+                </div>
+              )}
             </div>
             
-            <div className="graph-canvas-container">
+            <div className="graph-container">
               <canvas 
-                ref={graphRef}
+                ref={graphCanvasRef}
                 width={800}
-                height={600}
+                height={500}
                 className="graph-canvas"
               />
             </div>
           </div>
         )}
 
-        {/* Geometry Panel */}
-        {activeTool === "geometry" && (
-          <div className="geometry-panel">
-            <div className="geometry-tools">
-              <button>📐 Draw Line</button>
-              <button>⭕ Draw Circle</button>
-              <button>△ Draw Triangle</button>
-              <button>□ Draw Rectangle</button>
-              <button>📏 Measure</button>
-              <button>🔄 Transform</button>
-            </div>
-            <div className="geometry-canvas">
-              <canvas ref={canvasRef} />
-            </div>
-          </div>
-        )}
-
-        {/* Equations Panel */}
-        {activeTool === "equations" && (
-          <div className="equations-panel">
-            <div className="equation-solver">
-              <h3>Equation Solver</h3>
-              <input
-                type="text"
-                value={equationInput}
-                onChange={(e) => setEquationInput(e.target.value)}
-                placeholder="Enter equation (e.g., 2*x + 5 = 13, x**2 - 4 = 0)"
-                className="equation-input"
-              />
-              <button onClick={solveEquation}>Solve</button>
-              <div className="solution-display">
-                {equationSolution || "Solution will appear here..."}
+        {/* Geometry Tools Panel */}
+        {activeTool === "shapes" && (
+          <div className="tool-panel">
+            <h3>Geometry Tools</h3>
+            <div className="geometry-workspace">
+              <div className="shape-tools">
+                <h4>Add Shapes</h4>
+                <button onClick={() => addShape('rectangle')}>⬜ Rectangle</button>
+                <button onClick={() => addShape('circle')}>⭕ Circle</button>
+                <button onClick={() => addShape('triangle')}>△ Triangle</button>
+                
+                <div className="instructions">
+                  <p><strong>Instructions:</strong></p>
+                  <p>• Click a shape tool to select it</p>
+                  <p>• Click on canvas to place points</p>
+                  <p>• Measurements calculate automatically</p>
+                </div>
               </div>
-            </div>
-            
-            <div className="matrix-calculator">
-              <h3>Matrix Calculator</h3>
-              <div className="matrix-input">
-                {matrixInput.map((row, rowIndex) => (
-                  <div key={rowIndex}>
-                    {row.map((value, colIndex) => (
-                      <input 
-                        key={colIndex}
-                        type="text" 
-                        value={value}
-                        onChange={(e) => handleMatrixInputChange(rowIndex, colIndex, e.target.value)}
-                        style={{width: '60px', margin: '2px'}}
-                      />
-                    ))}
-                  </div>
-                ))}
+              
+              <div className="drawing-area">
+                <canvas 
+                  ref={canvasRef}
+                  width={600}
+                  height={500}
+                  className="geometry-canvas"
+                  onClick={handleCanvasClick}
+                />
               </div>
-              <div className="matrix-operations">
-                <button>Determinant</button>
-                <button>Inverse</button>
-                <button>Multiply</button>
+              
+              <div className="measurements-panel">
+                <h4>Measurements</h4>
+                {Object.keys(measurements).length === 0 ? (
+                  <p>Complete a shape to see measurements</p>
+                ) : (
+                  Object.entries(measurements).map(([shapeId, props]) => {
+                    const shape = shapes.find(s => s.id.toString() === shapeId);
+                    return (
+                      <div key={shapeId} className="shape-measurements">
+                        <h5>{shape?.type} Properties:</h5>
+                        {Object.entries(props).map(([key, value]) => (
+                          <div key={key} className="measurement">
+                            <span className="prop-name">{key}:</span>
+                            <span className="prop-value">{typeof value === 'number' ? value.toFixed(2) : value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })
+                )}
               </div>
             </div>
           </div>
@@ -519,4 +502,4 @@ function MathNotebook() {
   );
 }
 
-export default MathNotebook;
+export default GeometryNotebook;

@@ -130,7 +130,7 @@ body {
 .hero-subtitle {
   font-size: 1.5rem;
   margin-bottom: 2.5rem;
-  color: #d8d8d8;
+  color: white;
   font-weight: 300;
 }
 
@@ -274,23 +274,55 @@ body {
   z-index: 2;
 }
 
-.section-header {
-  text-align: center;
-  margin-bottom: 4rem;
-}
+/* Add this to your home.css file */
 
+/* Section headers - force white color */
 .section-header h2 {
+  color: white !important;
   font-size: 2.5rem;
   margin-bottom: 1rem;
-  color: white;
 }
 
 .section-header p {
   font-size: 1.2rem;
-  color: #d8d8d8;
+  color: white !important;
   max-width: 600px;
   margin: 0 auto;
 }
+
+
+.feature-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: white !important;
+}
+
+.animation-card h3 {
+  color: white !important;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+}
+
+
+.video-section h2,
+.features-section h2,
+.animations-section h2,
+.animation-section h2 {
+  color: white !important;
+}
+
+
+.feature-card p {
+  color: #d8d8d8;
+  line-height: 1.6;
+}
+
+.animation-card p {
+  color: #d8d8d8;
+  line-height: 1.6;
+}
+
+
 
 .video-container {
   max-width: 900px;

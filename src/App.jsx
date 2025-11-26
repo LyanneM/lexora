@@ -8,19 +8,22 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import AdminPanel from "./pages/AdminPanel";
 import Notebook from "./pages/Notebook";
+import EnhancedNotebook from "./pages/EnhancedNotebook"; // ADD THIS IMPORT
 import Quiz from "./pages/Quiz";
 import NoteTypeSelector from "./components/NoteTypeSelector";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import "./App.css";
 import MathNotebook from "./pages/MathNotebook";
-import PythonMathNotebook from "./pages/PythonMathNotebook";
 import CodeNotebook from "./pages/CodeNotebook";
 import QuizMode from './pages/QuizMode';
+import QuizReview from './pages/QuizReview';
 import QuizSession from './pages/QuizSession';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import ProtectedRoute from "./components/ProtectedRoute";
+import ComplexMathNotebook from "./pages/ComplexMathNotebook";
+import Feedback from "./pages/Feedback";
 
 function App() {
   return (
@@ -45,6 +48,14 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
+              <Route 
+                  path="/feedback" 
+                element={
+             <ProtectedRoute>
+                  <Feedback />
+                    </ProtectedRoute>
+                 } 
+            />
               
               <Route 
                 path="/adminpanel" 
@@ -76,14 +87,16 @@ function App() {
               />
               
               
-              <Route 
-                path="/notebook/python/:id?" 
-                element={
-                  <ProtectedRoute>
-                    <PythonMathNotebook />
-                  </ProtectedRoute>
-                } 
-              />
+           
+  
+               <Route 
+                  path="/notebook/complex-math/:id?" 
+                  element={
+                    <ProtectedRoute>
+                      <ComplexMathNotebook />
+                   </ProtectedRoute>
+              } 
+            />
               
               <Route 
                 path="/notebook/code/:id?" 
@@ -93,6 +106,26 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
+              
+              {/* ENHANCED NOTEBOOK ROUTES - ADD THESE */}
+              <Route 
+                path="/notebook-enhanced/:id?" 
+                element={
+                  <ProtectedRoute>
+                    <EnhancedNotebook />
+                  </ProtectedRoute>
+                } 
+              />
+              
+              <Route 
+                path="/notebook-new/:id?" 
+                element={
+                  <ProtectedRoute>
+                    <EnhancedNotebook />
+                  </ProtectedRoute>
+                } 
+              />
+              
               
               <Route 
                 path="/notebook/create/:type" 
@@ -111,7 +144,15 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
-              
+
+<Route 
+  path="/quiz-review/:quizId" 
+  element={
+    <ProtectedRoute>
+      <QuizReview />
+    </ProtectedRoute>
+  } 
+/>
               {/* Quiz routes - protected */}
               <Route 
                 path="/quiz" 

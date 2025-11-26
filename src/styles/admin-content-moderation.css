@@ -1,0 +1,387 @@
+.admin-content-moderation {
+  padding: 20px 0;
+}
+
+.moderation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.moderation-header h2 {
+  margin: 0;
+  color: white;
+}
+
+.moderation-filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #d8d8d8;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.filter-btn.active {
+  background: rgba(255, 0, 150, 0.3);
+  color: white;
+  border-color: #ff0080;
+}
+
+.filter-btn:hover {
+  background: rgba(255, 0, 150, 0.2);
+  color: white;
+}
+
+.moderation-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.stat {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+  background: linear-gradient(45deg, #ff0080, #00b4db);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-label {
+  color: #d8d8d8;
+  font-size: 0.9rem;
+}
+
+.content-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.content-item {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 25px;
+  transition: all 0.3s ease;
+}
+
+.content-item:hover {
+  border-color: rgba(255, 0, 150, 0.3);
+  transform: translateY(-2px);
+}
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.content-type {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.type-icon {
+  font-size: 1.2rem;
+}
+
+.type-name {
+  color: white;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.content-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: white;
+  text-transform: capitalize;
+}
+
+.flag-count {
+  background: rgba(255, 82, 82, 0.2);
+  color: #ff5252;
+  padding: 4px 8px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.date {
+  color: #d8d8d8;
+  font-size: 0.9rem;
+}
+
+.content-details {
+  margin-bottom: 20px;
+}
+
+.content-title {
+  margin: 0 0 10px 0;
+  color: white;
+  font-size: 1.2rem;
+}
+
+.content-author {
+  margin: 0 0 10px 0;
+  color: #d8d8d8;
+  font-size: 0.9rem;
+}
+
+.content-reason {
+  margin: 0 0 10px 0;
+  color: #ff9800;
+  font-size: 0.9rem;
+}
+
+.content-preview {
+  margin: 0;
+  color: #d8d8d8;
+  line-height: 1.5;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  border-left: 3px solid #ff0080;
+}
+
+.moderation-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  padding: 8px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.action-btn.approve:hover {
+  background: rgba(0, 200, 83, 0.3);
+  border-color: #00c853;
+}
+
+.action-btn.reject:hover {
+  background: rgba(255, 82, 82, 0.3);
+  border-color: #ff5252;
+}
+
+.action-btn.review:hover {
+  background: rgba(255, 152, 0, 0.3);
+  border-color: #ff9800;
+}
+
+.review-info {
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  border-left: 3px solid #00b4db;
+}
+
+.review-info p {
+  margin: 0;
+  color: #d8d8d8;
+  font-size: 0.9rem;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-content {
+  background: #1a1a2e;
+  border: 1px solid rgba(255, 0, 150, 0.3);
+  border-radius: 15px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: white;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #d8d8d8;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 5px;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  color: #ff0080;
+}
+
+.modal-body {
+  padding: 25px;
+}
+
+.content-review h4 {
+  margin: 0 0 20px 0;
+  color: white;
+  font-size: 1.3rem;
+}
+
+.content-review p {
+  margin: 0 0 10px 0;
+  color: #d8d8d8;
+}
+
+.content-full {
+  margin: 20px 0;
+}
+
+.content-full h5 {
+  margin: 0 0 10px 0;
+  color: white;
+}
+
+.content-text {
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #d8d8d8;
+  line-height: 1.5;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.rejection-reason {
+  margin: 20px 0;
+}
+
+.rejection-reason label {
+  display: block;
+  margin-bottom: 8px;
+  color: white;
+  font-weight: bold;
+}
+
+.rejection-reason textarea {
+  width: 100%;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  color: white;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.rejection-reason textarea:focus {
+  outline: none;
+  border-color: #ff0080;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  padding: 25px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  flex-wrap: wrap;
+}
+
+.modal-actions .action-btn {
+  flex: 1;
+  min-width: 120px;
+}
+
+.action-btn.cancel {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.action-btn.cancel:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+  .moderation-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .content-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .moderation-actions {
+    justify-content: center;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+  }
+  
+  .modal-content {
+    margin: 20px;
+  }
+}

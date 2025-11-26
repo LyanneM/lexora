@@ -247,6 +247,342 @@ export class QuizApiService {
       return false;
     }
   }
+
+  static async generateQuizWithFallback(content, options = {}) {
+    try {
+      return await this.generateQuizFromText(content, options);
+    } catch (error) {
+      console.log("AI generation failed, using template fallback:", error);
+      return await this.generateTemplateQuiz(content, options);
+    }
+  }
+
+  static async generateTemplateQuiz(content, options = {}) {
+    const concepts = this.extractKeyConcepts(content);
+    const numQuestions = options.numQuestions || 10;
+    
+    const templateQuiz = {
+      quiz_data: {
+        title: `Quiz: ${options.subject || 'Generated Quiz'}`,
+        questions: this.createTemplateQuestions(concepts, numQuestions),
+        metadata: {
+          generated_by: 'template_fallback',
+          source: 'content_based',
+          concept_count: concepts.length
+        }
+      }
+    };
+    
+    console.log(`✅ Generated ${templateQuiz.quiz_data.questions.length} template questions`);
+    return templateQuiz;
+  }
+
+  static extractKeyConcepts(content) {
+    // Simple concept extraction - you can enhance this
+    const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 10);
+    const words = content.toLowerCase().split(/\s+/);
+    
+    // Filter for potential key terms (longer words, capitalized phrases)
+    const keyTerms = words.filter(word => 
+      word.length > 5 && 
+      !['the', 'and', 'for', 'with', 'this', 'that'].includes(word)
+    ).slice(0, 15);
+    
+    return {
+      sentences: sentences.slice(0, 10),
+      keyTerms: [...new Set(keyTerms)].slice(0, 10)
+    };
+  }
+
+  static createTemplateQuestions(concepts, numQuestions) {
+    const questions = [];
+    const questionTypes = ['multiple_choice', 'true_false', 'short_answer'];
+    
+    for (let i = 0; i < numQuestions; i++) {
+      const type = questionTypes[i % questionTypes.length];
+      const question = this.createQuestionByType(type, concepts, i);
+      questions.push(question);
+    }
+    
+    return questions;
+  }
+
+  static createQuestionByType(type, concepts, index) {
+    const baseQuestion = {
+      id: `template_${Date.now()}_${index}`,
+      question: '',
+      type: type,
+      points: 1
+    };
+
+    switch (type) {
+      case 'multiple_choice':
+        return {
+          ...baseQuestion,
+          question: `What is the main concept related to "${concepts.keyTerms[index % concepts.keyTerms.length]}"?`,
+          options: [
+            "Primary definition",
+            "Secondary aspect", 
+            "Related concept",
+            "Opposite meaning"
+          ],
+          correct_answer: "Primary definition",
+          explanation: "This represents the core understanding of the concept."
+        };
+        
+      case 'true_false':
+        return {
+          ...baseQuestion,
+          question: `"${concepts.sentences[index % concepts.sentences.length]}" - Is this statement accurate?`,
+          options: ["True", "False"],
+          correct_answer: "True",
+          explanation: "This statement appears to be factually correct based on the content."
+        };
+        
+      case 'short_answer':
+        return {
+          ...baseQuestion,
+          question: `Explain the significance of "${concepts.keyTerms[index % concepts.keyTerms.length]}" in your own words.`,
+          correct_answer: "Student should provide a reasonable explanation based on the content.",
+          explanation: "This tests understanding of key concepts from the material."
+        };
+        
+      default:
+        return baseQuestion;
+    }
+  }
+
+  // Export quiz results to PDF
+  static async exportQuizToPDF(quizData, results = null) {
+    try {
+      const baseUrl = await this.getBaseUrl();
+      console.log(`📄 Exporting to PDF via ${baseUrl}/export/pdf`);
+      
+      const response = await fetch(`${baseUrl}/export/pdf`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          quiz_data: quizData,
+          results: results,
+          export_format: 'pdf'
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`PDF export failed: ${response.statusText}`);
+      }
+
+      // Handle the PDF blob response
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = `quiz-results-${new Date().toISOString().split('T')[0]}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      console.log('✅ PDF export completed successfully');
+      return true;
+    } catch (error) {
+      console.error('❌ PDF export error:', error);
+      // Fallback to client-side export
+      console.log('🔄 Attempting client-side export as fallback...');
+      return await this.exportQuizClientSide(quizData, results, 'txt');
+    }
+  }
+
+  // Export quiz results to CSV
+  static async exportQuizToCSV(quizData, results = null) {
+    try {
+      const baseUrl = await this.getBaseUrl();
+      console.log(`📊 Exporting to CSV via ${baseUrl}/export/csv`);
+      
+      const response = await fetch(`${baseUrl}/export/csv`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          quiz_data: quizData,
+          results: results,
+          export_format: 'csv'
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`CSV export failed: ${response.statusText}`);
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = `quiz-results-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      console.log('✅ CSV export completed successfully');
+      return true;
+    } catch (error) {
+      console.error('❌ CSV export error:', error);
+      // Fallback to client-side export
+      console.log('🔄 Attempting client-side CSV export...');
+      return await this.exportQuizClientSide(quizData, results, 'csv');
+    }
+  }
+
+  // Client-side export as fallback
+  static async exportQuizClientSide(quizData, results = null, format = 'csv') {
+    return new Promise((resolve, reject) => {
+      try {
+        let content = '';
+        let filename = '';
+        let mimeType = '';
+
+        if (format === 'csv') {
+          content = this.generateCSV(quizData, results);
+          filename = `quiz-results-${new Date().toISOString().split('T')[0]}.csv`;
+          mimeType = 'text/csv';
+        } else if (format === 'json') {
+          content = this.generateJSON(quizData, results);
+          filename = `quiz-results-${new Date().toISOString().split('T')[0]}.json`;
+          mimeType = 'application/json';
+        } else if (format === 'txt') {
+          content = this.generateText(quizData, results);
+          filename = `quiz-results-${new Date().toISOString().split('T')[0]}.txt`;
+          mimeType = 'text/plain';
+        } else {
+          throw new Error(`Unsupported format: ${format}`);
+        }
+
+        const blob = new Blob([content], { type: mimeType });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+
+        console.log(`✅ Client-side ${format.toUpperCase()} export completed`);
+        resolve(true);
+      } catch (error) {
+        console.error(`❌ Client-side ${format.toUpperCase()} export failed:`, error);
+        reject(error);
+      }
+    });
+  }
+
+  // Generate CSV content
+  static generateCSV(quizData, results) {
+    const questions = quizData.questions || quizData.quiz_data?.questions || [];
+    let csv = 'Question,Your Answer,Correct Answer,Result,Explanation\n';
+
+    questions.forEach((q, index) => {
+      const userAnswer = results?.answers?.[index] || results?.textAnswers?.[index] || 'Not answered';
+      const correctAnswer = q.correct_answer || 'Not provided';
+      const isCorrect = userAnswer.toString().toLowerCase() === correctAnswer.toString().toLowerCase();
+      const result = isCorrect ? 'Correct' : 'Incorrect';
+      const explanation = q.explanation || 'No explanation provided';
+      
+      // Escape CSV special characters
+      const escapeCSV = (str) => {
+        if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+          return `"${str.replace(/"/g, '""')}"`;
+        }
+        return str;
+      };
+
+      csv += `${escapeCSV(q.question)},${escapeCSV(userAnswer)},${escapeCSV(correctAnswer)},${result},${escapeCSV(explanation)}\n`;
+    });
+
+    // Add summary
+    if (results?.score) {
+      csv += `\nSummary\n`;
+      csv += `Total Questions,${questions.length}\n`;
+      csv += `Score,${results.score}%\n`;
+      csv += `Correct Answers,${Math.round((results.score / 100) * questions.length)}\n`;
+      csv += `Date,${new Date().toLocaleDateString()}\n`;
+    }
+
+    return csv;
+  }
+
+  // Generate JSON content
+  static generateJSON(quizData, results) {
+    const exportData = {
+      quizTitle: quizData.quizTitle || 'Quiz Results',
+      source: quizData.sourceName || 'Unknown',
+      date: new Date().toISOString(),
+      score: results?.score || 0,
+      totalQuestions: quizData.questions?.length || quizData.quiz_data?.questions?.length || 0,
+      questions: (quizData.questions || quizData.quiz_data?.questions || []).map((q, index) => ({
+        question: q.question,
+        type: q.type,
+        userAnswer: results?.answers?.[index] || results?.textAnswers?.[index] || 'Not answered',
+        correctAnswer: q.correct_answer || 'Not provided',
+        isCorrect: (results?.answers?.[index] || results?.textAnswers?.[index] || '').toString().toLowerCase() === (q.correct_answer || '').toString().toLowerCase(),
+        explanation: q.explanation || 'No explanation provided',
+        options: q.options || []
+      }))
+    };
+
+    return JSON.stringify(exportData, null, 2);
+  }
+
+  // Generate text content
+  static generateText(quizData, results) {
+    const questions = quizData.questions || quizData.quiz_data?.questions || [];
+    let text = 'QUIZ RESULTS\n';
+    text += '='.repeat(50) + '\n\n';
+    
+    if (results?.score) {
+      text += `Score: ${results.score}%\n`;
+      text += `Correct: ${Math.round((results.score / 100) * questions.length)}/${questions.length}\n`;
+    }
+    
+    text += `Date: ${new Date().toLocaleDateString()}\n`;
+    text += `Source: ${quizData.sourceName || 'Unknown'}\n\n`;
+    text += 'QUESTIONS AND ANSWERS\n';
+    text += '-'.repeat(50) + '\n\n';
+
+    questions.forEach((q, index) => {
+      const userAnswer = results?.answers?.[index] || results?.textAnswers?.[index] || 'Not answered';
+      const correctAnswer = q.correct_answer || 'Not provided';
+      const isCorrect = userAnswer.toString().toLowerCase() === correctAnswer.toString().toLowerCase();
+      
+      text += `Question ${index + 1} (${q.type || 'multiple_choice'}):\n`;
+      text += `${q.question}\n\n`;
+      text += `Your Answer: ${userAnswer}\n`;
+      text += `Correct Answer: ${correctAnswer}\n`;
+      text += `Result: ${isCorrect ? '✓ CORRECT' : '✗ INCORRECT'}\n`;
+      
+      if (q.explanation && q.explanation !== 'No explanation provided') {
+        text += `Explanation: ${q.explanation}\n`;
+      }
+      
+      if (q.options && q.options.length > 0) {
+        text += `Options:\n`;
+        q.options.forEach((option, optIndex) => {
+          text += `  ${String.fromCharCode(65 + optIndex)}. ${option}\n`;
+        });
+      }
+      
+      text += '\n' + '-'.repeat(50) + '\n\n';
+    });
+
+    return text;
+  }
 }
 
 export default QuizApiService;

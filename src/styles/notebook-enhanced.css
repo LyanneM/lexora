@@ -65,6 +65,7 @@
 .action-buttons {
   display: flex;
   gap: 0.5rem;
+  align-items: center;
 }
 
 .action-buttons button {
@@ -86,25 +87,62 @@
   cursor: not-allowed;
 }
 
-/* Infinite Canvas Styles */
+/* Connection Status Styles */
+.connection-status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.connection-status.connected {
+  background: #d4edda;
+  color: #155724;
+}
+
+.connection-status.disconnected {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.connection-status.checking {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.test-connection-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.test-connection-btn:hover {
+  background: #0056b3;
+}
+
+/* Main Content Area - FIXED LAYOUT */
 .notebook-content {
   display: flex;
   height: calc(100vh - 80px);
-  gap: 0;
+  flex-direction: row; /* Ensure horizontal layout */
   position: relative;
 }
 
+/* Notebook Canvas - LEFT SIDE */
 .notebook-canvas {
   flex: 1;
   position: relative;
   overflow: hidden;
   cursor: grab;
-  transition: flex 0.3s ease;
   background: #1e1e1e;
+  order: 1;
 }
 
 .notebook-canvas.with-ai {
-  flex: 0.7;
+  flex: 0.7; /* Shrink when AI panel is visible */
 }
 
 .notebook-canvas.ruled {
@@ -389,14 +427,14 @@
   box-shadow: 0 8px 25px rgba(0, 122, 204, 0.4);
 }
 
-/* Enhanced AI Companion Panel */
+/* AI Companion Panel - RIGHT SIDE */
 .ai-companion-panel {
-  flex: 0.3;
-  min-width: 400px;
+  width: 400px; /* Fixed width instead of flex */
   background: #2d2d30;
   display: flex;
   flex-direction: column;
   border-left: 1px solid #3e3e42;
+  order: 2;
 }
 
 .ai-header {
@@ -628,24 +666,48 @@
   margin-top: 5px;
 }
 
-/* Responsive Design */
-@media (max-width: 1024px) {
-  .notebook-content {
-    flex-direction: column;
-  }
-  
+/* RESPONSIVE DESIGN - FIXED FOR RIGHT SIDE AI */
+@media (max-width: 1200px) {
   .ai-companion-panel {
-    min-width: 100%;
-    height: 40vh;
+    width: 350px; /* Slightly smaller on medium screens */
   }
   
   .notebook-canvas.with-ai {
-    flex: 1;
-    height: 60vh;
+    flex: 0.65;
+  }
+}
+
+@media (max-width: 1024px) {
+  .notebook-content {
+    flex-direction: row; /* Keep horizontal layout */
+  }
+  
+  .ai-companion-panel {
+    width: 300px; /* Even smaller but still on right */
+  }
+  
+  .notebook-canvas.with-ai {
+    flex: 0.6;
   }
 }
 
 @media (max-width: 768px) {
+  .notebook-content {
+    flex-direction: column; /* Switch to vertical only on small mobile */
+  }
+  
+  .ai-companion-panel {
+    width: 100%; /* Full width on mobile */
+    height: 40vh; /* Fixed height on mobile */
+    order: 2; /* Below canvas on mobile */
+  }
+  
+  .notebook-canvas.with-ai {
+    flex: 1;
+    height: 60vh; /* Fixed height on mobile */
+    order: 1; /* Above AI panel on mobile */
+  }
+  
   .notebook-toolbar {
     flex-direction: column;
     gap: 1rem;
@@ -659,8 +721,210 @@
   .action-buttons {
     width: 100%;
     justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .note-title {
+    min-width: 150px;
+    font-size: 1rem;
   }
   
+  .tool-selection button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+  
+  .action-buttons button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+  
+  .ai-companion-panel {
+    height: 45vh; /* Slightly taller on very small screens */
+  }
+  
+  .notebook-canvas.with-ai {
+    height: 55vh;
+  }
+  
+  .message-content {
+    max-width: 75%;
+  }
+  
+  .ai-quick-actions {
+    justify-content: center;
+  }
+  
+  .ai-quick-actions button {
+    flex: 1;
+    min-width: 100px;
+    font-size: 0.7rem;
+    padding: 6px 8px;
+  }
+}
+/* src/styles/notebook-enhanced.css */
+
+.notebook-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #1e1e1e;
+  overflow: hidden;
+}
+
+.notebook-toolbar {
+  background: #2d2d30;
+  color: white;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  border-bottom: 1px solid #3e3e42;
+  z-index: 100;
+  flex-shrink: 0; /* Prevent toolbar from shrinking */
+}
+
+/* Main Content Area - FIXED LAYOUT */
+.notebook-content {
+  display: flex;
+  flex: 1; /* Take all available space */
+  height: calc(100vh - 80px);
+  min-height: 0; /* Important for flex children to respect overflow */
+  position: relative;
+  overflow: hidden; /* Prevent outer scrolling */
+}
+
+/* Notebook Canvas - LEFT SIDE */
+.notebook-canvas {
+  flex: 1;
+  position: relative;
+  overflow: auto; /* Enable scrolling for canvas */
+  cursor: grab;
+  background: #1e1e1e;
+  min-width: 0; /* Important for flexbox */
+}
+
+.notebook-canvas.with-ai {
+  flex: 1; /* Take remaining space when AI is visible */
+  min-width: 300px; /* Ensure minimum canvas width */
+}
+
+/* AI Companion Panel - RIGHT SIDE */
+.ai-companion-panel {
+  width: 400px;
+  background: #2d2d30;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid #3e3e42;
+  flex-shrink: 0; /* Prevent AI panel from shrinking */
+  min-height: 0; /* Important for flex children */
+  overflow: hidden; /* Contain scrolling internally */
+}
+
+/* Messages container should scroll */
+.messages-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background: #1e1e1e;
+  min-height: 0; /* Important for scrolling */
+}
+
+/* Ensure canvas elements don't interfere with scrolling */
+.canvas-element {
+  position: absolute;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  transition: box-shadow 0.3s, transform 0.2s;
+  min-width: 100px;
+  min-height: 60px;
+  pointer-events: auto; /* Ensure elements are clickable */
+}
+
+/* Empty canvas positioning */
+.empty-canvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #888;
+  background: rgba(30, 30, 30, 0.8);
+  padding: 2rem;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+  pointer-events: none; /* Don't interfere with canvas events */
+}
+
+.empty-canvas button {
+  pointer-events: auto; /* But allow button clicks */
+}
+
+/* Input area - fixed at bottom */
+.input-container {
+  padding: 20px;
+  border-top: 1px solid #3e3e42;
+  background: #252526;
+  flex-shrink: 0; /* Don't shrink input area */
+}
+
+/* Quick actions - fixed height */
+.ai-quick-actions {
+  padding: 15px 20px;
+  border-bottom: 1px solid #3e3e42;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  background: #252526;
+  flex-shrink: 0; /* Don't shrink quick actions */
+}
+
+/* Header - fixed height */
+.ai-header {
+  padding: 15px 20px;
+  border-bottom: 1px solid #3e3e42;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #252526;
+  flex-shrink: 0; /* Don't shrink header */
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 1200px) {
+  .ai-companion-panel {
+    width: 350px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .ai-companion-panel {
+    width: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .notebook-content {
+    flex-direction: column;
+  }
+  
+  .ai-companion-panel {
+    width: 100%;
+    height: 45vh;
+    flex-shrink: 0;
+  }
+  
+  .notebook-canvas.with-ai {
+    height: 55vh;
+    flex-shrink: 0;
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
   .ai-companion-panel {
     height: 50vh;
   }
@@ -668,38 +932,163 @@
   .notebook-canvas.with-ai {
     height: 50vh;
   }
+  
+  .note-title {
+    min-width: 150px;
+    font-size: 1rem;
+  }
 }
-.connection-status {
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: bold;
+/* src/styles/notebook-enhanced.css */
+
+.notebook-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #1e1e1e;
+  overflow: hidden;
+  position: relative; /* Create stacking context */
 }
 
-.connection-status.connected {
-  background: #d4edda;
-  color: #155724;
-}
-
-.connection-status.disconnected {
-  background: #f8d7da;
-  color: #721c24;
-}
-
-.connection-status.checking {
-  background: #fff3cd;
-  color: #856404;
-}
-
-.test-connection-btn {
-  background: #007bff;
+.notebook-toolbar {
+  background: #2d2d30;
   color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 4px;
-  cursor: pointer;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  border-bottom: 1px solid #3e3e42;
+  z-index: 100;
+  position: relative; /* Ensure toolbar stays on top */
 }
 
-.test-connection-btn:hover {
-  background: #0056b3;
+/* Main Content Area */
+.notebook-content {
+  display: flex;
+  flex: 1;
+  height: calc(100vh - 80px);
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Notebook Canvas - Full width always */
+.notebook-canvas {
+  flex: 1;
+  position: relative;
+  overflow: auto;
+  cursor: grab;
+  background: #1e1e1e;
+  min-width: 0;
+  /* No changes when AI is visible - stays full width */
+}
+
+/* AI Companion Panel - ABSOLUTE POSITIONING ON TOP */
+.ai-companion-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 100%;
+  background: #2d2d30;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid #3e3e42;
+  z-index: 50; /* Higher than canvas but lower than toolbar */
+  box-shadow: -5px 0px 15px rgba(0, 0, 0, 0.5);
+  transform: translateX(100%); /* Start off-screen */
+  transition: transform 0.3s ease-in-out;
+}
+
+/* When AI panel is visible */
+.ai-companion-panel.show {
+  transform: translateX(0); /* Slide in from right */
+}
+
+/* Optional: Add a subtle overlay when AI is open */
+.ai-companion-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 25;
+  display: none;
+}
+
+.ai-companion-overlay.show {
+  display: block;
+}
+
+/* Messages container scrolling */
+.messages-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background: #1e1e1e;
+  min-height: 0;
+}
+
+/* Input area */
+.input-container {
+  padding: 20px;
+  border-top: 1px solid #3e3e42;
+  background: #252526;
+  flex-shrink: 0;
+}
+
+/* Quick actions */
+.ai-quick-actions {
+  padding: 15px 20px;
+  border-bottom: 1px solid #3e3e42;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  background: #252526;
+  flex-shrink: 0;
+}
+
+/* Header */
+.ai-header {
+  padding: 15px 20px;
+  border-bottom: 1px solid #3e3e42;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #252526;
+  flex-shrink: 0;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 1200px) {
+  .ai-companion-panel {
+    width: 350px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .ai-companion-panel {
+    width: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .ai-companion-panel {
+    width: 100%;
+    height: 70vh;
+    top: auto;
+    bottom: 0;
+    transform: translateY(100%);
+  }
+  
+  .ai-companion-panel.show {
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .ai-companion-panel {
+    height: 80vh;
+  }
 }

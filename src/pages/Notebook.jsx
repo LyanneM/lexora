@@ -250,16 +250,17 @@ const debugConnection = async () => {
   };
 
   const toggleAICompanion = () => {
-    setShowAICompanion(!showAICompanion);
-    if (!showAICompanion && conversation.length === 0) {
-      setConversation([{
-        id: Date.now(),
-        type: 'ai',
-        content: "Hello! I'm your AI study companion. I can help you summarize, explain, create quizzes, and more based on your notes. What would you like help with?",
-        timestamp: new Date().toLocaleTimeString()
-      }]);
-    }
-  };
+  setShowAICompanion(!showAICompanion);
+  if (!showAICompanion && conversation.length === 0) {
+    setConversation([{
+      id: Date.now(),
+      type: 'ai',
+      content: "Hello! I'm your AI study companion...",
+      timestamp: new Date().toLocaleTimeString()
+    }]);
+  }
+};
+
 
   const saveNote = async () => {
     setIsSaving(true);
@@ -741,7 +742,7 @@ const checkBackendStatus = async () => {
 
         {/* Enhanced AI Companion Panel */}
         {showAICompanion && (
-          <div className="ai-companion-panel">
+          <div className={`ai-companion-panel ${showAICompanion ? 'show' : ''}`}>
             <div className="ai-header">
               <h3>🤖 AI Study Companion</h3>
               <button onClick={clearConversation} className="clear-chat-btn">

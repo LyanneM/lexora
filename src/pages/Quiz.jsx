@@ -36,7 +36,21 @@ function Quiz() {
   // Music functionality
   useEffect(() => {
     //audio element for background music
-    const backgroundAudio = new Audio('/music/quizz.mp3');
+   const backgroundAudio = new Audio('/music/quizz.mp3');
+   console.log('Audio source path:', backgroundAudio.src);
+
+backgroundAudio.addEventListener('error', (e) => {
+  console.error('❌ Audio failed to load');
+  console.error('Error details:', e);
+  console.error('Tried to load from:', backgroundAudio.src);
+  
+  // Check what's actually in your public folder
+  console.log('Check if the file exists at: public/music/quizz.mp3');
+});
+
+backgroundAudio.addEventListener('loadeddata', () => {
+  console.log('✅ Audio loaded successfully');
+});
     backgroundAudio.loop = true;
     backgroundAudio.volume = 0.3;
     setAudio(backgroundAudio);
@@ -66,37 +80,95 @@ function Quiz() {
     setMusicEnabled(!musicEnabled);
   };
 
-  const loadUserNotes = async () => {
-    if (!currentUser) {
-      setNotesLoading(false);
-      return;
-    }
 
-    setNotesLoading(true);
-    setNotesError('');
+
+
+const loadUserNotes = async () => {
+  if (!currentUser) {
+    setNotesLoading(false);
+    return;
+  }
+
+  setNotesLoading(true);
+  setNotesError('');
+  
+  try {
+    const q = query(
+      collection(db, "notes"),
+      where("owner", "==", currentUser.uid) 
+    );
     
-    try {
-      const q = query(
+    const querySnapshot = await getDocs(q);
+    const notesData = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    
+    setNotes(notesData);
+    console.log(`✓ Loaded ${notesData.length} notes`);
+    
+    if (notesData.length === 0) {
+      console.log("No notes found with 'owner' field, checking other possibilities...");
+      
+      const q2 = query(
         collection(db, "notes"),
         where("userId", "==", currentUser.uid)
       );
       
-      const querySnapshot = await getDocs(q);
-      const notesData = querySnapshot.docs.map(doc => ({
+      const querySnapshot2 = await getDocs(q2);
+      const notesData2 = querySnapshot2.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
       
-      setNotes(notesData);
-      console.log(`✓ Loaded ${notesData.length} notes`);
-      
-    } catch (error) {
-      console.error("Error loading notes:", error);
-      setNotesError('Unable to load notes. You can still use file upload or text input.');
-    } finally {
-      setNotesLoading(false);
+      if (notesData2.length > 0) {
+        setNotes(notesData2);
+        console.log(`✓ Loaded ${notesData2.length} notes using 'userId' field`);
+      }
     }
-  };
+    
+  } catch (error) {
+    console.error("Error loading notes:", error);
+    
+    if (error.code === 'failed-precondition') {
+      setNotesError('Please make sure you have the correct Firestore indexes set up.');
+    } else if (error.code === 'permission-denied') {
+      setNotesError('You do not have permission to access notes.');
+    } else {
+      setNotesError('Unable to load notes. You can still use file upload or text input.');
+    }
+  } finally {
+    setNotesLoading(false);
+  }
+};
+
+const debugNoteStructure = async () => {
+  try {
+    const notesRef = collection(db, "notes");
+    const snapshot = await getDocs(notesRef);
+    
+    console.log("=== FIRESTORE NOTES DEBUG ===");
+    snapshot.docs.forEach(doc => {
+      console.log(`Note ID: ${doc.id}`, doc.data());
+    });
+    console.log("=== END DEBUG ===");
+  } catch (error) {
+    console.error("Debug failed:", error);
+  }
+};
+
+
+useEffect(() => {
+  if (currentUser) {
+    loadUserNotes();
+    getServerInfo();
+    debugNoteStructure();
+  } else {
+    setNotesLoading(false);
+  }
+}, [currentUser]);
+
+  
 
   const getServerInfo = async () => {
     try {
@@ -132,21 +204,40 @@ function Quiz() {
     }
   };
 
-  const extractContent = async () => {
-    let content = '';
+   const extractContent = async () => {
+  let content = '';
+  
+  if (sourceType === 'note' && selectedSource) {
+    const note = notes.find(n => n.id === selectedSource);
     
-    if (sourceType === 'note' && selectedSource) {
-      const note = notes.find(n => n.id === selectedSource);
-      content = note?.content || JSON.stringify(note?.elements || '');
-      console.log("Extracted content from note");
-    } else if (sourceType === 'upload' && uploadedFile) {
-      return null;
-    } else if (sourceType === 'text' && customText) {
-      content = customText;
+    if (note) {
+      if (note.content) {
+        content = note.content;
+      } 
+      else if (note.elements && Array.isArray(note.elements)) {
+        content = note.elements
+          .map(element => element.content)
+          .filter(text => text && text.trim())
+          .join('\n\n');
+      }
+  
+      else if (note.title) {
+        content = `Title: ${note.title}\n\n`;
+      
+        if (note.description) content += `Description: ${note.description}\n`;
+        if (note.tags) content += `Tags: ${note.tags.join(', ')}\n`;
+      }
     }
     
-    return content;
-  };
+    console.log("Extracted content from note:", content ? `${content.length} chars` : 'No content');
+  } else if (sourceType === 'upload' && uploadedFile) {
+    return null;
+  } else if (sourceType === 'text' && customText) {
+    content = customText;
+  }
+  
+  return content;
+};
 
  const testBackendConnection = async () => {
   try {
@@ -193,7 +284,7 @@ const generateQuiz = async () => {
       console.log("Content length:", content?.length);
       
       quizData = await QuizApiService.generateQuizFromText(content, {
-        numQuestions: 50,
+        numQuestions: 20,
         quizType: 'mixed',
       });
     }
@@ -356,43 +447,52 @@ const getGeneratorStatus = () => {
           {/* Source Specific Inputs */}
           <div className="source-inputs">
             {sourceType === 'note' && (
-              <div className="note-selection">
-                <h4>Select a Note</h4>
-                {notesLoading ? (
-                  <div className="loading-notes">
-                    <p>Loading your notes...</p>
-                  </div>
-                ) : notesError ? (
-                  <div className="notes-error">
-                    <p>{notesError}</p>
-                    <button onClick={loadUserNotes} className="retry-btn">
-                      🔄 Retry
-                    </button>
-                  </div>
-                ) : (
-                  <>
-                    <select 
-                      value={selectedSource} 
-                      onChange={(e) => setSelectedSource(e.target.value)}
-                      className="note-select"
-                    >
-                      <option value="">Choose a note...</option>
-                      {notes.map(note => (
-                        <option key={note.id} value={note.id}>
-                          {note.title || `Note from ${new Date(note.createdAt?.toDate()).toLocaleDateString()}`}
-                        </option>
-                      ))}
-                    </select>
-                    {notes.length === 0 && (
-                      <p className="no-notes">
-                        You don't have any notes yet. Create some notes first or use file upload/text input!
-                      </p>
-                    )}
-                  </>
-                )}
-              </div>
-            )}
-
+  <div className="note-selection">
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+      <h4>Select a Note</h4>
+      <button 
+        onClick={loadUserNotes} 
+        className="retry-btn"
+        style={{ padding: '5px 10px', background: '#6c757d', color: 'white', border: 'none', borderRadius: '4px' }}
+      >
+        🔄 Refresh
+      </button>
+    </div>
+    
+    {notesLoading ? (
+      <div className="loading-notes">
+        <p>Loading your notes...</p>
+      </div>
+    ) : notesError ? (
+      <div className="notes-error">
+        <p>{notesError}</p>
+        <button onClick={loadUserNotes} className="retry-btn">
+          🔄 Retry Loading Notes
+        </button>
+      </div>
+    ) : (
+      <>
+        <select 
+          value={selectedSource} 
+          onChange={(e) => setSelectedSource(e.target.value)}
+          className="note-select"
+        >
+          <option value="">Choose a note...</option>
+          {notes.map(note => (
+            <option key={note.id} value={note.id}>
+              {note.title || `Note from ${note.createdAt ? new Date(note.createdAt.toDate()).toLocaleDateString() : 'unknown date'}`}
+            </option>
+          ))}
+        </select>
+        {notes.length === 0 && (
+          <p className="no-notes">
+            You don't have any notes yet. Create some notes first or use file upload/text input!
+          </p>
+        )}
+      </>
+    )}
+  </div>
+)}
             {sourceType === 'upload' && (
               <div className="file-upload">
                 <h4>Upload Document</h4>
@@ -448,7 +548,7 @@ const getGeneratorStatus = () => {
               }
               className="generate-btn"
             >
-              {loading ? '🔄 Generating Quiz...' : '🫸 Generate AI Quiz (Up to 50 questions)'}
+              {loading ? '🔄 Generating Quiz...' : '🫸 Generate AI Quiz (Up to 30 questions)'}
             </button>
             
             {sourceType === 'text' && customText.length < 50 && (
