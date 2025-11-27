@@ -35,7 +35,7 @@ function CodeNotebook() {
 
   // Fixed starter templates
   const starterTemplates = {
-    python: `# Python Starter Code
+    python: `# Use this code as trial 
 def hello_world():
     print("Hello, World!")
 
@@ -45,7 +45,6 @@ def factorial(n):
     else:
         return n * factorial(n-1)  # Fixed: n-1
 
-# Test your code here
 hello_world()
 print(factorial(5))`,
 
