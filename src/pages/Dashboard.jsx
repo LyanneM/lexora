@@ -11,19 +11,19 @@ function Dashboard() {
   const [activeTab, setActiveTab] = useState("notes");
   const [loading, setLoading] = useState(true);
   
-  // ADD THIS MISSING STATE DECLARATION
+  
   const [userData, setUserData] = useState({
     notes: [],
     quizzes: [],
     uploads: []
   });
 
-  // Add useEffect to fetch data when component mounts
+  
   useEffect(() => {
     fetchUserData();
   }, [currentUser]);
 
-  // In your fetchUserData function, add more detailed logging:
+  
   const fetchUserData = async () => {
     if (!currentUser) {
       console.log("No current user found");
@@ -35,7 +35,7 @@ function Dashboard() {
     try {
       console.log("Fetching data for user:", currentUser.uid);
       
-      // Fetch notes with better error handling
+     
       let userNotes = [];
       try {
         const notesQuery = query(
@@ -53,7 +53,7 @@ function Dashboard() {
         console.log('Notes error details:', notesError.code, notesError.message);
       }
 
-      // Fetch quizzes
+      
       let userQuizzes = [];
       try {
         const quizzesQuery = query(
