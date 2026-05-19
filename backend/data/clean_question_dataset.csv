@@ -1,0 +1,106 @@
+Subject,Year,Question,Type,Style,Level
+Mathematics,2021,Solve for x: 3x - 7 = 11.,Structured,fill-in-the-blank question,High School
+Mathematics,2021,Find the area of a triangle with base 6 cm and height 4 cm.,Structured,fill-in-the-blank question,High School
+Mathematics,2022,Simplify: (2x² - 8) ÷ (x - 2).,Structured,fill-in-the-blank question,High School
+Mathematics,2023,A car travels 240 km in 3 hours. Find its average speed.,Structured,fill-in-the-blank question,High School
+Mathematics,2024,Differentiate y = 3x³ - 2x² + 5x.,Structured,fill-in-the-blank question,High School
+English,2021,"""Rewrite: 'She completed the work","and so did he.' beginning with 'Both...'""",Structured,High School
+English,2021,Explain the meaning of the idiom: 'To spill the beans.',Structured,fill-in-the-blank question,High School
+English,2022,Write a composition on the topic: 'A blessing in disguise.',Essay,fill-in-the-blank question,High School
+English,2023,Identify and correct the error: 'He don’t like football.',Structured,fill-in-the-blank question,High School
+English,2024,Give one function of a relative pronoun in a sentence.,Structured,fill-in-the-blank question,High School
+Kiswahili,2021,Andika sentensi kwa kutumia neno 'barabara'.,Structured,fill-in-the-blank question,High School
+Kiswahili,2021,Tafsiri: 'Education is important.' kwa Kiswahili.,Structured,fill-in-the-blank question,High School
+Kiswahili,2022,Eleza maana ya msemo: 'Kuku mgeni hakosi kamba mguuni.',Structured,fill-in-the-blank question,High School
+Kiswahili,2023,Andika insha: 'Jukumu langu katika jamii.',Essay,fill-in-the-blank question,High School
+Kiswahili,2024,Tambua kivumishi katika sentensi: 'Mtoto mzuri alicheza.',Structured,fill-in-the-blank question,High School
+Biology,2021,State two functions of the cell membrane.,Structured,fill-in-the-blank question,High School
+Biology,2021,Name the organelle responsible for photosynthesis.,Structured,fill-in-the-blank question,High School
+Biology,2022,Explain how temperature affects enzyme activity.,Structured,fill-in-the-blank question,High School
+Biology,2023,Describe the process of mitosis.,Essay,fill-in-the-blank question,High School
+Biology,2024,State one difference between arteries and veins.,Structured,fill-in-the-blank question,High School
+Chemistry,2021,Define an acid according to the Bronsted-Lowry theory.,Structured,fill-in-the-blank question,High School
+Chemistry,2021,Write the chemical equation for the reaction between sodium and water.,Structured,fill-in-the-blank question,High School
+Chemistry,2022,Explain why graphite conducts electricity but diamond does not.,Essay,fill-in-the-blank question,High School
+Chemistry,2023,State one use of chlorine gas.,Structured,fill-in-the-blank question,High School
+Chemistry,2024,Name the process used to separate ethanol and water.,Structured,fill-in-the-blank question,High School
+Physics,2021,Define velocity.,Structured,fill-in-the-blank question,High School
+Physics,2022,Explain why a stone thrown upwards eventually falls back to the ground.,Structured,fill-in-the-blank question,High School
+Physics,2023,State Newton’s third law of motion.,Structured,fill-in-the-blank question,High School
+Physics,2024,Name the type of mirror used by drivers to view wide areas behind them.,Structured,fill-in-the-blank question,High School
+Geography,2021,Name two types of volcanic mountains.,Structured,fill-in-the-blank question,High School
+Geography,2021,State three factors influencing climate.,Structured,fill-in-the-blank question,High School
+Geography,2022,Explain three effects of soil erosion.,Essay,fill-in-the-blank question,High School
+Geography,2023,List two uses of a topographical map.,Structured,fill-in-the-blank question,High School
+Geography,2024,Define the term 'river rejuvenation.',Structured,fill-in-the-blank question,High School
+History,2021,State two reasons for the migration of the Luo into Kenya.,Structured,fill-in-the-blank question,High School
+History,2021,Identify one result of the coming of Europeans to Africa.,Structured,fill-in-the-blank question,High School
+History,2022,Explain three causes of the Maji Maji rebellion.,Essay,fill-in-the-blank question,High School
+History,2023,Mention two roles of the council of elders among the Kikuyu.,Structured,fill-in-the-blank question,High School
+History,2024,State one effect of nationalism in Africa.,Structured,fill-in-the-blank question,High School
+CRE,2021,State two attributes of God from the creation stories.,Structured,fill-in-the-blank question,High School
+CRE,2021,Explain the meaning of faith according to Hebrews 11:1.,Structured,fill-in-the-blank question,High School
+CRE,2022,Describe three teachings of Jesus on prayer.,Essay,fill-in-the-blank question,High School
+CRE,2023,State two ways Christians can show love to others.,Structured,fill-in-the-blank question,High School
+CRE,2024,Mention one reason why Christians read the Bible.,Structured,fill-in-the-blank question,High School
+Business Studies,2021,Define entrepreneurship.,Structured,fill-in-the-blank question,High School
+Business Studies,2021,State two types of business resources.,Structured,fill-in-the-blank question,High School
+Business Studies,2022,Explain three functions of a wholesaler.,Essay,fill-in-the-blank question,High School
+Business Studies,2023,List two forms of business ownership.,Structured,fill-in-the-blank question,High School
+Business Studies,2024,State one advantage of using e-commerce.,Structured,fill-in-the-blank question,High School
+Agriculture,2021,State two methods of soil conservation.,Structured,fill-in-the-blank question,High School
+Agriculture,2021,Name one example of a leguminous crop.,Structured,fill-in-the-blank question,High School
+Agriculture,2022,Explain three advantages of crop rotation.,Essay,fill-in-the-blank question,High School
+Agriculture,2023,List two causes of infertility in female animals.,Structured,fill-in-the-blank question,High School
+Agriculture,2024,Define zero grazing.,Structured,fill-in-the-blank question,High School
+Computer Studies,2021,Define the term 'software.',Structured,fill-in-the-blank question,High School
+Computer Studies,2021,State two input devices of a computer.,Structured,fill-in-the-blank question,High School
+Computer Studies,2022,Explain three characteristics of a good computer file.,Essay,fill-in-the-blank question,High School
+Computer Studies,2023,List two types of computer networks.,Structured,fill-in-the-blank question,High School
+Computer Studies,2024,State one advantage of cloud storage.,Structured,fill-in-the-blank question,High School
+Subject,,Question,Type,Style,University
+Accounting In Business,,Which type of unemployment arises from a permanent reduction in demand for the products supplied by a single industry or group of industries with traditionally large workforces? A.Frictional B.Structural C.Cyclical D.Seasonal,Structured,multiple-choice question,University
+Accounting In Business,,Which of the five fundamentals principles of the ACCA code of ethics and conduct imposes an obligation on members to comply with relevant laws and regulations and avoid any action that may bring discredit to the profession? This includes actions which a reasonable and informed third party,having knowledge of all relevant information,would conclude negatively affects the good reputation of the profession. A. Independence B. Objectivity C. Professional behaviour D. Professional competence and due care,University
+Accounting In Business,,Which of the following is the correct sequence of the training process A. Training needs analysis,definition of learning requirements,panning training programs,University
+Accounting In Business,,What does a decision support system (DSS) do to fulfil its function? A. Captures human expertise B. Combines data and analytical models C. Performs and records routine transactions D. Facilitates the creation and integration of new knowledge,Structured,multiple-choice question,University
+b) In your role as marketing manager at Jasiri Enterprises,,"discuss FOUR considerations which you would make in the selection of a marketing channel. (8 Marks)""",Essay,fill-in-the-blank question,University
+You are the marketing manager of a medium sized firm manufacturing and selling glass crystal and similar giftware. During the COVID 19 pandemic times have been tough,,"you are reflecting on your marketing information requirements for the new marketing initiative. Explain the stages you would undergo in conducting this research. (20 Marks)""",Essay,fill-in-the-blank question,University
+f) Find the regression coefficient of Y on X and of X on Y on the basis of the following: ΣX=50,,X̄=5,Ȳ=6,ΣXY=350,University
+Management Accounting,,"""1. A company is reviewing actual performance to budget to see where there are differences. The following standard information is relevant: £ per unit Selling price Direct materials Direct labour Fixed production overheads Variable production overheads Fixed selling costs Variable selling cost Total costs Budgeted sales units 3",000 Actual sales units 3,500 50 –– 4 16 5 10 1 1 –– 37 –– What was the favourable sales volume variance using marginal costing?,University
+Management Accounting,,"""2. A company uses process costing to establish the cost per unit of its output. The following information was available for the last month: Input units 10",000 Output units 9,850 Opening stock 300 units,University
+Management Accounting,,"""3. A company uses process costing to value its output. The following was recorded for the period: Input materials 2",000 units at £4.50 per unit Conversion costs £13,340 Normal loss 5% of input valued at £3 per unit Actual loss 150 units. There were no opening or closing stocks. What was the valuation of one unit of output to one decimal place?,University
+D £36,,"000 favourable""",Multiple Choice,multiple-choice question,University
+Category,,Question,Type,Style,University
+Category,,Question,Type,Style,University
+Computer Forensics,,Define computer forensics.,Structured,definition,University
+Computer Forensics,,Explain the difference between computer forensics and cyber security investigation.,Structured,short-answer,University
+Computer Forensics,,What are the main stages of a digital forensic investigation?,Structured,list,University
+Computer Forensics,,Describe two key challenges faced during evidence acquisition in digital forensics.,Structured,short-answer,University
+Computer Forensics,,Explain the importance of maintaining a chain of custody in computer forensics.,Structured,explanation,University
+Simulation and Modelling,,Define Simulation.,Structured,definition,University
+Simulation and Modelling,,Define Modelling.,Structured,definition,University
+Simulation and Modelling,,With the aid of an example define a system in the context of simulation and modelling.,Structured,explanation,University
+Simulation and Modelling,,List any four characteristics of a system.,Structured,list,University
+Simulation and Modelling,,During simulation a student has realized that two systems behave differently — one where the response at time t=0 depends only on input at t=0,and another where the response depends also on past events. Categorize these systems accurately.,Structured,University
+Simulation and Modelling,,Describe any two methods of storing lists in a computer system for simulation.,Structured,list,University
+Business Process Management,,Explain the four dimensions of the devil’s quadrangle used in process performance measurement.,Essay,explanation,University
+Business Process Management,,Explain two key reasons why we may need to analyse an AS-IS business process.,Structured,explanation,University
+Business Process Management,,Explain four key sources of waste that may render an AS-IS process inefficient.,Structured,list,University
+Business Process Management,,Using an example explain the value-added analysis approach.,Structured,explanation,University
+Business Process Management,,Using examples,explain five re-design heuristics that are critical to the business process re-design process.,Essay,University
+Probability and Statistics II,,A university bookstore claims that 50% of its customers are satisfied. Find the probability that in a sample of 600,less than 45% are satisfied.,Structured,University
+Probability and Statistics II,,The amount of time X (in minutes) a bank teller spends with a customer follows an exponential distribution with mean 4 minutes. Determine the probability distribution function f(x).,Structured,formula,University
+Probability and Statistics II,,Find the probability that a clerk spends between four and five minutes with a randomly selected customer.,Structured,calculation,University
+Probability and Statistics II,,Determine the mean and variance of a random variable X with the given probability density function f(x) = (x^(α-1)e^(-x/β)) / (β^αΓ(α)) for x > 0.,Structured,calculation,University
+Probability and Statistics II,,Marks of 500 candidates are normally distributed with mean 45 and SD 20. Given the pass mark is 41,estimate the number who passed.,Structured,University
+Probability and Statistics II,,If 5% of the candidates obtained a distinction by scoring y marks or more,estimate the value of y.,Structured,University
+Fundamentals of Financial Management,,Explain the concept “time value of money.”,Structured,definition,University
+Fundamentals of Financial Management,,Jane invests Ksh. 100,000 at 8% quarterly compound interest for 5 years. Determine the maturity value.,Structured,University
+Fundamentals of Financial Management,,How long does it take to triple Ksh. 60,000 at 9% compound rate per year?,Structured,University
+Fundamentals of Financial Management,,Discuss the four main managerial finance functions.,Essay,explanation,University
+Fundamentals of Financial Management,,With reference to agency theory,discuss three causes of conflict between shareholders and management and how they can be resolved.,Essay,University
+Contract Law,,Aziz Ltd agreed to rebuild a ship for Blue for Kshs 700 million. Blue cancels the contract before completion. Discuss breach of contract based on this case.,Essay,discussion,University
+Contract Law,,State general defences available for breach of contract.,Structured,list,University
+Contract Law,,Discuss how undue influence differs from unconscionable conduct and its impact on genuine consent.,Essay,comparison,University
+Contract Law,,"""With aid of decided cases","list the exceptions to the position that damages for mental distress are not awarded for commercial contracts.""",Essay,University
+Contract Law,,Identify and illustrate three situations in which courts may imply terms into a contract,with aid of decided cases.,Essay,University

@@ -1,0 +1,485 @@
+/* src/styles/complex-math-notebook.css */
+.complex-math-notebook {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #1e1e1e;
+  color: #ffffff;
+}
+
+.math-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: #2d2d30;
+  border-bottom: 1px solid #3e3e42;
+}
+
+.math-title {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 0.5rem;
+  border-bottom: 2px solid #007acc;
+  min-width: 300px;
+}
+
+.math-title:focus {
+  outline: none;
+  border-color: #0098ff;
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.save-btn, .back-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.save-btn {
+  background: #007acc;
+  color: white;
+}
+
+.save-btn:hover:not(:disabled) {
+  background: #0098ff;
+}
+
+.save-btn:disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+
+.back-btn {
+  background: #555;
+  color: white;
+}
+
+.back-btn:hover {
+  background: #666;
+}
+
+.math-tool-nav {
+  display: flex;
+  background: #252526;
+  border-bottom: 1px solid #3e3e42;
+  padding: 0 2rem;
+}
+
+.math-tool-nav button {
+  padding: 1rem 1.5rem;
+  background: transparent;
+  border: none;
+  color: #cccccc;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+
+.math-tool-nav button:hover {
+  background: #2a2d2e;
+  color: #ffffff;
+}
+
+.math-tool-nav button.active {
+  color: #0098ff;
+  border-bottom-color: #0098ff;
+  background: #2a2d2e;
+}
+
+.math-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.tool-panel {
+  background: #252526;
+  border-radius: 8px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border: 1px solid #3e3e42;
+}
+
+.tool-panel h3 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #0098ff;
+  border-bottom: 1px solid #3e3e42;
+  padding-bottom: 0.5rem;
+}
+
+/* Calculator Styles */
+.calculator {
+  max-width: 400px;
+}
+
+.calc-display {
+  background: #0e0e0e;
+  border: 1px solid #3e3e42;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  min-height: 80px;
+}
+
+.calc-input {
+  color: #cccccc;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  min-height: 1.5rem;
+}
+
+.calc-result {
+  color: #0098ff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: right;
+}
+
+.calc-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.calc-scientific, .calc-basic {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+
+.calc-scientific button, .calc-basic button {
+  padding: 0.75rem;
+  border: none;
+  border-radius: 4px;
+  background: #333;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.calc-scientific button:hover, .calc-basic button:hover {
+  background: #444;
+}
+
+.calc-basic button.equals {
+  background: #007acc;
+  grid-column: span 2;
+}
+
+.calc-basic button.equals:hover {
+  background: #0098ff;
+}
+
+/* Matrix Styles */
+.matrix-operations {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.matrix-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.matrix-container h4 {
+  margin-bottom: 1rem;
+  color: #cccccc;
+}
+
+.matrix-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.matrix-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.matrix-cell {
+  width: 60px;
+  height: 40px;
+  text-align: center;
+  background: #333;
+  border: 1px solid #555;
+  border-radius: 4px;
+  color: white;
+}
+
+.matrix-cell:focus {
+  outline: none;
+  border-color: #007acc;
+}
+
+.matrix-cell.result {
+  background: #2b5b2b;
+  border-color: #3d7b3d;
+}
+
+.matrix-controls {
+  display: flex;
+  gap: 1rem;
+}
+
+.matrix-controls button {
+  padding: 0.75rem 1.5rem;
+  background: #007acc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.matrix-controls button:hover {
+  background: #0098ff;
+}
+
+.matrix-result {
+  background: #1e1e1e;
+  padding: 1rem;
+  border-radius: 4px;
+  border: 1px solid #3e3e42;
+}
+
+/* Calculus Styles */
+.calculus-operations {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.function-input {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.function-input label {
+  min-width: 120px;
+}
+
+.function-input input {
+  flex: 1;
+  padding: 0.5rem;
+  background: #333;
+  border: 1px solid #555;
+  border-radius: 4px;
+  color: white;
+}
+
+.function-input input:focus {
+  outline: none;
+  border-color: #007acc;
+}
+
+.calculus-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.calculus-controls button {
+  padding: 0.75rem 1.5rem;
+  background: #007acc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  width: fit-content;
+}
+
+.calculus-controls button:hover {
+  background: #0098ff;
+}
+
+.integration-range {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.integration-range input {
+  width: 80px;
+  padding: 0.5rem;
+  background: #333;
+  border: 1px solid #555;
+  border-radius: 4px;
+  color: white;
+}
+
+.calculus-result {
+  background: #1e1e1e;
+  padding: 1rem;
+  border-radius: 4px;
+  border: 1px solid #3e3e42;
+}
+
+/* Complex Numbers Styles */
+.complex-operations {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.complex-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.complex-number h4 {
+  margin-bottom: 1rem;
+  color: #cccccc;
+}
+
+.complex-input {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.complex-input input {
+  width: 80px;
+  padding: 0.5rem;
+  background: #333;
+  border: 1px solid #555;
+  border-radius: 4px;
+  color: white;
+  text-align: center;
+}
+
+.complex-controls {
+  display: flex;
+  gap: 1rem;
+}
+
+.complex-controls button {
+  padding: 0.75rem 1.5rem;
+  background: #007acc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.complex-controls button:hover {
+  background: #0098ff;
+}
+
+.complex-result {
+  background: #1e1e1e;
+  padding: 1rem;
+  border-radius: 4px;
+  border: 1px solid #3e3e42;
+}
+
+/* Equation Solver Styles */
+.equation-solver {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.equation-input {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.equation-input label {
+  min-width: 80px;
+}
+
+.equation-input input {
+  flex: 1;
+  padding: 0.5rem;
+  background: #333;
+  border: 1px solid #555;
+  border-radius: 4px;
+  color: white;
+}
+
+.equation-input input:focus {
+  outline: none;
+  border-color: #007acc;
+}
+
+.equation-controls button {
+  padding: 0.75rem 1.5rem;
+  background: #007acc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.equation-controls button:hover {
+  background: #0098ff;
+}
+
+.equation-result {
+  background: #1e1e1e;
+  padding: 1rem;
+  border-radius: 4px;
+  border: 1px solid #3e3e42;
+}
+
+/* Error Styles */
+.error {
+  color: #f48771;
+  background: #5a1f1f;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #f48771;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .math-header {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .math-tool-nav {
+    overflow-x: auto;
+    padding: 0 1rem;
+  }
+  
+  .math-content {
+    padding: 1rem;
+  }
+  
+  .matrix-inputs,
+  .complex-inputs {
+    grid-template-columns: 1fr;
+  }
+  
+  .calculator {
+    max-width: 100%;
+  }
+  
+  .calc-buttons {
+    grid-template-columns: 1fr;
+  }
+}

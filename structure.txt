@@ -1,0 +1,79 @@
+📁 lexora-project/
+│
+├── 📁 frontend/                     # React + Vite frontend
+│   ├── 📁 node_modules/
+│   ├── 📁 public/
+│   │   └── favicon.ico              # App icon 
+│   ├── 📁 src/
+│   │   ├── 📁 assets/               # Images, animations,etc
+│   │   ├── 📁 components/           
+│   │   │   └── Footer.jsx
+│   │   ├── 📁 pages/                # App pages
+│   │   │   ├── Home.jsx
+│   │   │   ├── Login.jsx
+│   │   │   ├── Register.jsx
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── Notes.jsx   #normal, math, pythonmath and coding
+│   │   │   ├── Quiz.jsx
+│   │   │   ├── QuizMode.jsx
+│   │   │   ├── QuizSession.jsx
+│   │   │   ├── Notebook.jsx
+│   │   │   └── AdminPanel.jsx
+│   │   │   └── Register.jsx
+│   │   │   └── Settings.jsx
+│   │   │   └── Unauthorized.jsx
+│   │   ├── 📁 styles/               # CSS files per section
+│   │   │   ├── global.css
+│   │   │   ├── home.css
+│   │   │   ├── login.css
+│   │   │   ├── register.css
+│   │   │   ├── dashboard.css
+│   │   │   ├── notes.css
+│   │   │   ├── quiz.css  
+            ├── quizmode.css
+            ├── quiz-session.css
+│   │   │   ├── admin.css
+│   │   │   ├── navbar.css
+│   │   │   └── footer.css
+│   │   ├── 📁 utils/
+│   │   │   └── api.js               # Helper functions (AI, DB, etc.)
+│   │   │   └── auth.js 
+│   │   │   └── ProtectedRoute.js 
+│   │   │   └── quizApiService.js 
+│   │   ├── App.jsx                  # Root component
+│   │   ├── main.jsx                 # React entry point
+│   │   └── router.jsx               # Route definitions
+│   ├── package.json
+│   └── vite.config.js
+│
+└── 📁 .venv/                      # Virtual environment
+└── 📁 backend/                      # Python AI backend
+    ├── 📁 _py_cache_/
+    ├── 📁 ai_services/
+    │   ├── ai_companion.py          # Chat-based AI helper
+        |  __init__.py        # Auto quiz creation
+    │   ├── quiz_generator.py         
+        ├── clean_dataset.csv
+        ├── train_quiz_model.ipynb
+    │   └── content_moderator.py     # Filters inappropriate content
+    ├── 📁 chroma_db/
+    ├── 📁 models/                   # ML models, embeddings
+    ├── 📁 services/ 
+    │   ├── math_notebook.py
+    │   ├── code_executor.py      
+    │   ├── graphing_service.py      
+    │   ├── advanced_code_executor.py     #for advanced coding       
+    ├── 📁 data/ 
+    ├── 📁 utils/     
+    |   __init__.py               # Knowledge base, datasets
+    ├── main.py    
+    ├── setup_ai_services.py      #for setting up gen API
+    ├── start_server.py           #to check if the server/port 8000 is working for the backend
+    ├── test_comprehensive.py     #to check if the math notebook is working, ie: doing calculations
+    ├── test_installation.py      #test if the installations needed from requirements.txt
+    ├── test_math_backend.py     #test the backend of the math notebooks           
+    ├── requirements.txt             
+    └── .env                         # Environment variables (API keys, DB)
+│ package-lock.json
+│ package.json
+│ structure

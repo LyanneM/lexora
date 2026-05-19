@@ -1,0 +1,201 @@
+Exam_ID,Subject,Course_Code,Year,Semester,Question_Number,Question_Text,Marks,Answer_Key
+1,Business,BUS496,2021,2,1,What is GDP?,3,Gross Domestic Product.
+1,Computer Science,COM303,2023,1,2,What is recursion in programming?,5,A function calling itself.
+1,Physics,PHY481,2021,2,3,What is the speed of light in a vacuum?,5,3.0 × 10^8 m/s
+1,Computer Science,COM185,2022,2,4,What is recursion in programming?,3,A function calling itself.
+1,Mathematics,MAT121,2022,2,5,What is the derivative of x^2?,4,2x
+1,Physics,PHY249,2023,2,6,What is Ohm's Law?,3,V = IR
+1,Physics,PHY137,2022,2,7,What is Ohm's Law?,10,V = IR
+1,Business,BUS406,2023,2,8,What is SWOT analysis?,2,"Strengths, Weaknesses, Opportunities, Threats."
+1,Physics,PHY363,2022,1,9,What is the unit of force?,10,Newton (N)
+1,Mathematics,MAT372,2021,2,10,What is the integral of 1/x?,2,ln|x| + C
+2,Physics,PHY278,2021,1,1,State Newton's Second Law of Motion.,5,Force equals mass times acceleration (F = ma).
+2,Physics,PHY290,2021,1,2,State Newton's Second Law of Motion.,5,Force equals mass times acceleration (F = ma).
+2,Mathematics,MAT217,2022,2,3,Solve for x: 2x + 3 = 7,2,x = 2
+2,Business,BUS234,2021,1,4,What is a market economy?,2,An economy driven by supply and demand.
+2,Physics,PHY413,2021,2,5,What is the speed of light in a vacuum?,2,3.0 × 10^8 m/s
+2,Business,BUS399,2021,1,6,Define supply and demand.,4,Relationship between availability and desire for a product.
+2,Computer Science,COM178,2022,1,7,Define an algorithm.,2,A step-by-step procedure to solve a problem.
+2,Mathematics,MAT294,2021,2,8,What is the integral of 1/x?,10,ln|x| + C
+2,Computer Science,COM109,2023,1,9,What does HTML stand for?,10,HyperText Markup Language
+2,Physics,PHY304,2022,2,10,What is the speed of light in a vacuum?,2,3.0 × 10^8 m/s
+3,Physics,PHY119,2022,2,1,What is the unit of force?,2,Newton (N)
+3,Business,BUS413,2022,1,2,What is GDP?,3,Gross Domestic Product.
+3,Physics,PHY471,2022,1,3,Define kinetic energy.,4,Energy due to motion: KE = 1/2 mv²
+3,Physics,PHY378,2022,2,4,State Newton's Second Law of Motion.,5,Force equals mass times acceleration (F = ma).
+3,Computer Science,COM104,2023,1,5,What is recursion in programming?,2,A function calling itself.
+3,Computer Science,COM401,2021,2,6,What is recursion in programming?,4,A function calling itself.
+3,Business,BUS247,2022,2,7,Define supply and demand.,3,Relationship between availability and desire for a product.
+3,Mathematics,MAT478,2022,1,8,What is the derivative of x^2?,5,2x
+3,Physics,PHY178,2021,1,9,State Newton's Second Law of Motion.,10,Force equals mass times acceleration (F = ma).
+3,Business,BUS430,2022,2,10,Define inflation.,10,The rate at which the general price level rises.
+4,Mathematics,MAT454,2023,2,1,Define a matrix.,4,A rectangular array of numbers arranged in rows and columns.
+4,Physics,PHY214,2023,1,2,Define kinetic energy.,4,Energy due to motion: KE = 1/2 mv²
+4,Business,BUS486,2023,2,3,What is SWOT analysis?,5,"Strengths, Weaknesses, Opportunities, Threats."
+4,Mathematics,MAT331,2021,2,4,What is the quadratic formula?,2,x = (-b ± √(b² - 4ac)) / 2a
+4,Computer Science,COM393,2023,2,5,Define an algorithm.,10,A step-by-step procedure to solve a problem.
+4,Physics,PHY393,2021,2,6,State Newton's Second Law of Motion.,3,Force equals mass times acceleration (F = ma).
+4,Business,BUS151,2021,2,7,Define inflation.,10,The rate at which the general price level rises.
+4,Mathematics,MAT422,2022,2,8,What is the integral of 1/x?,2,ln|x| + C
+4,Computer Science,COM451,2023,2,9,Define an algorithm.,4,A step-by-step procedure to solve a problem.
+4,Business,BUS465,2021,2,10,Define supply and demand.,3,Relationship between availability and desire for a product.
+5,Physics,PHY319,2021,1,1,What is the speed of light in a vacuum?,2,3.0 × 10^8 m/s
+5,Mathematics,MAT111,2021,2,2,What is the integral of 1/x?,5,ln|x| + C
+5,Computer Science,COM312,2023,1,3,What is SQL used for?,5,Managing and querying databases.
+5,Mathematics,MAT431,2021,1,4,What is the quadratic formula?,3,x = (-b ± √(b² - 4ac)) / 2a
+5,Mathematics,MAT332,2022,1,5,What is the integral of 1/x?,2,ln|x| + C
+5,Business,BUS492,2023,2,6,What is a market economy?,4,An economy driven by supply and demand.
+5,Computer Science,COM296,2021,1,7,What is recursion in programming?,10,A function calling itself.
+5,Computer Science,COM368,2021,2,8,What is Big O notation?,2,A measure of algorithm efficiency.
+5,Computer Science,COM303,2022,1,9,Define an algorithm.,5,A step-by-step procedure to solve a problem.
+5,Mathematics,MAT408,2023,1,10,Define a matrix.,4,A rectangular array of numbers arranged in rows and columns.
+6,Mathematics,MAT360,2023,1,1,What is the quadratic formula?,4,x = (-b ± √(b² - 4ac)) / 2a
+6,Mathematics,MAT483,2021,1,2,What is the derivative of x^2?,3,2x
+6,Business,BUS462,2021,2,3,Define supply and demand.,10,Relationship between availability and desire for a product.
+6,Computer Science,COM132,2023,2,4,What is Big O notation?,10,A measure of algorithm efficiency.
+6,Business,BUS251,2023,1,5,Define supply and demand.,10,Relationship between availability and desire for a product.
+6,Mathematics,MAT191,2022,2,6,What is the quadratic formula?,10,x = (-b ± √(b² - 4ac)) / 2a
+6,Business,BUS306,2022,2,7,Define supply and demand.,2,Relationship between availability and desire for a product.
+6,Business,BUS416,2023,1,8,What is GDP?,5,Gross Domestic Product.
+6,Business,BUS255,2023,1,9,Define supply and demand.,3,Relationship between availability and desire for a product.
+6,Business,BUS317,2023,1,10,What is SWOT analysis?,5,"Strengths, Weaknesses, Opportunities, Threats."
+7,Business,BUS300,2021,2,1,Define supply and demand.,10,Relationship between availability and desire for a product.
+7,Mathematics,MAT265,2023,1,2,What is the quadratic formula?,3,x = (-b ± √(b² - 4ac)) / 2a
+7,Business,BUS222,2023,2,3,What is a market economy?,2,An economy driven by supply and demand.
+7,Physics,PHY456,2023,1,4,Define kinetic energy.,2,Energy due to motion: KE = 1/2 mv²
+7,Physics,PHY300,2021,1,5,State Newton's Second Law of Motion.,2,Force equals mass times acceleration (F = ma).
+7,Mathematics,MAT402,2021,1,6,Define a matrix.,4,A rectangular array of numbers arranged in rows and columns.
+7,Business,BUS451,2023,2,7,What is a market economy?,4,An economy driven by supply and demand.
+7,Physics,PHY259,2022,2,8,What is the unit of force?,2,Newton (N)
+7,Mathematics,MAT280,2023,1,9,What is the quadratic formula?,10,x = (-b ± √(b² - 4ac)) / 2a
+7,Mathematics,MAT222,2022,2,10,What is the derivative of x^2?,10,2x
+8,Business,BUS343,2021,2,1,Define inflation.,5,The rate at which the general price level rises.
+8,Business,BUS110,2021,1,2,Define inflation.,4,The rate at which the general price level rises.
+8,Mathematics,MAT221,2022,1,3,What is the derivative of x^2?,2,2x
+8,Physics,PHY285,2023,2,4,What is Ohm's Law?,2,V = IR
+8,Mathematics,MAT257,2023,2,5,What is the derivative of x^2?,4,2x
+8,Business,BUS365,2023,2,6,What is SWOT analysis?,3,"Strengths, Weaknesses, Opportunities, Threats."
+8,Mathematics,MAT236,2023,2,7,Define a matrix.,4,A rectangular array of numbers arranged in rows and columns.
+8,Computer Science,COM374,2022,2,8,Define an algorithm.,5,A step-by-step procedure to solve a problem.
+8,Computer Science,COM108,2023,2,9,What is recursion in programming?,5,A function calling itself.
+8,Computer Science,COM333,2022,1,10,What does HTML stand for?,5,HyperText Markup Language
+9,Physics,PHY449,2021,1,1,What is Ohm's Law?,4,V = IR
+9,Business,BUS195,2021,1,2,Define supply and demand.,3,Relationship between availability and desire for a product.
+9,Mathematics,MAT353,2022,2,3,What is the derivative of x^2?,5,2x
+9,Mathematics,MAT183,2021,1,4,What is the derivative of x^2?,10,2x
+9,Mathematics,MAT209,2021,1,5,Solve for x: 2x + 3 = 7,4,x = 2
+9,Mathematics,MAT429,2021,1,6,Define a matrix.,2,A rectangular array of numbers arranged in rows and columns.
+9,Computer Science,COM422,2022,2,7,Define an algorithm.,5,A step-by-step procedure to solve a problem.
+9,Physics,PHY491,2023,2,8,What is Ohm's Law?,4,V = IR
+9,Physics,PHY111,2021,2,9,What is Ohm's Law?,2,V = IR
+9,Business,BUS233,2022,1,10,Define inflation.,5,The rate at which the general price level rises.
+10,Business,BUS176,2023,2,1,What is GDP?,4,Gross Domestic Product.
+10,Physics,PHY210,2021,1,2,What is Ohm's Law?,10,V = IR
+10,Computer Science,COM216,2022,2,3,What is SQL used for?,4,Managing and querying databases.
+10,Mathematics,MAT130,2022,2,4,Solve for x: 2x + 3 = 7,2,x = 2
+10,Business,BUS109,2021,1,5,Define supply and demand.,3,Relationship between availability and desire for a product.
+10,Business,BUS122,2021,1,6,What is a market economy?,4,An economy driven by supply and demand.
+10,Computer Science,COM260,2023,1,7,What does HTML stand for?,5,HyperText Markup Language
+10,Mathematics,MAT373,2023,2,8,What is the derivative of x^2?,5,2x
+10,Physics,PHY289,2022,2,9,What is Ohm's Law?,5,V = IR
+10,Business,BUS128,2022,1,10,Define supply and demand.,3,Relationship between availability and desire for a product.
+11,Mathematics,MAT239,2021,1,1,What is the derivative of x^2?,2,2x
+11,Business,BUS409,2023,1,2,Define supply and demand.,5,Relationship between availability and desire for a product.
+11,Physics,PHY106,2021,1,3,State Newton's Second Law of Motion.,3,Force equals mass times acceleration (F = ma).
+11,Computer Science,COM324,2022,2,4,What is Big O notation?,2,A measure of algorithm efficiency.
+11,Computer Science,COM484,2021,1,5,What is Big O notation?,5,A measure of algorithm efficiency.
+11,Business,BUS395,2021,1,6,Define supply and demand.,3,Relationship between availability and desire for a product.
+11,Physics,PHY261,2021,2,7,What is Ohm's Law?,2,V = IR
+11,Physics,PHY334,2022,1,8,What is the unit of force?,2,Newton (N)
+11,Mathematics,MAT388,2023,1,9,What is the quadratic formula?,10,x = (-b ± √(b² - 4ac)) / 2a
+11,Computer Science,COM487,2023,1,10,What does HTML stand for?,4,HyperText Markup Language
+12,Mathematics,MAT218,2021,1,1,Define a matrix.,4,A rectangular array of numbers arranged in rows and columns.
+12,Mathematics,MAT278,2022,2,2,What is the integral of 1/x?,10,ln|x| + C
+12,Physics,PHY163,2021,1,3,What is Ohm's Law?,4,V = IR
+12,Mathematics,MAT354,2021,2,4,Solve for x: 2x + 3 = 7,5,x = 2
+12,Business,BUS206,2021,2,5,Define supply and demand.,10,Relationship between availability and desire for a product.
+12,Physics,PHY218,2023,1,6,What is Ohm's Law?,10,V = IR
+12,Physics,PHY413,2022,2,7,Define kinetic energy.,4,Energy due to motion: KE = 1/2 mv²
+12,Business,BUS170,2023,1,8,Define supply and demand.,4,Relationship between availability and desire for a product.
+12,Computer Science,COM479,2021,1,9,Define an algorithm.,3,A step-by-step procedure to solve a problem.
+12,Computer Science,COM237,2023,1,10,What does HTML stand for?,2,HyperText Markup Language
+13,Computer Science,COM454,2022,2,1,What is recursion in programming?,2,A function calling itself.
+13,Business,BUS456,2023,1,2,What is a market economy?,4,An economy driven by supply and demand.
+13,Mathematics,MAT301,2022,1,3,Define a matrix.,2,A rectangular array of numbers arranged in rows and columns.
+13,Mathematics,MAT206,2022,1,4,What is the quadratic formula?,3,x = (-b ± √(b² - 4ac)) / 2a
+13,Mathematics,MAT486,2021,1,5,What is the derivative of x^2?,2,2x
+13,Physics,PHY366,2021,1,6,What is Ohm's Law?,3,V = IR
+13,Computer Science,COM360,2021,2,7,What is Big O notation?,10,A measure of algorithm efficiency.
+13,Physics,PHY207,2021,1,8,What is Ohm's Law?,10,V = IR
+13,Mathematics,MAT491,2021,1,9,Define a matrix.,2,A rectangular array of numbers arranged in rows and columns.
+13,Computer Science,COM458,2023,1,10,What is Big O notation?,10,A measure of algorithm efficiency.
+14,Mathematics,MAT289,2023,2,1,Define a matrix.,4,A rectangular array of numbers arranged in rows and columns.
+14,Mathematics,MAT290,2022,1,2,What is the integral of 1/x?,10,ln|x| + C
+14,Physics,PHY261,2021,2,3,What is Ohm's Law?,4,V = IR
+14,Computer Science,COM189,2021,1,4,Define an algorithm.,3,A step-by-step procedure to solve a problem.
+14,Computer Science,COM191,2022,1,5,What is recursion in programming?,4,A function calling itself.
+14,Computer Science,COM487,2023,1,6,What is Big O notation?,5,A measure of algorithm efficiency.
+14,Mathematics,MAT189,2023,1,7,Define a matrix.,3,A rectangular array of numbers arranged in rows and columns.
+14,Computer Science,COM311,2021,1,8,What is SQL used for?,4,Managing and querying databases.
+14,Mathematics,MAT311,2021,2,9,What is the quadratic formula?,5,x = (-b ± √(b² - 4ac)) / 2a
+14,Computer Science,COM336,2023,2,10,What is Big O notation?,2,A measure of algorithm efficiency.
+15,Computer Science,COM146,2022,1,1,What does HTML stand for?,2,HyperText Markup Language
+15,Physics,PHY172,2022,2,2,What is the unit of force?,5,Newton (N)
+15,Computer Science,COM340,2023,2,3,Define an algorithm.,3,A step-by-step procedure to solve a problem.
+15,Physics,PHY427,2021,2,4,What is the unit of force?,3,Newton (N)
+15,Business,BUS360,2022,2,5,What is GDP?,5,Gross Domestic Product.
+15,Business,BUS270,2023,2,6,What is SWOT analysis?,5,"Strengths, Weaknesses, Opportunities, Threats."
+15,Computer Science,COM121,2022,1,7,What does HTML stand for?,2,HyperText Markup Language
+15,Mathematics,MAT310,2022,1,8,What is the integral of 1/x?,10,ln|x| + C
+15,Computer Science,COM190,2022,1,9,Define an algorithm.,2,A step-by-step procedure to solve a problem.
+15,Physics,PHY441,2023,1,10,What is Ohm's Law?,2,V = IR
+16,Mathematics,MAT486,2023,1,1,What is the quadratic formula?,10,x = (-b ± √(b² - 4ac)) / 2a
+16,Computer Science,COM454,2023,1,2,Define an algorithm.,10,A step-by-step procedure to solve a problem.
+16,Business,BUS414,2021,1,3,Define inflation.,4,The rate at which the general price level rises.
+16,Mathematics,MAT431,2023,2,4,What is the integral of 1/x?,4,ln|x| + C
+16,Mathematics,MAT316,2021,1,5,What is the quadratic formula?,2,x = (-b ± √(b² - 4ac)) / 2a
+16,Physics,PHY442,2022,1,6,State Newton's Second Law of Motion.,4,Force equals mass times acceleration (F = ma).
+16,Physics,PHY204,2023,1,7,What is the speed of light in a vacuum?,5,3.0 × 10^8 m/s
+16,Physics,PHY342,2022,2,8,Define kinetic energy.,5,Energy due to motion: KE = 1/2 mv²
+16,Mathematics,MAT279,2023,2,9,What is the quadratic formula?,3,x = (-b ± √(b² - 4ac)) / 2a
+16,Business,BUS361,2023,1,10,What is a market economy?,3,An economy driven by supply and demand.
+17,Business,BUS487,2021,1,1,Define inflation.,5,The rate at which the general price level rises.
+17,Mathematics,MAT166,2023,1,2,What is the quadratic formula?,4,x = (-b ± √(b² - 4ac)) / 2a
+17,Mathematics,MAT268,2022,2,3,What is the derivative of x^2?,2,2x
+17,Business,BUS252,2021,1,4,What is GDP?,5,Gross Domestic Product.
+17,Computer Science,COM360,2023,2,5,What is SQL used for?,3,Managing and querying databases.
+17,Physics,PHY152,2022,1,6,Define kinetic energy.,4,Energy due to motion: KE = 1/2 mv²
+17,Computer Science,COM350,2022,1,7,What does HTML stand for?,4,HyperText Markup Language
+17,Computer Science,COM314,2022,1,8,What is Big O notation?,4,A measure of algorithm efficiency.
+17,Physics,PHY108,2023,1,9,What is the speed of light in a vacuum?,3,3.0 × 10^8 m/s
+17,Business,BUS268,2023,2,10,Define inflation.,5,The rate at which the general price level rises.
+18,Mathematics,MAT254,2021,1,1,What is the integral of 1/x?,2,ln|x| + C
+18,Business,BUS431,2021,2,2,Define supply and demand.,5,Relationship between availability and desire for a product.
+18,Mathematics,MAT458,2023,1,3,What is the quadratic formula?,2,x = (-b ± √(b² - 4ac)) / 2a
+18,Business,BUS324,2021,1,4,What is GDP?,5,Gross Domestic Product.
+18,Business,BUS311,2021,2,5,Define supply and demand.,5,Relationship between availability and desire for a product.
+18,Mathematics,MAT255,2022,2,6,What is the integral of 1/x?,3,ln|x| + C
+18,Business,BUS168,2022,1,7,Define supply and demand.,4,Relationship between availability and desire for a product.
+18,Business,BUS336,2022,1,8,Define supply and demand.,3,Relationship between availability and desire for a product.
+18,Mathematics,MAT245,2023,2,9,What is the quadratic formula?,5,x = (-b ± √(b² - 4ac)) / 2a
+18,Mathematics,MAT174,2023,2,10,Solve for x: 2x + 3 = 7,2,x = 2
+19,Mathematics,MAT487,2022,1,1,What is the quadratic formula?,3,x = (-b ± √(b² - 4ac)) / 2a
+19,Mathematics,MAT469,2021,2,2,What is the derivative of x^2?,2,2x
+19,Computer Science,COM467,2023,1,3,What is SQL used for?,4,Managing and querying databases.
+19,Physics,PHY273,2023,2,4,Define kinetic energy.,3,Energy due to motion: KE = 1/2 mv²
+19,Business,BUS219,2022,2,5,Define inflation.,10,The rate at which the general price level rises.
+19,Physics,PHY137,2021,1,6,What is the unit of force?,4,Newton (N)
+19,Physics,PHY150,2022,1,7,State Newton's Second Law of Motion.,3,Force equals mass times acceleration (F = ma).
+19,Physics,PHY162,2022,1,8,What is Ohm's Law?,3,V = IR
+19,Mathematics,MAT440,2021,1,9,What is the derivative of x^2?,3,2x
+19,Mathematics,MAT363,2021,1,10,Solve for x: 2x + 3 = 7,3,x = 2
+20,Computer Science,COM351,2021,2,1,Define an algorithm.,10,A step-by-step procedure to solve a problem.
+20,Physics,PHY345,2023,2,2,Define kinetic energy.,10,Energy due to motion: KE = 1/2 mv²
+20,Physics,PHY327,2022,2,3,State Newton's Second Law of Motion.,4,Force equals mass times acceleration (F = ma).
+20,Computer Science,COM256,2023,1,4,What is recursion in programming?,2,A function calling itself.
+20,Physics,PHY171,2022,1,5,What is the speed of light in a vacuum?,4,3.0 × 10^8 m/s
+20,Computer Science,COM249,2021,1,6,What does HTML stand for?,5,HyperText Markup Language
+20,Computer Science,COM195,2022,1,7,What does HTML stand for?,2,HyperText Markup Language
+20,Computer Science,COM487,2021,2,8,What is SQL used for?,2,Managing and querying databases.
+20,Computer Science,COM270,2021,1,9,What is Big O notation?,5,A measure of algorithm efficiency.
+20,Computer Science,COM392,2022,2,10,What is recursion in programming?,5,A function calling itself.

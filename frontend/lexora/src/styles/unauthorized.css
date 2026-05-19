@@ -1,0 +1,75 @@
+/* src/styles/unauthorized.css */
+.unauthorized-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+  padding: 20px;
+}
+
+.unauthorized-content {
+  background: white;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+}
+
+.unauthorized-content h1 {
+  color: #d32f2f;
+  margin-bottom: 15px;
+}
+
+.unauthorized-content p {
+  color: #666;
+  margin-bottom: 25px;
+  font-size: 18px;
+}
+
+.actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.btn-primary, .btn-secondary {
+  padding: 12px 25px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: #8A2BE2;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #6A0DAD;
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid #8A2BE2;
+  color: #8A2BE2;
+}
+
+.btn-secondary:hover {
+  background: #f3e5f5;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+  .actions {
+    flex-direction: column;
+  }
+  
+  .btn-primary, .btn-secondary {
+    width: 100%;
+    text-align: center;
+  }
+}

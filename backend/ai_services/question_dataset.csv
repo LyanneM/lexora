@@ -1,0 +1,291 @@
+High School
+Subject,Year,Question,Type,Style
+
+Mathematics,2021,Solve for x: 3x - 7 = 11.,Structured,fill-in-the-blank question
+Mathematics,2021,Find the area of a triangle with base 6 cm and height 4 cm.,Structured,fill-in-the-blank question
+Mathematics,2022,Simplify: (2x² - 8) ÷ (x - 2).,Structured, fill-in-the-blank question
+Mathematics,2023,A car travels 240 km in 3 hours. Find its average speed.,Structured, fill-in-the-blank question
+Mathematics,2024,Differentiate y = 3x³ - 2x² + 5x.,Structured, fill-in-the-blank question
+English,2021,"Rewrite: 'She completed the work, and so did he.' beginning with 'Both...'",Structured, fill-in-the-blank question
+English,2021,Explain the meaning of the idiom: 'To spill the beans.',Structured, fill-in-the-blank question
+English,2022,Write a composition on the topic: 'A blessing in disguise.',Essay, fill-in-the-blank question
+English,2023,Identify and correct the error: 'He don’t like football.',Structured, fill-in-the-blank question
+English,2024,Give one function of a relative pronoun in a sentence.,Structured, fill-in-the-blank question
+Kiswahili,2021,Andika sentensi kwa kutumia neno 'barabara'.,Structured, fill-in-the-blank question
+Kiswahili,2021,Tafsiri: 'Education is important.' kwa Kiswahili.,Structured, fill-in-the-blank question
+Kiswahili,2022,Eleza maana ya msemo: 'Kuku mgeni hakosi kamba mguuni.',Structured, fill-in-the-blank question
+Kiswahili,2023,Andika insha: 'Jukumu langu katika jamii.',Essay, fill-in-the-blank question
+Kiswahili,2024,Tambua kivumishi katika sentensi: 'Mtoto mzuri alicheza.',Structured, fill-in-the-blank question
+Biology,2021,State two functions of the cell membrane.,Structured, fill-in-the-blank question
+Biology,2021,Name the organelle responsible for photosynthesis.,Structured, fill-in-the-blank question
+Biology,2022,Explain how temperature affects enzyme activity.,Structured, fill-in-the-blank question
+Biology,2023,Describe the process of mitosis.,Essay, fill-in-the-blank question
+Biology,2024,State one difference between arteries and veins.,Structured, fill-in-the-blank question
+Chemistry,2021,Define an acid according to the Bronsted-Lowry theory.,Structured, fill-in-the-blank question
+Chemistry,2021,Write the chemical equation for the reaction between sodium and water.,Structured, fill-in-the-blank question
+Chemistry,2022,Explain why graphite conducts electricity but diamond does not.,Essay, fill-in-the-blank question
+Chemistry,2023,State one use of chlorine gas.,Structured, fill-in-the-blank question
+Chemistry,2024,Name the process used to separate ethanol and water.,Structured, fill-in-the-blank question
+Physics,2021,Define velocity.,Structured, fill-in-the-blank question
+Physics,2021,A body moves 20 m in 4 s. Calculate its speed.,Structured
+Physics,2022,Explain why a stone thrown upwards eventually falls back to the ground.,Structured, fill-in-the-blank question
+Physics,2023,State Newton’s third law of motion.,Structured, fill-in-the-blank question
+Physics,2024,Name the type of mirror used by drivers to view wide areas behind them.,Structured, fill-in-the-blank question
+Geography,2021,Name two types of volcanic mountains.,Structured, fill-in-the-blank question
+Geography,2021,State three factors influencing climate.,Structured, fill-in-the-blank question
+Geography,2022,Explain three effects of soil erosion.,Essay, fill-in-the-blank question
+Geography,2023,List two uses of a topographical map.,Structured, fill-in-the-blank question
+Geography,2024,Define the term 'river rejuvenation.',Structured, fill-in-the-blank question
+History,2021,State two reasons for the migration of the Luo into Kenya.,Structured, fill-in-the-blank question
+History,2021,Identify one result of the coming of Europeans to Africa.,Structured, fill-in-the-blank question
+History,2022,Explain three causes of the Maji Maji rebellion.,Essay, fill-in-the-blank question
+History,2023,Mention two roles of the council of elders among the Kikuyu.,Structured, fill-in-the-blank question
+History,2024,State one effect of nationalism in Africa.,Structured, fill-in-the-blank question
+CRE,2021,State two attributes of God from the creation stories.,Structured, fill-in-the-blank question
+CRE,2021,Explain the meaning of faith according to Hebrews 11:1.,Structured, fill-in-the-blank question
+CRE,2022,Describe three teachings of Jesus on prayer.,Essay, fill-in-the-blank question
+CRE,2023,State two ways Christians can show love to others.,Structured, fill-in-the-blank question
+CRE,2024,Mention one reason why Christians read the Bible.,Structured, fill-in-the-blank question
+Business Studies,2021,Define entrepreneurship.,Structured, fill-in-the-blank question
+Business Studies,2021,State two types of business resources.,Structured, fill-in-the-blank question
+Business Studies,2022,Explain three functions of a wholesaler.,Essay, fill-in-the-blank question
+Business Studies,2023,List two forms of business ownership.,Structured, fill-in-the-blank question
+Business Studies,2024,State one advantage of using e-commerce.,Structured, fill-in-the-blank question
+Agriculture,2021,State two methods of soil conservation.,Structured, fill-in-the-blank question
+Agriculture,2021,Name one example of a leguminous crop.,Structured, fill-in-the-blank question
+Agriculture,2022,Explain three advantages of crop rotation.,Essay, fill-in-the-blank question
+Agriculture,2023,List two causes of infertility in female animals.,Structured, fill-in-the-blank question
+Agriculture,2024,Define zero grazing.,Structured, fill-in-the-blank question
+Computer Studies,2021,Define the term 'software.',Structured, fill-in-the-blank question
+Computer Studies,2021,State two input devices of a computer.,Structured, fill-in-the-blank question
+Computer Studies,2022,Explain three characteristics of a good computer file.,Essay, fill-in-the-blank question
+Computer Studies,2023,List two types of computer networks.,Structured, fill-in-the-blank question
+Computer Studies,2024,State one advantage of cloud storage.,Structured, fill-in-the-blank question
+
+University
+Subject,SubjectCode,Question,Type, Style
+Accounting In Business,F1, Which type of unemployment arises from a permanent reduction in demand for the products supplied by a single industry or group of industries with traditionally large workforces? A.Frictional B.Structural C.Cyclical D.Seasonal, Structured, multiple-choice question
+Accounting In Business,F1, Which of the five fundamentals principles of the ACCA code of ethics and conduct imposes an obligation on members to comply with relevant laws and regulations and avoid any action that may bring discredit to the profession? This includes actions which a reasonable and informed third party, having knowledge of all relevant information, would conclude negatively affects the good reputation of the profession. A. Independence B. Objectivity C. Professional behaviour D. Professional competence and due care, Structured, multiple-choice question
+Accounting In Business,F1, Which of the following is the correct sequence of the training process A. Training needs analysis, definition of learning requirements, panning training programs, defining training objectives B. Defining training objectives, planning training programs, defining learning requirements, training needs analysis C. Training needs analysis, defining learning requirements, defining training objectives, planning training programs D. Defining learning requirements, training needs analysis, defining training objectives, planning training programs,  Structured, multiple-choice question
+Accounting In Business,F1, What does a decision support system (DSS) do to fulfil its function? A. Captures human expertise B. Combines data and analytical models C. Performs and records routine transactions D. Facilitates the creation and integration of new knowledge, Structured, multiple-choice question
+Subject,SubjectCode,Question,Type,Style
+Principle of Marketing,BBS,"QUESTION TWO  
+a) Kalausi Limited is a fast-moving consumer goods company with branches in 5 locations within Kenya. Due to the recent hike in fuel prices, Kalausi has been left with no option but to commensurately increase the prices of its products. In your role as marketing manager at Kalausi you have been tasked to write a report to explain to the next senior management team THREE alternatives which the organization can employ to avert a price increase. Justify your response. (12 Marks)  
+b) In your role as marketing manager at Jasiri Enterprises, a manufacturer of assorted biscuits, discuss FOUR considerations which you would make in the selection of a marketing channel. (8 Marks)",Essay,fill-in-the-blank question
+Principle of Marketing,BBS,"QUESTION THREE  
+You are the marketing manager of a medium sized firm manufacturing and selling glass crystal and similar giftware. During the COVID 19 pandemic times have been tough, but with a strong balance sheet you are now considering plans to enter a new market with your existing product range suitably engraved. You have decided to offer graduate giftware to students graduating from colleges and universities and have decided to commission market research. As a marketing graduate yourself, you are reflecting on your marketing information requirements for the new marketing initiative. Explain the stages you would undergo in conducting this research. (20 Marks)",Essay,fill-in-the-blank question
+Principle of Marketing,BBS,"QUESTION FOUR  
+Corporate responsibility (CSR) is no longer perceived as an activity that businesses halfheartedly invest their time and effort to appease an organization’s board members and impress customers. Using relevant examples, describe FIVE advantages of corporate social responsibility. (20 Marks)",Essay,fill-in-the-blank question
+Principle of Marketing,BBS,"QUESTION FIVE  
+The key to any successful business is knowing how to market to your audience. Discuss how Wakati Fast Foods situated in Nairobi can leverage on digital marketing to enhance the uptake of its products.",Essay,fill-in-the-blank question
+
+Computer Organization and Architecture,BBIT/IT/FIT,"Determine the length of the memory read instruction cycle. (4 Marks)  
+b. When, at the latest, should memory data be placed on the bus? Allow 20 ns for the settling of data lines. (2 Marks)  
+ii) A manufacturer wishes to design a hard disk with a capacity of 30 GB or more (using the standard definition of 1GB = 2^30 bytes). If the technology used to manufacture the disks allows 1024-byte sectors, 2048 sectors/track, and 40% tracks/platter, how many platters are required? (6 Marks)  
+iii) With the aid of a diagram describe the memory hierarchy (hint: size, speed, cost) (6 Marks)  
+iv) What is the use of cache memory? (2 Marks)",Essay,fill-in-the-blank question
+Computer Organization and Architecture,BBIT/IT/FIT,"QUESTION 2  
+i) Discuss any five (5) parameters which influence performance. (10 Marks)  
+ii) Discuss speculative execution. (2 Marks)  
+iii) Discuss the replacement algorithms.",Essay,fill-in-the-blank question
+
+Probability and Statistics 1,MAT,"a) Differentiate between a statistic and a parameter (2 Marks)  
+b) Differentiate between probability and non-probability sampling methods, giving examples. (3 Marks)  
+c) Draw a back-to-back stem and leaf to compare the reaction time of boys and girls to a certain stimulus and compare the distributions. (4 Marks)  
+d) The number of goals scored in 15 hockey matches is shown in the table:  
+No. of goals: 1 2 3 4 5  
+No. of matches: 2 1 5 3 4  
+i. Estimate the mean, median and standard deviation. (6 Marks)  
+ii. Estimate Bowley’s coefficient of skewness and interpret your result. (4 Marks)  
+e) Suppose there are 40 transistors of which 8 are defective. If sampling without replacement is performed, what is the probability of picking 4 good transistors in the first 7 draws? (3 Marks)  
+f) Find the regression coefficient of Y on X and of X on Y on the basis of the following: ΣX=50, ΣY=60, X̄=5, Ȳ=6, ΣXY=350, Var(X)=4, Var(Y)=9.",Essay,fill-in-the-blank question
+
+French,HLE,"GRAMMAIRE/ VOCABULAIRE (18 PTS)  
+A. Complétez le dialogue avec les partitifs du/de la/de l’/des. (2PTS)  
+Pour le pique-nique j’ai apporté (1) _______pain et (2) ______poulet.  
+B. Complétez avec adjectifs démonstratifs, Ce/Cet/Cette/Ces. (2PTS)  
+1. ______________émission de radio passe à 10 heures.  
+2. _____________ magazine coûte 3 euros.  
+C. Complétez les questions suivantes avec quel, quelle, quels, quelles. (2PTS)  
+1. ___________ jour êtes-vous libre ?  
+2. ___________ ligne de métro prends-tu ce matin ?  
+D. Mettez ces phrases à l’impératif, utilisez « tu ». (2PTS)  
+1. Casser les œufs. __________ les œufs !  
+2. Verser l’eau doucement. _________ l’eau doucement!  
+E. Mettez les verbes au passé composé. (6PTS)  
+1. Vous (lire) pendant vos vacances ? _____________________________  
+2. Maman (rentrer) à la maison. _________________________________  
+3. Son avion (partir) avec du retard. ______________________________  
+4. Elle (nager) pendant une heure. _______________________________  
+5. Il (manger) trois gâteaux. _____________________________________  
+6. Ils (venir) en vacances avec nous. ______________________________  
+F. Complétez en choisissant le mot qui convient. (2PTS)  
+1. Donnez-moi 4 __________________ de jambon, s’il vous plaît. (□ morceaux □ rondelles □ tranches)",Fill-in,fill-in-the-blank question
+
+Operating Systems Concepts,BBIT/IT/FIT,"a) Explain the term Operating System. (2 Marks)  
+b) Highlight and briefly discuss the different types of operating systems. (5 Marks)  
+c) Explain the concept of multi-programmed operating systems. (5 Marks)  
+d) Discuss the concept of multi-processor systems or parallel systems. (6 Marks)  
+e) Explain your understanding of the term “semaphore”. (2 Marks)  
+QUESTION 2  
+a) Draw the state diagram of a process from its creation to termination, including all transitions, and briefly elaborate each state and transition. (8 Marks)  
+b) What are interrupts? How are they handled by the operating system? (5 Marks)  
+c) Discuss differences between user-level threads and kernel-supported threads. (4 Marks)  
+d) Briefly explain the dining philosophers’ problem.",Essay,fill-in-the-blank question
+
+Application Programming for the Internet,BBIT/FIT/ICS,"i) Discuss the functions of the various components of the MVC structure. (6 Marks)  
+ii) Explain two (2) benefits of using namespaces in PHP. (3 Marks)  
+iii) You have been given the narration below. Draw any 2 valid UML class diagrams. [Hint: Define your own additional variables]  
+John is a pupil at Best Primary School. He has two pets, a duck and a tortoise. The Duck is called Ducky and the Tortoise is called Speed. John is 10 years old. Ducky is a yellow-colored pet while Speed’s shell is grey-brown. Speed is 5 years old while Ducky is 1 year old.  
+iv) List any two JavaScript frameworks used in Web Development.  
+v) What are the benefits of using frameworks in Web Development?  
+vi) Discuss any 4 elements of good website design.",Essay,fill-in-the-blank question
+
+Subject,SubjectCode,Question,Type,Style
+Management Accounting,F2,"1. A company is reviewing actual performance to budget to see where there are differences. The following standard information is relevant: £ per unit Selling price Direct materials Direct labour Fixed production overheads Variable production overheads Fixed selling costs Variable selling cost Total costs Budgeted sales units 3,000 Actual sales units 3,500 50 –– 4 16 5 10 1 1 –– 37 –– What was the favourable sales volume variance using marginal costing?  
+A £9,500  
+B £7,500  
+C £7,000  
+D £6,500",Multiple Choice,multiple-choice question
+Management Accounting,F2,"2. A company uses process costing to establish the cost per unit of its output. The following information was available for the last month: Input units 10,000 Output units 9,850 Opening stock 300 units, 100% complete for materials and 70% complete for conversion costs Closing stock 450 units, 100% complete for materials and 30% complete for conversion costs. The company uses the weighted average method of valuing stock. What were the equivalent units for conversion costs?  
+A 9,505 units  
+B 9,715 units  
+C 9,775 units  
+D 9,985 units",Multiple Choice,multiple-choice question
+Management Accounting,F2,"3. A company uses process costing to value its output. The following was recorded for the period: Input materials 2,000 units at £4.50 per unit Conversion costs £13,340 Normal loss 5% of input valued at £3 per unit Actual loss 150 units. There were no opening or closing stocks. What was the valuation of one unit of output to one decimal place?  
+A £11.8  
+B £11.6  
+C £11.2  
+D £11.0",Multiple Choice,multiple-choice question
+Management Accounting,F2,"4. The following information relates to labour costs for the past month:  
+Budget Labour rate £10 per hour Production time 15,000 hours Time per unit 3 hours Production units 5,000 units  
+Actual Wages paid £176,000 Production 5,500 units Total hours worked 14,000 hours  
+There was no idle time. What were the labour rate and efficiency variances?  
+Rate variance Efficiency variance  
+A £26,000 adverse £25,000 favourable  
+B £26,000 adverse £10,000 favourable  
+C £36,000 adverse £12,500 favourable  
+D £36,000 adverse £25,000 favourable",Multiple Choice,multiple-choice question
+
+Corporate and Business Law,F4,"QUESTION ONE  
+In relation to company law distinguish between:  
+a) executive directors;  
+b) non‐executive directors;  
+c) shadow directors.",Essay,fill-in-the-blank question
+Corporate and Business Law,F4,"QUESTION TWO  
+In relation to company law, explain the meaning of the following:  
+(a) a fixed charge;  
+(b) a floating charge.",Essay,fill-in-the-blank question
+Corporate and Business Law,F4,"QUESTION THREE  
+In relation to the rules governing the payment of company dividends explain:  
+a) how dividends may be properly funded;  
+b) the rules which apply to public limited companies;  
+c) the consequences of any dividend being paid in breach of those rules.",Essay,fill-in-the-blank question
+Corporate and Business Law,F4,"QUESTION FOUR  
+Within the context of the UN Convention on Contracts for the International Sale of Goods, explain:  
+(a) an offer;  
+(b) an invitation to treat;  
+(c) a counter‐offer.",Essay,fill-in-the-blank question
+Corporate and Business Law,F4,"QUESTION FIVE  
+Within the context of the UN Convention on Contracts for the International Sale of Goods, explain when risk for loss or damage to goods passes from the seller to the buyer.",Essay,fill-in-the-blank question
+
+IT Fundamentals,BBIT,"a) Computers are divided into three categories as per the data they process. Briefly explain the different categories while giving examples of each type of computers. (6 Marks)  
+b) Giving examples describe the two types of software learned in class. (4 Marks)  
+c) List three categories of network devices and give an example of a device that operates at that layer. (3 Marks)  
+d) With working from home, most companies have resorted to buying their employees bundles. As the Network Administrator, state two ways you would ensure that the bundles are not misused to watch movies or access unrelated websites.  
+e) List and explain the core functions of an operating system.  
+f) You have been consulted by your organization again to help in buying a printer. Give a list of five things that you would emphasize. (5 Marks)  
+g) If you were to increase the functionality of your computer or add controllers, state four adapter cards you would add. (2 Marks)  
+h) Describe three major components of a computer and state two factors for each that you would consider when buying them. (6 Marks)  
+Question 2  
+a) Describe and explain four types of power fluctuations that can cause data loss or hardware failure. (8 Marks)  
+b) Giving examples differentiate between type one and type two hypervisors. (4 Marks)  
+c) What is the difference between cloud computing and virtualization?",Essay,fill-in-the-blank question
+
+Principles of Communication,BA Communication,"a) Demonstrate three ways in which conciseness can be achieved in spoken communication. (6 Marks)  
+b) Describe four ways to achieve better clarity in spoken and written correspondence. (9 Marks)  
+Question 4  
+You have been requested to speak to high school students about a topic of your choice. Write out a speech of between 350 and 600 words, observing all principles of communication. (15 Marks)  
+Question 5  
+a) Justify five ways in which courtesy can be shown in writing and speech. (10 Marks)  
+b) Define concreteness in communication and illustrate two ways to achieve it in written communication.",Essay,fill-in-the-blank question
+
+English for Effective Communication,BAC1205,"Rewrite the following Newspaper Headlines and indicate if each is active or passive. Add punctuation and articles where required. (15 Marks)  
+a) Narobi named ‘most youthful’ city in the world  
+b) Ben Githae wins top prize at Kenyan Gospel Music Awards  
+c) World’s Biggest Bookstore sold to developer  
+d) Two baby baboons on display at the Kenya Wildlife Society  
+e) Sudanese government reveals independence plan  
+Question 3  
+a) Rewrite the following sentences correctly by choosing the correct word in brackets.  
+i. That book belongs to those children. That book is… (theirs/there’re)  
+ii. This scarf belongs to my aunty Hellen. This scarf is… (hers/shes)  
+iii. Water has ----------- calories than milk (less/fewer)  
+iv. She has much ----- patience than her husband (less/fewer)",Fill-in,fill-in-the-blank question
+
+Differential Calculus,MAT,"a) Determine the domain and range of the following functions and write them using interval notation:  
+(i) f(x) = 12−x−x³  
+(ii) f(x) = ln(x−3)  
+b) Given the function f(x) = 3x³ −4x² −3x+8, find:  
+(i) f(−3)  
+(ii) f(h−2)  
+c) A manufacturing company produces and sells seats. The cost function is given by C(x) = 4x + 120x^(1/3) + 3000. Seats are sold for $200 each. Find the total profit from selling 27 seats.  
+d) Determine the derivative of the following functions:  
+(i) f(x) = x³e^(2x)  
+(ii) f(x) = √(7x + 6)",Essay,fill-in-the-blank question
+
+Advanced Business Mathematics,MAT,"a) The Network Standards Company has a profit function P(x) = 1000x−2x², 0 ≤ x ≤ 300 where x is the number of modems produced and P(x) is profit in dollars. Compute P′(200) and interpret. (3 Marks)  
+b) The number of dollars spent on advertising affects sales. If x (in thousands) is the advertising spend and N(x) (in thousands) is the number sold: N(x) = 2580−520x.  
+(i) Sketch the graph of N(x) for 0 < x ≤ 20.  
+(ii) Determine lim x→13 N(x) and interpret.  
+c) Evaluate  
+(i) lim x→2 (5x³ −x² −x −2)/(x−2)  
+(ii) ∫₀³ √(3x+1) dx.",Essay,fill-in-the-blank question
+
+Calculus II,MAT,"a) Use the Midpoint Rule with n=4 to estimate ∫₀² (2x² + 1)dx. (6 Marks)  
+b) The TexMechs IT Company determines that the marginal cost for their 64GB flash drive is given by dC/dx = 0.02x + 6 where x is the number of drives produced and C is cost in dollars.  
+(i) Determine the general solution for C. (2 Marks)  
+(ii) Find the particular cost function C, knowing that the cost of producing 10 drives is $400. (2 Marks)  
+c) Determine the particular solution for the initial value problem dy/dx = x y³x, y(0)=5.  
+d) Find the Taylor series for cosx about x=0.",Essay,fill-in-the-blank question
+
+Category,Subject,Question,Type,Style
+Category,Subject,Question,Type,Style
+Computer Forensics,Computer Forensics,Define computer forensics.,Structured,definition
+Computer Forensics,Computer Forensics,Explain the difference between computer forensics and cyber security investigation.,Structured,short-answer
+Computer Forensics,Computer Forensics,What are the main stages of a digital forensic investigation?,Structured,list
+Computer Forensics,Computer Forensics,Describe two key challenges faced during evidence acquisition in digital forensics.,Structured,short-answer
+Computer Forensics,Computer Forensics,Explain the importance of maintaining a chain of custody in computer forensics.,Structured,explanation
+
+Simulation and Modelling,Simulation and Modelling,Define Simulation.,Structured,definition
+Simulation and Modelling,Simulation and Modelling,Define Modelling.,Structured,definition
+Simulation and Modelling,Simulation and Modelling,With the aid of an example define a system in the context of simulation and modelling.,Structured,explanation
+Simulation and Modelling,Simulation and Modelling,List any four characteristics of a system.,Structured,list
+Simulation and Modelling,Simulation and Modelling,During simulation a student has realized that two systems behave differently — one where the response at time t=0 depends only on input at t=0, and another where the response depends also on past events. Categorize these systems accurately.,Structured,explanation
+Simulation and Modelling,Simulation and Modelling,Describe any two methods of storing lists in a computer system for simulation.,Structured,list
+
+Business Process Management,Business Process Management,Explain the four dimensions of the devil’s quadrangle used in process performance measurement.,Essay,explanation
+Business Process Management,Business Process Management,Explain two key reasons why we may need to analyse an AS-IS business process.,Structured,explanation
+Business Process Management,Business Process Management,Explain four key sources of waste that may render an AS-IS process inefficient.,Structured,list
+Business Process Management,Business Process Management,Using an example explain the value-added analysis approach.,Structured,explanation
+Business Process Management,Business Process Management,Using examples, explain five re-design heuristics that are critical to the business process re-design process.,Essay,explanation
+
+Probability and Statistics II,Probability and Statistics II,A university bookstore claims that 50% of its customers are satisfied. Find the probability that in a sample of 600, less than 45% are satisfied.,Structured,calculation
+Probability and Statistics II,Probability and Statistics II,The amount of time X (in minutes) a bank teller spends with a customer follows an exponential distribution with mean 4 minutes. Determine the probability distribution function f(x).,Structured,formula
+Probability and Statistics II,Probability and Statistics II,Find the probability that a clerk spends between four and five minutes with a randomly selected customer.,Structured,calculation
+Probability and Statistics II,Probability and Statistics II,Determine the mean and variance of a random variable X with the given probability density function f(x) = (x^(α-1)e^(-x/β)) / (β^αΓ(α)) for x > 0.,Structured,calculation
+Probability and Statistics II,Probability and Statistics II,Marks of 500 candidates are normally distributed with mean 45 and SD 20. Given the pass mark is 41, estimate the number who passed.,Structured,calculation
+Probability and Statistics II,Probability and Statistics II,If 5% of the candidates obtained a distinction by scoring y marks or more, estimate the value of y.,Structured,calculation
+
+Fundamentals of Financial Management,Fundamentals of Financial Management,Explain the concept “time value of money.”,Structured,definition
+Fundamentals of Financial Management,Fundamentals of Financial Management,Jane invests Ksh. 100,000 at 8% quarterly compound interest for 5 years. Determine the maturity value.,Structured,calculation
+Fundamentals of Financial Management,Fundamentals of Financial Management,How long does it take to triple Ksh. 60,000 at 9% compound rate per year?,Structured,calculation
+Fundamentals of Financial Management,Fundamentals of Financial Management,Discuss the four main managerial finance functions.,Essay,explanation
+Fundamentals of Financial Management,Fundamentals of Financial Management,With reference to agency theory, discuss three causes of conflict between shareholders and management and how they can be resolved.,Essay,discussion
+
+Contract Law,Contract Law,Aziz Ltd agreed to rebuild a ship for Blue for Kshs 700 million. Blue cancels the contract before completion. Discuss breach of contract based on this case.,Essay,discussion
+Contract Law,Contract Law,State general defences available for breach of contract.,Structured,list
+Contract Law,Contract Law,Discuss how undue influence differs from unconscionable conduct and its impact on genuine consent.,Essay,comparison
+Contract Law,Contract Law,"With aid of decided cases, list the exceptions to the position that damages for mental distress are not awarded for commercial contracts.",Essay,case-analysis
+Contract Law,Contract Law,Identify and illustrate three situations in which courts may imply terms into a contract, with aid of decided cases.,Essay,case-analysis
+
