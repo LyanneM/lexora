@@ -1,12 +1,63 @@
-# React + Vite
+# Lexora
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Lexora is split into two parts:
 
-Currently, two official plugins are available:
+- Backend: Python app in `backend/`
+- Frontend: Vite app in `frontend/lexora/`
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Required versions
 
-## Expanding the ESLint configuration
+- Python: `3.13.7`
+- Node.js: `v20.20.2`
+- npm: `10.8.2`
+- nvm: any recent `nvm` or `nvm-windows` version that can select Node 20.x
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+If you use `nvm`, switch to the Node version first, then install dependencies.
+
+## Setup
+
+### 1. Backend environment
+
+From the project root, activate the Python virtual environment:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+& .\.venv\Scripts\Activate.ps1
+```
+
+If you need to create the environment again, use the Python version above and install the backend requirements from `backend/requirements.txt`.
+
+### 2. Frontend dependencies
+
+Install frontend dependencies in `frontend/lexora`:
+
+```powershell
+cd frontend\lexora
+npm install
+```
+
+## Run the project
+
+### Backend
+
+From the repository root with the virtual environment activated:
+
+```powershell
+cd backend
+python main.py
+```
+
+### Frontend
+
+In a separate terminal:
+
+```powershell
+cd frontend\lexora
+npm run dev
+```
+
+## Notes
+
+- Keep secrets in environment variables or a local `.env` file that is not committed.
+- The backend expects `OPENAI_API_KEY` and `GOOGLE_API_KEY` from the environment when those providers are used.
+- The frontend uses Vite, so `npm run dev` starts the local development server.
